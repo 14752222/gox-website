@@ -1851,11 +1851,11 @@ setInterval(() =&gt; {
     <table>
       <thead><tr><th>能力</th><th>Windows</th><th>Linux (X11)</th><th>macOS</th></tr></thead>
       <tbody>
-        <tr><td>窗口与渲染</td><td>✅</td><td>✅(需实机验证)</td><td>❌ 占位</td></tr>
-        <tr><td>输入法 IME</td><td>✅</td><td>❌</td><td>—</td></tr>
-        <tr><td>剪贴板</td><td>✅</td><td>❌ 降级(读空串 / 写 false)</td><td>—</td></tr>
-        <tr><td>原生对话框</td><td>✅</td><td>❌ 降级(confirm 取 true、openFile 取 null)</td><td>—</td></tr>
-        <tr><td>字体</td><td>✅ 静态候选</td><td>✅ 惰性扫描字体目录,CJK 优先</td><td>—</td></tr>
+        <tr><td>窗口与渲染</td><td>✅</td><td>✅(需实机验证)</td><td>✅(cocoa,0.6.0 起)</td></tr>
+        <tr><td>输入法 IME</td><td>✅</td><td>❌</td><td>✅</td></tr>
+        <tr><td>剪贴板</td><td>✅</td><td>❌ 降级(读空串 / 写 false)</td><td>✅(NSPasteboard)</td></tr>
+        <tr><td>原生对话框</td><td>✅</td><td>❌ 降级(confirm 取 true、openFile 取 null)</td><td>✅(alert / confirm / openFile / saveFile)</td></tr>
+        <tr><td>字体</td><td>✅ 静态候选</td><td>✅ 惰性扫描字体目录,CJK 优先</td><td>✅ 扫描系统字体目录(darwin 选型已适配)</td></tr>
         <tr><td>原生能力(电量 / 网络 / 亮度 / 设置页)</td><td>✅ 走 win32 宿主</td><td>—</td><td>—</td></tr>
         <tr><td>原生能力(相机 / 定位 / 相册 / 权限)</td><td>❌ 明说缺(报 unsupported)</td><td>—</td><td>—</td></tr>
       </tbody>

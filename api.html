@@ -1396,12 +1396,12 @@ count = 2</code></pre>
       <thead><tr><th>能力</th><th>Windows</th><th>Linux (X11)</th><th>macOS</th></tr></thead>
       <tbody>
         <tr><td>CLI 脚本</td><td>✅</td><td>✅</td><td>✅</td></tr>
-        <tr><td>GUI 窗口</td><td>✅</td><td>✅(需实机验证)</td><td>❌ 占位</td></tr>
-        <tr><td>输入法 IME</td><td>✅</td><td>❌</td><td>—</td></tr>
-        <tr><td>剪贴板</td><td>✅</td><td>❌ 降级(读空串 / 写 false)</td><td>—</td></tr>
-        <tr><td>原生对话框</td><td>✅</td><td>❌ 降级(<code class="inline">confirm</code> 取 true、<code class="inline">openFile</code> 取 null)</td><td>—</td></tr>
-        <tr><td>显示器枚举 / 窗口归属</td><td>✅</td><td>未实机验证</td><td>—</td></tr>
-        <tr><td>折叠姿态</td><td>靠 <code class="inline">reportPosture</code> 上报</td><td>靠上报</td><td>—</td></tr>
+        <tr><td>GUI 窗口</td><td>✅</td><td>✅(需实机验证)</td><td>✅(cocoa,0.6.0 起)</td></tr>
+        <tr><td>输入法 IME</td><td>✅</td><td>❌</td><td>✅</td></tr>
+        <tr><td>剪贴板</td><td>✅</td><td>❌ 降级(读空串 / 写 false)</td><td>✅(NSPasteboard)</td></tr>
+        <tr><td>原生对话框</td><td>✅</td><td>❌ 降级(<code class="inline">confirm</code> 取 true、<code class="inline">openFile</code> 取 null)</td><td>✅(alert / confirm / openFile / saveFile)</td></tr>
+        <tr><td>显示器枚举 / 窗口归属</td><td>✅</td><td>未实机验证</td><td>✅</td></tr>
+        <tr><td>折叠姿态</td><td>靠 <code class="inline">reportPosture</code> 上报</td><td>靠上报</td><td>靠上报(macOS 无折痕硬件)</td></tr>
       </tbody>
     </table>
 
