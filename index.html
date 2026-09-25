@@ -14,7 +14,7 @@
   <div class="container nav">
     <a class="brand" href="index.html">
       <img class="brand-logo" src="assets/logo.png" alt="Gox" width="30" height="30">
-      Gox <span class="ver">v0.5.0</span>
+      Gox <span class="ver">v0.6.0</span>
     </a>
     <button class="nav-toggle" aria-label="菜单">☰</button>
     <ul class="nav-links">
@@ -187,7 +187,7 @@ Type :exit to quit, :help for help
         </tr>
         <tr>
           <td>工具链</td>
-          <td><code class="inline">gox</code> / <code class="inline">goxjs</code> 命令行(REPL、运行脚本、<code class="inline">create</code> 脚手架)、packager 打包单文件、五平台 npm 预编译二进制</td>
+          <td><code class="inline">gox</code> / <code class="inline">goxjs</code> 命令行(REPL、运行脚本、<code class="inline">create</code> 脚手架、<code class="inline">dev</code> 热更新、<code class="inline">build</code> 统一构建)、packager 打包单文件、五平台 npm 预编译二进制</td>
           <td><a href="guide.html#install">教程 §1</a></td>
         </tr>
       </tbody>
@@ -343,11 +343,15 @@ render(
   <div class="container">
     <div class="section-head">
       <h2>版本与现状</h2>
-      <p>当前版本 <code class="inline">0.5.0</code>。下面是最近几个版本真正加了什么,详细条目见 GitHub Releases。</p>
+      <p>当前版本 <code class="inline">0.6.0</code>。下面是最近几个版本真正加了什么,详细条目见 GitHub Releases。</p>
     </div>
     <table class="cap-table">
       <thead><tr><th>版本</th><th>内容</th></tr></thead>
       <tbody>
+        <tr>
+          <td><code class="inline">0.6.0</code></td>
+          <td>macOS 窗口后端 cocoa(桌面 GUI 三平台齐);<code class="inline">gox dev</code> 热更新、<code class="inline">gox.json</code> 项目配置、<code class="inline">gox build</code> 统一构建入口;async 箭头函数、for-of 解构绑定、尾逗号</td>
+        </tr>
         <tr>
           <td><code class="inline">0.5.0</code></td>
           <td>原生能力层:六个内置模块 <code class="inline">gx/device</code> · <code class="inline">gx/app</code> · <code class="inline">gx/geo</code> · <code class="inline">gx/media</code> · <code class="inline">gx/permission</code> · <code class="inline">gx/viewport</code>(共用一个宿主契约);<code class="inline">padding</code> 支持四边分别指定</td>
@@ -372,7 +376,7 @@ render(
     </table>
     <div class="callout note">
       <b>已知缺口</b>
-      <p>macOS 的 GUI 后端尚未实现(CLI 不受影响);X11 后端已实现但未做实机验证;虚拟化长列表、表格、tooltip、图标、富文本等仍未封装;原生能力层里依赖真机的部分(相机 / 定位 / 相册 / 权限)在桌面上诚实报 <code class="inline">unsupported</code>，需移动宿主实现。
+      <p>macOS 窗口后端(cocoa)0.6.0 起可用;X11 后端已实现但未做实机验证;虚拟化长列表、表格、tooltip、图标、富文本等仍未封装;原生能力层里依赖真机的部分(相机 / 定位 / 相册 / 权限)在桌面上诚实报 <code class="inline">unsupported</code>，需移动宿主实现。
         组件级的详细支持现状见<a href="components.html">组件参考</a>。</p>
     </div>
   </div>
@@ -396,7 +400,7 @@ render(
 
 <footer class="site-footer">
   <div class="container footer-row">
-    <div>Gox v0.5.0 — Apache License 2.0 · 用 ❤ 和 Go 编写</div>
+    <div>Gox v0.6.0 — Apache License 2.0 · 用 ❤ 和 Go 编写</div>
     <div class="links">
       <a href="guide.html">使用教程</a>
       <a href="components.html">组件参考</a>

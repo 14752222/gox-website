@@ -14,7 +14,7 @@
   <div class="container nav">
     <a class="brand" href="index.html">
       <img class="brand-logo" src="assets/logo.png" alt="Gox" width="30" height="30">
-      Gox <span class="ver">v0.5.0</span>
+      Gox <span class="ver">v0.6.0</span>
     </a>
     <button class="nav-toggle" aria-label="菜单">☰</button>
     <ul class="nav-links">
@@ -129,6 +129,8 @@ Type :exit to quit, :help for help
         <tr><td><code class="inline">gox</code></td><td>无参数 → 进入 REPL</td></tr>
         <tr><td><code class="inline">gox &lt;file.js&gt;</code></td><td>运行脚本</td></tr>
         <tr><td><code class="inline">gox create &lt;name&gt;</code></td><td>创建 GUI 工程(<code class="inline">new</code> / <code class="inline">init</code> 同义;非空目录加 <code class="inline">--force</code>)</td></tr>
+        <tr><td><code class="inline">gox dev [入口.js]</code></td><td>开发热更新:监听 src/ 的 .js 变更,自动重建 VM 重跑入口(0.6.0 起)</td></tr>
+        <tr><td><code class="inline">gox build &lt;平台&gt;</code></td><td>统一构建入口(<code class="inline">android|ios|windows|macos</code>;自动注入权限并生成图标;读 <code class="inline">gox.json</code> 配置)</td></tr>
         <tr><td><code class="inline">gox version</code></td><td>打印版本号</td></tr>
         <tr><td><code class="inline">gox help</code></td><td>打印用法</td></tr>
       </tbody>
@@ -566,8 +568,8 @@ render(
 
     <div class="callout warn">
       <b>平台支持</b>
-      <p>窗口后端:Windows(纯 syscall win32)与 Linux(X11,Wayland 下走 XWayland)。macOS 的 GUI 后端尚未实现 —— CLI 脚本不受影响。
-        输入法(IME)与原生对话框目前仅 Windows 后端提供,其余平台会安全降级。</p>
+      <p>窗口后端:Windows(纯 syscall win32)、Linux(X11,Wayland 下走 XWayland)与 macOS(cocoa,0.6.0 起,purego 纯 Go 驱动 AppKit)。
+        输入法(IME)与原生对话框在 Windows 与 macOS 后端提供,其余平台会安全降级。</p>
     </div>
 
     <h3>内置模块速查:该 import 什么</h3>
@@ -716,7 +718,7 @@ go run ./packager app.js --gui --target linux/amd64    # 纯 Go 交叉编译</co
     <p>定位不同。Gox 的价值在于<strong>从零走通完整编译管线</strong>(lexer → parser → compiler → 字节码 VM)并提供可用的语言与宿主能力,适合写脚本工具、CLI、小型桌面程序,以及学习运行时原理。它不追求替代生产环境的 Node 生态 —— 没有 npm 生态兼容,也没有 JIT。</p>
 
     <h3>macOS 能用吗?</h3>
-    <p>CLI 完全可用:<code class="inline">npm i -g @goxjs/goxjs</code> 的预编译二进制包含 darwin-amd64 与 darwin-arm64。GUI 窗口后端尚未实现 macOS 支持。</p>
+    <p>CLI 与 GUI 都可用:<code class="inline">npm i -g @goxjs/goxjs</code> 的预编译二进制包含 darwin-amd64 与 darwin-arm64;0.6.0 起 GUI 也有 macOS 窗口后端(cocoa),窗口、IME 与原生对话框都可用。</p>
 
     <h3>怎么调试 / 参与开发?</h3>
     <pre class="code"><code data-lang="bash">gox version            # 打印当前版本,先确认自己跑的是哪一个构建
@@ -744,7 +746,7 @@ go run ./packager -h   # 打包器用法</code></pre>
 
 <footer class="site-footer">
   <div class="container footer-row">
-    <div>Gox v0.5.0 — Apache License 2.0 · 用 ❤ 和 Go 编写</div>
+    <div>Gox v0.6.0 — Apache License 2.0 · 用 ❤ 和 Go 编写</div>
     <div class="links">
       <a href="index.html">首页</a>
       <a href="guide.html">使用教程</a>
