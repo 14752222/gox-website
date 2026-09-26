@@ -1,0 +1,6 @@
+# Gox 官网 robots.txt
+User-agent: *
+Allow: /
+
+# 搜索引擎 sitemap
+Sitemap: https://14752222.github.io/Gox/sitemap.xml
