@@ -145,10 +145,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.6.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.7.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.7.0 | `gox cert` 一键生成各平台签名证书、`gox build android` 自动接入签名、`gox create` 生成 certs/ 目录；`gox build macos --arch universal`（amd64+arm64 合并）；iOS 相册多选保序与 media.preview 多文件预览 |
 | 0.6.0 | macOS 窗口后端 cocoa（桌面 GUI 三平台齐）；`gox dev` 热更新、`gox.json` 项目配置、`gox build` 统一构建入口 |
 | 0.5.0 | 原生能力层六个内置模块（gx/device · gx/app · gx/geo · gx/media · gx/permission · gx/viewport） |
 | 0.4.0 | 脚手架 `gox create`；路由 `gx/router` 与屏幕 `gx/screen` 成为内置模块 |
