@@ -5,7 +5,7 @@ description: 安装 Gox JavaScript 运行时的三种方式：npm i -g @goxjs/go
 
 # 安装与创建工程
 
-三种进入方式,按目标挑一个。三种方式装出来的都是**同一个二进制**,命令名有 `goxjs` 与 `gox` 两个(互为别名,用法完全相同);从源码构建则是 `Gox` (Windows 下 `Gox.exe`)。
+三种进入方式,按目标挑一个。三种方式装出来的都是**同一个二进制**,命令名有 `goxjs` 与 `gox` 两个(互为别名,用法完全相同);从源码构建则得到 `gox` (Windows 下 `gox.exe`)。
 
 ## 方式一:`gox create` 脚手架(要写 GUI 应用时最省事)
 
@@ -57,10 +57,10 @@ npx goxjs app.js    # 或者不全局安装,直接跑
 ```bash
 git clone https://github.com/14752222/Gox.git
 cd Gox
-go build           # Windows 下生成 Gox.exe,类 Unix 下生成 Gox
-./Gox app.js       # 之后用 ./Gox 替代教程中的 gox
+go build ./cmd/gox  # Windows 下生成 gox.exe,类 Unix 下生成 gox
+./gox app.js        # 之后用 ./gox 替代教程中的 gox
 ```
 
 ::: tip 提示
-教程统一用 `gox` 演示命令。源码构建请自行替换成 `./Gox`(Windows 为 `Gox.exe`),用法完全相同。
+教程统一用 `gox` 演示命令。源码构建请自行替换成 `./gox`(Windows 为 `gox.exe`),用法完全相同。
 :::

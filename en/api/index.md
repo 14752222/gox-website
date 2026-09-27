@@ -18,7 +18,7 @@ Gox is a **single-threaded** bytecode virtual machine. A script goes from lexing
 | Create a project | `gox create my-app` | Scaffolding: lays out a ready-to-run GUI project (`new` / `init` are synonyms; requires 0.4.0+) |
 | Pack into a single file | `go run ./packager app.js -o app.exe` | Bundles the runtime and the script into a standalone executable |
 
-`goxjs` and `gox` are two command names for the same binary; a source build produces `Gox` / `Gox.exe`. Subcommand detection is "does this argument look like a script path" (based on extension and path separators), so `gox help.js` still **runs the script** rather than the `help` subcommand.
+`goxjs` and `gox` are two command names for the same binary; a source build produces `gox` / `gox.exe`. Subcommand detection is "does this argument look like a script path" (based on extension and path separators), so `gox help.js` still **runs the script** rather than the `help` subcommand.
 
 ### What's in the Global Scope
 

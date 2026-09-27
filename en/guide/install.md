@@ -5,7 +5,7 @@ description: "Three ways to install the Gox JavaScript runtime: npm i -g @goxjs/
 
 # Installation and Creating a Project
 
-Three entry points — pick one based on your goal. All three install **the same binary**. There are two command names, `goxjs` and `gox` (aliases of each other, identical usage); a source build produces `Gox` (`Gox.exe` on Windows).
+Three entry points — pick one based on your goal. All three install **the same binary**. There are two command names, `goxjs` and `gox` (aliases of each other, identical usage); a source build produces `gox` (`gox.exe` on Windows).
 
 ## Option 1: The `gox create` Scaffold (Easiest for GUI Apps)
 
@@ -57,10 +57,10 @@ Requires Go 1.26+:
 ```bash
 git clone https://github.com/14752222/Gox.git
 cd Gox
-go build           # produces Gox.exe on Windows, Gox on Unix-like systems
-./Gox app.js       # then use ./Gox in place of gox in the tutorials
+go build ./cmd/gox  # produces gox.exe on Windows, gox on Unix-like systems
+./gox app.js        # then use ./gox in place of gox in the tutorials
 ```
 
 ::: tip Note
-The tutorials consistently use `gox` in command examples. If you built from source, substitute `./Gox` (`Gox.exe` on Windows) yourself — the usage is identical.
+The tutorials consistently use `gox` in command examples. If you built from source, substitute `./gox` (`gox.exe` on Windows) yourself — the usage is identical.
 :::
