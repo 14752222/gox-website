@@ -22,6 +22,7 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | All children of a container with a background pile up in the top-left corner | That isn't a `column`/`row`; a generic box doesn't lay out its children |
 | Rows scrolled out of the viewport are invisible but "seem clickable" | That can't happen — `scroll`'s painting and hit testing share the same viewport, by design |
 | Sizes jitter during animation | Property reads should go through the render layer's interpolation; if layout reads the prop's final value and then falls back to the intrinsic size, it jitters. You won't hit this in normal use |
+| Tooltip is slow to appear while the pointer rests still | The `tooltip` delay is driven by the event pump waking up; it works normally as long as the app has JS timers or window events, and in the worst case (no wake source at all) it appears at the next event |
 
 ### Unimplemented components (can be simulated with existing capabilities)
 
@@ -30,7 +31,6 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | tabs | Write it directly with [Switch / Match](/en/components/patterns#view) (or [conditional rendering](/en/components/patterns#reactive)'s `{() => tab() === 0 ? panelA : panelB}`); not packaged as a component |
 | list / table / tree | List rendering + `scroll` is enough already; tables and trees you assemble from `row` yourself |
 | Virtualized long lists | The [each directive](/en/components/patterns#view) gives you keyed reuse, but "mount only the visible range" windowing is still not implemented |
-| tooltip | `onMouseMove` exists, so you can build one yourself |
 | icon / rich text / spinner / video | Not implemented |
 
 ### Platform differences at a glance

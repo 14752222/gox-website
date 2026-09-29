@@ -22,6 +22,7 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | 带背景色的容器里子元素全叠在左上角 | 那不是 `column`/`row`,通用盒子不布局子元素 |
 | 滚出视口的行看不见却"好像还能点" | 不会发生 —— `scroll` 的绘制与命中共用同一个视口,这是刻意设计 |
 | 动画期间尺寸抽搐 | 读属性应该走渲染层的插值;若布局读到了 prop 的终值又回落固有尺寸就会抖。正常使用不会遇到 |
+| 悬停不动时 tooltip 迟迟不弹 | `tooltip` 的延迟由事件泵唤醒,泵有 JS 定时器或窗口事件时正常;完全没有唤醒源时最迟会在下一次事件到达时弹出 |
 
 ### 未实现的组件(可用现有能力模拟)
 
@@ -30,7 +31,6 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | tabs 选项卡 | 用[Switch / Match](/components/patterns#view)(或[条件渲染](/components/patterns#reactive)的 `{() => tab() === 0 ? panelA : panelB}`)直接写,未封装成组件 |
 | list / table / tree | 列表渲染 + `scroll` 已够用;表格与树要自己拼 `row` |
 | 虚拟化长列表 | 用 [each 指令](/components/patterns#view) 可做 keyed 复用,但"只挂可见区间"的窗口化仍未做 |
-| tooltip | 有 `onMouseMove` 可以自己实现 |
 | icon / 富文本 / spinner / 视频 | 未实现 |
 
 ### 平台差异一览

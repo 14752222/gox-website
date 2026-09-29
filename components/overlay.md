@@ -59,6 +59,34 @@ const notify = () => {
 {() => (showToast() ? <toast message="Saved successfully" level="success" /> : null)}
 ```
 
+### `<tooltip>` {#tooltip}
+
+`稳定` · `非模态` · `不挡交互`
+
+悬停提示:包裹一个触发元素,鼠标在它上面停留 `delay` 毫秒后,在旁边弹出一段深色小字。移开鼠标、按下鼠标或按 Esc 都会收起。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| text | string | 提示文本(单行,过长会被截断;空串不弹) |
+| placement | string | `top` / `bottom` / `left` / `right`,默认 `bottom`;贴边放不下会自动翻到另一侧 |
+| delay | number | 显示延迟毫秒,默认 `500` |
+
+`<tooltip>` 对布局透明——它的盒子就是触发元素的盒子,想给谁加提示就把它包起来:
+
+```js
+<tooltip text="保存到云端 (Ctrl+S)" placement="bottom">
+  <button>保存</button>
+</tooltip>
+
+<tooltip text="删除后不可恢复" placement="top" delay={200}>
+  <button background="#c0392b">删除</button>
+</tooltip>
+```
+
+::: info 提示不挡交互
+弹层是纯展示,没有事件处理器——即使它盖在别的控件上,点击仍然穿过去命中下面的控件。想改字号直接在 `<tooltip>` 上写 `font={12}`,文字沿父链继承。
+:::
+
 ### gx/dialog 原生系统对话框 {#native-dialog}
 
 `稳定` · `仅 Windows 原生` · `async`

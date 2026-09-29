@@ -59,6 +59,34 @@ const notify = () => {
 {() => (showToast() ? <toast message="Saved successfully" level="success" /> : null)}
 ```
 
+### `<tooltip>` {#tooltip}
+
+`Stable` · `Non-modal` · `Click-through`
+
+A hover hint: wrap a trigger element, and after the pointer rests on it for `delay` milliseconds, a small dark text bubble pops up beside it. Moving the mouse away, pressing a mouse button, or pressing Esc dismisses it.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| text | string | Hint text (single line, truncated when too long; empty string never shows) |
+| placement | string | `top` / `bottom` / `left` / `right`, defaults to `bottom`; flips to the opposite side automatically when it doesn't fit |
+| delay | number | Show delay in milliseconds, defaults to `500` |
+
+`<tooltip>` is layout-transparent — its box is the trigger element's box. Wrap whatever you want to annotate:
+
+```js
+<tooltip text="Save to the cloud (Ctrl+S)" placement="bottom">
+  <button>Save</button>
+</tooltip>
+
+<tooltip text="This cannot be undone" placement="top" delay={200}>
+  <button background="#c0392b">Delete</button>
+</tooltip>
+```
+
+::: info The tooltip never blocks interaction
+The bubble is purely presentational and has no event handlers — even when it covers another control, clicks pass through to whatever is underneath. To change the font size, write `font={12}` on the `<tooltip>` itself; text inherits along the parent chain.
+:::
+
 ### gx/dialog Native System Dialogs {#native-dialog}
 
 `Stable` · `Windows native only` · `async`
