@@ -23,12 +23,14 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | 滚出视口的行看不见却"好像还能点" | 不会发生 —— `scroll` 的绘制与命中共用同一个视口,这是刻意设计 |
 | 动画期间尺寸抽搐 | 读属性应该走渲染层的插值;若布局读到了 prop 的终值又回落固有尺寸就会抖。正常使用不会遇到 |
 | 悬停不动时 tooltip 迟迟不弹 | `tooltip` 的延迟由事件泵唤醒,泵有 JS 定时器或窗口事件时正常;完全没有唤醒源时最迟会在下一次事件到达时弹出 |
+| 表格行点不动 | `table` 的行默认**不可点**(纯展示)。要行交互就挂 `onRowClick`,组件会把它桥接到每一行 |
+| 表格/树改了数据不刷新 | `columns` / `rows` / `nodes` 在**首次布局时物化**成内部行。数据变了要让组件重建(换 prop 值触发响应式重建),就地改数组元素不会反映到已经建好的行上 |
+| 树展开一个分支后别的分支全收了 | 不会 —— 展开态跨重建保留(按节点的 `key`)。但**同层不同分支用同一个 `key` 会串味**,请保证 `key` 在整棵树里唯一(不给 `key` 时用 `label`) |
 
 ### 未实现的组件(可用现有能力模拟)
 
 | 想要 | 现状 / 替代做法 |
 | --- | --- |
-| list / table / tree | 列表渲染 + `scroll` 已够用;表格与树要自己拼 `row` |
 | 虚拟化长列表 | 用 [each 指令](/components/patterns#view) 可做 keyed 复用,但"只挂可见区间"的窗口化仍未做 |
 | 富文本 | `text` 支持 `wrap` / `ellipsis`;行内混排样式(粗体 / 彩色片段)暂无,需要时用 `row` 拼装 |
 | 视频(应用内播放) | **有意不做**(见 [决策记录](https://github.com/14752222/Gox/blob/main/docs/video-decision.md)):选 / 存 / 系统预览已由 `gx/media` 覆盖,内联播放需平台视频层,不在内核做。封面用 `<image src>` 显示 |
@@ -45,11 +47,12 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | 原生能力(电量 / 网络 / 亮度 / 设置页) | ✅ 走 win32 宿主 | — | — |
 | 原生能力(相机 / 定位 / 相册 / 权限) | ❌ 明说缺(报 unsupported) | — | — |
 
-::: tip 完整演示脚本(共 43 个,都在仓库 testdata/ 下)
+::: tip 完整演示脚本(共 46 个,都在仓库 testdata/ 下)
 命令行里 `gox testdata/<名字>.js` 即可运行,例如 `gox testdata/menu_demo.js`。
 
-- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js
+- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js
 - 列表与条件:view_demo.js、view_demo2.js、list_demo.js、condrender_demo.js、resource_demo.js
+- 数据展示:table_demo.js、tree_demo.js
 - 布局与样式:grid_demo.js、elastic_layout_demo.js、model_demo.js、jsx_demo.js
 - 交互与动画:events_demo.js、focus_demo.js、hover_demo.js、transition_demo.js、resize_demo.js、clipboard_demo.js、ime_demo.js
 - 模块能力:router_demo.js(+ 懒加载模块 router_page_detail.js)、router_window_demo.js、routing_demo.js、multiwindow_demo.js、storage_demo.js、dev_panel_demo.js、native_demo.js、counter_demo.js、rx_demo.js、kit_demo.js、gui_demo.js

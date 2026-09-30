@@ -23,12 +23,14 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | Rows scrolled out of the viewport are invisible but "seem clickable" | That can't happen — `scroll`'s painting and hit testing share the same viewport, by design |
 | Sizes jitter during animation | Property reads should go through the render layer's interpolation; if layout reads the prop's final value and then falls back to the intrinsic size, it jitters. You won't hit this in normal use |
 | Tooltip is slow to appear while the pointer rests still | The `tooltip` delay is driven by the event pump waking up; it works normally as long as the app has JS timers or window events, and in the worst case (no wake source at all) it appears at the next event |
+| Table rows are not clickable | `table` rows are **not clickable by default** (presentation only). For row interaction attach `onRowClick` and the component bridges it onto every row |
+| Table/tree does not refresh after changing data | `columns` / `rows` / `nodes` are materialised into internal rows at **first layout**. Rebuild the component when data changes (change the prop value to trigger a reactive rebuild); mutating array elements in place will not reach the rows already built |
+| Expanding one tree branch collapsed all the others | That does not happen — expansion survives rebuilds (keyed by the node's `key`). But **two branches sharing the same `key` will interfere**; keep `key` unique across the whole tree (it falls back to `label` when omitted) |
 
 ### Unimplemented components (can be simulated with existing capabilities)
 
 | Want | Status / workaround |
 | --- | --- |
-| list / table / tree | List rendering + `scroll` is enough already; tables and trees you assemble from `row` yourself |
 | Virtualized long lists | The [each directive](/en/components/patterns#view) gives you keyed reuse, but "mount only the visible range" windowing is still not implemented |
 | Rich text | `text` supports `wrap` / `ellipsis`; inline mixed styling (bold / colored runs) is not available — assemble with `row` if needed |
 | Video (in-app playback) | **Deliberately not implemented** (see the [decision record](https://github.com/14752222/Gox/blob/main/docs/video-decision.md)): picking / saving / system preview are covered by `gx/media`, but inline playback needs a platform video layer and is out of scope for the core. Show a poster frame with `<image src>` |
@@ -45,11 +47,12 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | Native capabilities (battery / network / brightness / settings page) | ✅ via the win32 host | — | — |
 | Native capabilities (camera / location / photo library / permissions) | ❌ explicitly missing (reports unsupported) | — | — |
 
-::: tip Full demo scripts (43 in total, all under testdata/ in the repo)
+::: tip Full demo scripts (46 in total, all under testdata/ in the repo)
 Run them from the command line with `gox testdata/<name>.js`, e.g. `gox testdata/menu_demo.js`.
 
-- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js
+- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js
 - Lists & conditionals: view_demo.js, view_demo2.js, list_demo.js, condrender_demo.js, resource_demo.js
+- Data display: table_demo.js, tree_demo.js
 - Layout & styling: grid_demo.js, elastic_layout_demo.js, model_demo.js, jsx_demo.js
 - Interaction & animation: events_demo.js, focus_demo.js, hover_demo.js, transition_demo.js, resize_demo.js, clipboard_demo.js, ime_demo.js
 - Module capabilities: router_demo.js (+ the lazy-loaded module router_page_detail.js), router_window_demo.js, routing_demo.js, multiwindow_demo.js, storage_demo.js, dev_panel_demo.js, native_demo.js, counter_demo.js, rx_demo.js, kit_demo.js, gui_demo.js

@@ -1,9 +1,9 @@
 ---
-title: 内容展示：text / image / progress / 反馈与数据类
-description: Gox GUI 内容展示与反馈组件：text 文本块（wrap 折行、ellipsis 省略）、image 图片（PNG/JPEG/GIF 同步解码）、progress 进度条，以及 alert / tag / badge / avatar / empty / icon / spinner / skeleton / pagination。
+title: 内容展示：text / image / progress / table / tree / 反馈与数据类
+description: Gox GUI 内容展示与反馈组件：text 文本块（wrap 折行、ellipsis 省略）、image 图片（PNG/JPEG/GIF 同步解码）、progress 进度条、table 数据表格、tree 树形控件、list-item 列表行，以及 alert / tag / badge / avatar / empty / icon / spinner / skeleton / pagination。
 ---
 
-# 内容展示：text / image / progress
+# 内容展示：text / image / progress / table / tree / 反馈与数据类
 
 ### `<text>` {#text}
 
@@ -209,3 +209,109 @@ const [show, setShow] = createSignal(true);
 const [page, setPage] = createSignal(3);
 <pagination total={200} pageSize={20} current={() => page()} onChange={(e) => setPage(e.page)} />
 ```
+### `<table>` {#table}
+
+`稳定` · `声明式数据`
+
+数据表格。喂 `columns` + `rows` 两组数据即可,不需要手拼 `row`/`text` 的嵌套 —— 表头、网格线、对齐都由组件负责。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| columns | array | 列定义:字符串数组(简写)或 `{key, label, width?, align?}` 对象数组 |
+| rows | array | 数据:二维数组(按列下标取)或对象数组(按 `key` 取) |
+| zebra | boolean | 隔行浅灰底色,长表格更好读 |
+| borderless | boolean | 去掉网格线(表头底线保留) |
+| onRowClick | function | 行点击,收到 `{index, row}`;**不挂则行不可点** |
+| width / height | number | 通常给 `width`;高度可交给内容算 |
+
+**列宽**未显式给定时按该列内容的测量宽度占比分配剩余空间,所以不必逐列调宽度;想固定某列写 `width`。
+
+```js
+const FILES = [
+  { name: "main.go", size: "1.2KB" },
+  { name: "logo.png", size: "48KB" },
+];
+
+<table
+  width={480}
+  zebra
+  columns={[
+    { key: "name", label: "名称" },
+    { key: "size", label: "大小", width: 90, align: "right" },
+  ]}
+  rows={FILES}
+  onRowClick={(e) => console.log(e.index, e.row.name)}
+/>
+```
+
+简写形式(字符串表头 + 二维数组数据)适合静态小表:
+
+```js
+<table columns={["页面", "耗时"]} rows={[["首页", "12ms"]]} />
+```
+
+::: info 行高与对齐
+行高固定 **28px**,与 `select` / `input` 同一套常量,混排能对齐。`align` 针对**整列**(写在列定义上),取值 `left`(缺省)/ `right` / `center`。
+:::
+
+### `<tree>` {#tree}
+
+`稳定` · `声明式数据`
+
+树形控件。`nodes` 是递归数据,子节点通过 `children` 嵌套;展开/收起是**渲染层状态**,点一下有子节点的行就切换,不需要脚本回写。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| nodes | array | 节点数组:`{label, key?, children?}`,纯字符串数组当叶子简写 |
+| onSelect | function | 点节点回调,收到 `{label, key, index, leaf}` |
+
+**初始全收起**。展开态跨重建保留 —— 展开一个分支不会把别的分支收起来。
+
+```js
+<tree
+  nodes={[
+    { label: "src", children: [
+      { label: "gfx", children: [{ label: "node.go" }] },
+      { label: "main.go" },
+    ]},
+    { label: "README.md" },
+  ]}
+  onSelect={(n) => console.log(n.label, n.leaf)}
+/>
+```
+
+::: info 缩进与占位
+每层缩进 16px,箭头列 16px。**叶子节点不画箭头但保留占位宽度**,所以同层节点的文字左对齐 —— 这也是手拼 `row` 时最容易做漏的一点。
+:::
+
+### `<list-item>` {#list-item}
+
+`稳定`
+
+列表行。它是个普通容器(可以包任意内容),但带上了"行"这套跨应用一致的视觉约定:固定 28px 行高、左右 10px 留白、悬停高亮、选中底色、可选行底线。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| selected | boolean | 受控选中态,只影响底色,**状态由脚本持有** |
+| divider | boolean | 行底线,缺省 **开**(写 `divider={false}` 关掉) |
+| height | number | 缺省 28,与表格/字段控件对齐 |
+
+搭配 `each` 指令与 `scroll` 就是一张列表:
+
+```js
+const [picked, setPicked] = createSignal(0);
+
+<scroll height={200}>
+  <view each={items}>
+    {(item, i) => (
+      <list-item selected={picked() === i} onClick={() => setPicked(i)}>
+        {item}
+      </list-item>
+    )}
+  </view>
+</scroll>
+```
+
+::: info 悬停反馈只在可点时给
+`selected` 优先于悬停底色(选中是持续态,不该被瞬时悬停盖掉);没挂 `onClick` 的行悬停**不变色** —— 对纯展示的行做悬停反馈会误导用户以为可点。
+:::

@@ -1,9 +1,9 @@
 ---
-title: "Content Display: text / image / progress / Feedback & Data"
-description: "Gox GUI content display and feedback elements: text block (wrap, ellipsis), image (PNG/JPEG/GIF synchronous decoding), progress bar, plus alert / tag / badge / avatar / empty / icon / spinner / skeleton / pagination."
+title: "Content Display: text / image / progress / table / tree / Feedback & Data"
+description: "Gox GUI content display and feedback elements: text block (wrap, ellipsis), image (PNG/JPEG/GIF synchronous decoding), progress bar, table, tree, list-item, plus alert / tag / badge / avatar / empty / icon / spinner / skeleton / pagination."
 ---
 
-# Content Display: text / image / progress
+# Content Display: text / image / progress / table / tree / Feedback & Data
 
 ### `<text>` {#text}
 
@@ -213,3 +213,109 @@ Above 7 pages an ellipsis collapses the middle (first/last always visible, ellip
 const [page, setPage] = createSignal(3);
 <pagination total={200} pageSize={20} current={() => page()} onChange={(e) => setPage(e.page)} />
 ```
+### `<table>` {#table}
+
+`Stable` · `Declarative data`
+
+Data table. Feed it `columns` + `rows` and you are done — no need to hand-assemble nested `row`/`text`. Headers, grid lines and alignment are the component's job.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| columns | array | Column definitions: an array of strings (shorthand) or of `{key, label, width?, align?}` objects |
+| rows | array | Data: an array of arrays (indexed by position) or an array of objects (looked up by `key`) |
+| zebra | boolean | Alternating light-grey rows — easier to read in long tables |
+| borderless | boolean | Drop the grid lines (the header's bottom rule stays) |
+| onRowClick | function | Row click, receives `{index, row}`; **without it rows are not clickable** |
+| width / height | number | You usually set `width`; height can be derived from content |
+
+Column widths are distributed by each column's measured content when not given explicitly, so you rarely need to tune widths per column; set `width` to pin one.
+
+```js
+const FILES = [
+  { name: "main.go", size: "1.2KB" },
+  { name: "logo.png", size: "48KB" },
+];
+
+<table
+  width={480}
+  zebra
+  columns={[
+    { key: "name", label: "Name" },
+    { key: "size", label: "Size", width: 90, align: "right" },
+  ]}
+  rows={FILES}
+  onRowClick={(e) => console.log(e.index, e.row.name)}
+/>
+```
+
+The shorthand (string headers + array-of-arrays data) suits small static tables:
+
+```js
+<table columns={["Page", "Time"]} rows={[["Home", "12ms"]]} />
+```
+
+::: info Row height and alignment
+Row height is fixed at **28px**, shared with `select` / `input`, so mixed layouts line up. `align` applies to an **entire column** (declared on the column), one of `left` (default) / `right` / `center`.
+:::
+
+### `<tree>` {#tree}
+
+`Stable` · `Declarative data`
+
+Tree control. `nodes` is recursive data with children nested under `children`; expand/collapse is **renderer state** — clicking a row that has children toggles it, no script write-back required.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| nodes | array | Node array: `{label, key?, children?}`; an array of plain strings is shorthand for leaves |
+| onSelect | function | Node click callback, receives `{label, key, index, leaf}` |
+
+**Starts fully collapsed.** Expansion survives rebuilds — expanding one branch never collapses another.
+
+```js
+<tree
+  nodes={[
+    { label: "src", children: [
+      { label: "gfx", children: [{ label: "node.go" }] },
+      { label: "main.go" },
+    ]},
+    { label: "README.md" },
+  ]}
+  onSelect={(n) => console.log(n.label, n.leaf)}
+/>
+```
+
+::: info Indentation and placeholders
+Each level indents by 16px, with a 16px arrow column. **Leaf nodes draw no arrow but keep the placeholder width**, so text of siblings stays left-aligned — the detail most hand-rolled `row` trees get wrong.
+:::
+
+### `<list-item>` {#list-item}
+
+`Stable`
+
+A list row. It is an ordinary container (it can hold anything) but carries the cross-application conventions of a "row": fixed 28px height, 10px horizontal padding, hover highlight, selected background and an optional bottom divider.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| selected | boolean | Controlled selected state; affects the background only, **the script owns the state** |
+| divider | boolean | Bottom rule, **on by default** (pass `divider={false}` to turn it off) |
+| height | number | Defaults to 28, aligned with tables and field controls |
+
+Paired with the `each` directive and `scroll`, that is a list:
+
+```js
+const [picked, setPicked] = createSignal(0);
+
+<scroll height={200}>
+  <view each={items}>
+    {(item, i) => (
+      <list-item selected={picked() === i} onClick={() => setPicked(i)}>
+        {item}
+      </list-item>
+    )}
+  </view>
+</scroll>
+```
+
+::: info Hover feedback only when clickable
+`selected` takes precedence over the hover background (selection is a persistent state, not to be masked by a transient hover); rows without `onClick` do **not** change colour on hover — giving a purely presentational row hover feedback falsely suggests it is clickable.
+:::
