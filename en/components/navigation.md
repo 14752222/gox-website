@@ -102,3 +102,36 @@ A JSX element is an object for **a single mount**; a node has only one `Parent` 
 :::
 
 Behavior: near the bottom-right corner of the screen, it automatically folds up and to the left so the whole menu stays visible; clicking an option or clicking outside closes it; right-clicking again on the menu is swallowed (it won't close accidentally).
+
+### `<tabs> / <tab>` {#tabs}
+
+`stable` · `container`
+
+Tabbed panes: a self-drawn tab strip on top (the active item in the theme green with an underline) plus a content area. `<tab>` elements stacked directly under `<tabs>` are the pages; page content stacks vertically (column semantics), so multiple elements need no extra wrapper.
+
+| Element | Prop | Description |
+| --- | --- | --- |
+| tabs | value | When present, **controlled**: the active page = `value` (a number, clamped); clicking the strip **does not change internal state**, it only dispatches `onChange` and waits for the script to write the new index back to a signal — no write-back means no switch (that's the definition of controlled) |
+| tabs | onChange | Fired on a switch with `{index, title}`; dispatched in both controlled and uncontrolled modes |
+| tab | title | The strip label; falls back to `Tab N` |
+| tab | children | The page content; **every page is keep-alive** — nodes stay in the tree (text typed into inputs, scroll positions survive a switch), the inactive pages are simply not laid out, not painted and not hit-tested |
+
+```js
+import { createSignal } from "gx/solid";
+import { h, render } from "gx/gfx";
+
+const [tab, setTab] = createSignal(0);
+
+<tabs value={() => tab()} onChange={(e) => setTab(e.index)}>
+  <tab title="File">
+    <input width={240} placeholder="Switch away and back — the text is still here" />
+  </tab>
+  <tab title="Edit">
+    <text>Edit page</text>
+  </tab>
+</tabs>
+```
+
+::: info keep-alive vs. conditional rendering
+`<tabs>` pages follow the same philosophy as the [`show` directive](/en/components/patterns#reactive) and the router's `keepAlive`: hidden ≠ destroyed. If you want a page rebuilt fresh every time, drive it with `value` and write the conditional rendering yourself.
+:::

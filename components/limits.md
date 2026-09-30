@@ -28,7 +28,6 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 
 | 想要 | 现状 / 替代做法 |
 | --- | --- |
-| tabs 选项卡 | 用[Switch / Match](/components/patterns#view)(或[条件渲染](/components/patterns#reactive)的 `{() => tab() === 0 ? panelA : panelB}`)直接写,未封装成组件 |
 | list / table / tree | 列表渲染 + `scroll` 已够用;表格与树要自己拼 `row` |
 | 虚拟化长列表 | 用 [each 指令](/components/patterns#view) 可做 keyed 复用,但"只挂可见区间"的窗口化仍未做 |
 | icon / 富文本 / spinner / 视频 | 未实现 |
@@ -48,8 +47,8 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 ::: tip 完整演示脚本(共 42 个,都在仓库 testdata/ 下)
 命令行里 `gox testdata/<名字>.js` 即可运行,例如 `gox testdata/menu_demo.js`。
 
-- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js
-- 列表与条件:view_demo.js、view_demo2.js、list_demo.js、tabs_demo.js、resource_demo.js
+- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js
+- 列表与条件:view_demo.js、view_demo2.js、list_demo.js、condrender_demo.js、resource_demo.js
 - 布局与样式:grid_demo.js、elastic_layout_demo.js、model_demo.js、jsx_demo.js
 - 交互与动画:events_demo.js、focus_demo.js、hover_demo.js、transition_demo.js、resize_demo.js、clipboard_demo.js、ime_demo.js
 - 模块能力:router_demo.js(+ 懒加载模块 router_page_detail.js)、router_window_demo.js、routing_demo.js、multiwindow_demo.js、storage_demo.js、dev_panel_demo.js、native_demo.js、counter_demo.js、rx_demo.js、kit_demo.js、gui_demo.js

@@ -102,3 +102,36 @@ JSX 元素是**单次挂载**的对象,一个节点只有一个 `Parent` 字段�
 :::
 
 行为:靠近屏幕右下角时会自动向左上翻折保证整块可见;点选项或点外部关闭;在菜单上再点右键会被吞掉(不会误关)。
+
+### `<tabs> / <tab>` {#tabs}
+
+`稳定` · `容器`
+
+选项卡:顶部标签条(自绘,激活项主题绿 + 下划线)+ 内容区。`<tab>` 直接堆在 `<tabs>` 下即为页,页内容按 column 语义竖排(多元素不必再包一层容器)。
+
+| 元素 | Prop | 说明 |
+| --- | --- | --- |
+| tabs | value | 存在即**受控**:激活页 = `value`(数字,越界自动钳位),点击标签条**不改内部状态**,只派发 `onChange` 等脚本写回 signal —— 不回写就是切不动(受控的定义) |
+| tabs | onChange | 切页时收到 `{index, title}`,受控/非受控都派发 |
+| tab | title | 标签条文字,缺省兜底 `Tab N` |
+| tab | 子节点 | 页内容;**全部页都是 keep-alive 的** —— 节点留树,输入框打的字、滚动位置切走再回来都还在,非激活页只是不布局、不绘制、不命中 |
+
+```js
+import { createSignal } from "gx/solid";
+import { h, render } from "gx/gfx";
+
+const [tab, setTab] = createSignal(0);
+
+<tabs value={() => tab()} onChange={(e) => setTab(e.index)}>
+  <tab title="文件">
+    <input width={240} placeholder="切走再回来,打的字还在" />
+  </tab>
+  <tab title="编辑">
+    <text>编辑页</text>
+  </tab>
+</tabs>
+```
+
+::: info keep-alive 与条件渲染的区别
+`<tabs>` 的页语义与 [`show` 指令](/components/patterns#reactive)、路由 `keepAlive` 是同一套哲学:隐藏 ≠ 销毁。想要"每次切来都全新构建",请在 `value` 驱动下用条件渲染自己写。
+:::
