@@ -1,6 +1,6 @@
 ---
-title: 反馈与弹层：dialog / toast / 原生对话框
-description: Gox GUI 弹层：dialog 模态对话框（40% 遮罩 + Esc 关闭）、toast 轻提示，以及 gx/dialog 的系统原生 alert/confirm/openFile。
+title: 反馈与弹层：dialog / drawer / toast / 原生对话框
+description: Gox GUI 弹层：dialog 模态对话框（40% 遮罩 + Esc 关闭）、drawer 侧边抽屉（复用同一套弹层机制）、toast 轻提示，以及 gx/dialog 的系统原生 alert/confirm/openFile。
 ---
 
 # 反馈与弹层：dialog / toast / 原生对话框
@@ -34,8 +34,37 @@ const [open, setOpen] = createSignal(false);
 ```
 
 ::: info Esc 的关闭优先级
-按一次 Esc 只关**一层**,优先级是:**菜单 > 下拉框 > 对话框**。 所以对话框里展开着的下拉框会先收起来,再按才轮到对话框。
+按一次 Esc 只关**一层**,优先级是:**菜单 > 下拉框 > 对话框 / 抽屉**。 所以对话框里展开着的下拉框会先收起来,再按才轮到对话框。
 :::
+
+### `<drawer>` {#drawer}
+
+`稳定` · `模态`
+
+抽屉:从窗口侧边滑入的面板,**复用 `<dialog>` 的弹层机制**——同样铺满窗口的遮罩、同样吞掉其下点击、同样点遮罩 / 按 Esc 触发 `onClose`。差别只在于内容面板贴边而不是居中。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| open | bool / function | 是否打开;为假时整支不绘制、不拦截点击 |
+| side | string | `right`(缺省) / `left`,面板贴哪边(也决定滑入方向) |
+| width | number | 面板宽度,缺省 280(超过窗口宽会钳到窗口宽) |
+| onClose | function | 点遮罩 / 按 Esc 时派发;**不替脚本改 `open`**,受控语义下是否真的关由脚本回写决定 |
+
+```js
+const [open, setOpen] = createSignal(false);
+
+<button onClick={() => setOpen(true)}>
+  <text>Open drawer</text>
+</button>
+<drawer open={() => open()} side="right" width={280} onClose={() => setOpen(false)}>
+  <column gap={10} padding={16}>
+    <text>Drawer content</text>
+    <button onClick={() => setOpen(false)}><text>Close</text></button>
+  </column>
+</drawer>
+```
+
+面板打开时从侧边滑入(靠动画心跳推进进度,不新增定时器);`open` 转假时反向滑出。
 
 ### `<toast>` {#toast}
 

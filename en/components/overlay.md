@@ -1,6 +1,6 @@
 ---
-title: "Feedback and Overlays: dialog / toast / Native Dialogs"
-description: "Gox GUI overlays: the modal dialog (40% mask + Esc to close), toast lightweight notifications, and gx/dialog's native system alert/confirm/openFile."
+title: "Feedback and Overlays: dialog / drawer / toast / Native Dialogs"
+description: "Gox GUI overlays: the modal dialog (40% mask + Esc to close), the side drawer (reusing the same overlay machinery), toast lightweight notifications, and gx/dialog's native system alert/confirm/openFile."
 ---
 
 # Feedback and Overlays: dialog / toast / Native Dialogs
@@ -34,8 +34,37 @@ const [open, setOpen] = createSignal(false);
 ```
 
 ::: info Esc Close Priority
-One Esc press closes only **one layer**, with the priority: **menu > dropdown > dialog**. So an open dropdown inside a dialog collapses first, and another press gets to the dialog.
+One Esc press closes only **one layer**, with the priority: **menu > dropdown > dialog / drawer**. So an open dropdown inside a dialog collapses first, and another press gets to the dialog.
 :::
+
+### `<drawer>` {#drawer}
+
+`Stable` · `Modal`
+
+A drawer: a panel that slides in from a window edge, **reusing the `<dialog>` overlay machinery** — the same full-window mask, the same swallowing of clicks beneath it, and the same `onClose` on mask click / Esc. The only difference is that the content panel hugs an edge instead of being centered.
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| open | bool / function | Whether it is open; when false the whole subtree draws nothing and intercepts no clicks |
+| side | string | `right` (default) / `left` — which edge the panel hugs (and the slide-in direction) |
+| width | number | Panel width, default 280 (clamped to the window width if larger) |
+| onClose | function | Dispatched on mask click / Esc; it does **not** change `open` — under controlled semantics, whether it actually closes is decided by the script writing back |
+
+```js
+const [open, setOpen] = createSignal(false);
+
+<button onClick={() => setOpen(true)}>
+  <text>Open drawer</text>
+</button>
+<drawer open={() => open()} side="right" width={280} onClose={() => setOpen(false)}>
+  <column gap={10} padding={16}>
+    <text>Drawer content</text>
+    <button onClick={() => setOpen(false)}><text>Close</text></button>
+  </column>
+</drawer>
+```
+
+The panel slides in from its edge when opened (the slide progress is driven by the animation heartbeat — no new timers), and slides back out when `open` turns false.
 
 ### `<toast>` {#toast}
 

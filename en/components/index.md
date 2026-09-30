@@ -1,6 +1,6 @@
 ---
 title: "Component Reference: Overview and Conventions"
-description: "Overview of the Gox GUI component reference: a category map of the 25 built-in elements, plus five shared conventions — imports, reactive bindings, controlled semantics, styling, and unknown-tag warnings."
+description: "Overview of the Gox GUI component reference: a category map of the built-in elements, plus five shared conventions — imports, reactive bindings, controlled semantics, styling, and unknown-tag warnings."
 ---
 
 # Component Reference: Overview and Conventions

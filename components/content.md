@@ -1,6 +1,6 @@
 ---
-title: 内容展示：text / image / progress
-description: Gox GUI 内容展示元素：text 文本块（wrap 折行、ellipsis 省略）、image 图片（PNG/JPEG/GIF 同步解码）、progress 进度条。
+title: 内容展示：text / image / progress / 反馈与数据类
+description: Gox GUI 内容展示与反馈组件：text 文本块（wrap 折行、ellipsis 省略）、image 图片（PNG/JPEG/GIF 同步解码）、progress 进度条，以及 alert / tag / badge / avatar / empty / icon / spinner / skeleton / pagination。
 ---
 
 # 内容展示：text / image / progress
@@ -76,4 +76,136 @@ setInterval(() => setStep(s => (s >= 10 ? 0 : s + 1)), 400);
 
 <progress value={() => step() / 10} />
 <text>{() => `value: ${step() * 10}%`}</text>
+```
+
+## 反馈与数据类组件 {#feedback}
+
+`alert` / `tag` / `badge` / `avatar` / `empty` / `icon` / `spinner` / `skeleton` / `pagination` 一组,
+覆盖"提示、量化、空态、加载、分页"这些每个应用都会用到的槽位。一屏示例见
+[`testdata/feedback_demo.js`](https://github.com/14752222/Gox/blob/main/testdata/feedback_demo.js)。
+
+### `<alert>` {#alert}
+
+`稳定` · `提示`
+
+横幅提示。`level` 决定左侧色条与图标色。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| level | string | `info`(缺省) / `success` / `warn` / `error` |
+| closable | bool | 为真时右上角出现关闭叉 |
+| onClose | function | 点关闭叉时派发;**不替脚本摘树**,显隐归信号管 |
+
+```js
+const [show, setShow] = createSignal(true);
+{() => show() && (
+  <alert level="warn" closable onClose={() => setShow(false)}>
+    Storage is almost full.
+  </alert>
+)}
+```
+
+### `<tag>` {#tag}
+
+`稳定` · `标签`
+
+小标签,可关闭。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| color | 颜色 | 胶囊底色,缺省浅灰 |
+| closable | bool | 尾部出现关闭叉 |
+| onClose | function | 点叉派发 |
+
+### `<badge>` {#badge}
+
+`稳定` · `容器`
+
+角标。**包裹式**——唯一流内子节点是宿主,角标画在宿主右上角,自身尺寸完全跟随宿主。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| value | number | 数字角标;超过 `max` 显示 `max+`;0/负数自动隐藏 |
+| max | number | 上限,缺省 99 |
+| dot | bool | 小红点(不显示数字) |
+
+```js
+<badge value={5}><button><text>Inbox</text></button></badge>
+<badge dot><icon name="bell" size={24} /></badge>
+```
+
+### `<avatar>` {#avatar}
+
+`稳定`
+
+头像方块/圆。显示 `name` 首字,`color` 为底色。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| name | string | 取首字显示 |
+| size | number | 边长,缺省 40 |
+| color | 颜色 | 底色,缺省主题蓝 |
+| round | bool | 正圆(否则圆角方块) |
+
+### `<empty>` {#empty}
+
+`稳定`
+
+空状态:居中占位图形 + `desc` 文案,子节点作插图。
+
+```js
+<empty desc="Nothing here yet"><icon name="folder" size={44} /></empty>
+```
+
+### `<icon>` {#icon}
+
+`稳定`
+
+内置图标。纯光栅原语(直线/矩形/圆)在 24×24 逻辑网格里绘制,三平台零依赖。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| name | string | 内置图标名(见下),未知名字静默不画 |
+| size | number | 边长,缺省 16 |
+| color | 颜色 | 缺省继承文字色(沿祖先链) |
+
+内置清单:`home` / `search` / `user` / `gear` / `bell` / `chat` / `folder` / `calendar` /
+`heart` / `plus` / `minus` / `close` / `check` / `arrow-left` / `arrow-right`。
+
+```js
+<row gap={12} align="center">
+  <icon name="home" size={24} />
+  <icon name="heart" size={24} color="#e01b24" />
+</row>
+```
+
+### `<spinner>` / `<skeleton>` {#loading}
+
+`稳定` · `加载态`
+
+转圈与骨架屏。两者都靠**同一根动画心跳**持续重绘(与过渡动画共用 16ms 表,静止时一起停表,零开销)。
+
+| 元素 | Prop | 说明 |
+| --- | --- | --- |
+| spinner | size / color | 边长(缺省 24)/ 刻度色 |
+| skeleton | rows / avatar / active | 行数(缺省 3)/ 是否带圆形头像 / 是否呼吸闪烁(缺省真) |
+
+### `<pagination>` {#pagination}
+
+`稳定` · `受控`
+
+分页器。**完全受控**——显示只看 `current`,点击页码只派发 `onChange`,等脚本把新值写回。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| total | number | 总条数 |
+| pageSize | number | 每页条数,缺省 10 |
+| current | number / function | 当前页(1-based,越界自动钳位) |
+| onChange | function | 收到 `{page, pageSize}`;第 1 页点 `‹`、末页点 `›` 不派发 |
+
+页数超过 7 时折叠出省略号(首尾恒可见、省略号不可点)。
+
+```js
+const [page, setPage] = createSignal(3);
+<pagination total={200} pageSize={20} current={() => page()} onChange={(e) => setPage(e.page)} />
 ```

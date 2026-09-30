@@ -30,7 +30,8 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | --- | --- |
 | list / table / tree | List rendering + `scroll` is enough already; tables and trees you assemble from `row` yourself |
 | Virtualized long lists | The [each directive](/en/components/patterns#view) gives you keyed reuse, but "mount only the visible range" windowing is still not implemented |
-| icon / rich text / spinner / video | Not implemented |
+| Rich text | `text` supports `wrap` / `ellipsis`; inline mixed styling (bold / colored runs) is not available — assemble with `row` if needed |
+| Video (in-app playback) | **Deliberately not implemented** (see the [decision record](https://github.com/14752222/Gox/blob/main/docs/video-decision.md)): picking / saving / system preview are covered by `gx/media`, but inline playback needs a platform video layer and is out of scope for the core. Show a poster frame with `<image src>` |
 
 ### Platform differences at a glance
 
@@ -44,10 +45,10 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | Native capabilities (battery / network / brightness / settings page) | ✅ via the win32 host | — | — |
 | Native capabilities (camera / location / photo library / permissions) | ❌ explicitly missing (reports unsupported) | — | — |
 
-::: tip Full demo scripts (42 in total, all under testdata/ in the repo)
+::: tip Full demo scripts (43 in total, all under testdata/ in the repo)
 Run them from the command line with `gox testdata/<name>.js`, e.g. `gox testdata/menu_demo.js`.
 
-- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js
+- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js
 - Lists & conditionals: view_demo.js, view_demo2.js, list_demo.js, condrender_demo.js, resource_demo.js
 - Layout & styling: grid_demo.js, elastic_layout_demo.js, model_demo.js, jsx_demo.js
 - Interaction & animation: events_demo.js, focus_demo.js, hover_demo.js, transition_demo.js, resize_demo.js, clipboard_demo.js, ime_demo.js
