@@ -33,7 +33,7 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | --- | --- |
 | 虚拟化长列表 | 用 [each 指令](/components/patterns#view) 可做 keyed 复用,但"只挂可见区间"的窗口化仍未做 |
 | 富文本 | `text` 支持 `wrap` / `ellipsis`;行内混排样式(粗体 / 彩色片段)暂无,需要时用 `row` 拼装 |
-| 视频(应用内播放) | **有意不做**(见 [决策记录](https://github.com/14752222/Gox/blob/main/docs/video-decision.md)):选 / 存 / 系统预览已由 `gx/media` 覆盖,内联播放需平台视频层,不在内核做。封面用 `<image src>` 显示 |
+| 内联视频播放(平台视频层) | `<video>` 的**标签与宿主契约已落地**(S8):能挂载、能收事件、`playing` / `muted` / `loop` / `volume` 全受控。**解码不在内核** —— 交给窗口后端的平台视频层(MF / AVPlayerLayer / SurfaceView),桌面三后端目前都没接 ⇒ 降级为封面 / 占位 + 一次 `onError({code:"unsupported"})`,`canIUse("video")` 为 `false`。选 / 存 / 系统预览见 [`gx/media`](/components/modules);理由与后端接入步骤见[决策记录](https://github.com/14752222/Gox/blob/main/docs/video-decision.md) |
 
 ### 平台差异一览
 
@@ -50,7 +50,7 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 ::: tip 完整演示脚本(都在仓库 `testdata/` 下)
 命令行里 `gox testdata/<名字>.js` 即可运行,例如 `gox testdata/menu_demo.js`。
 
-- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js、tabbar_demo.js
+- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、video_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js、tabbar_demo.js
 - 列表与条件:view_demo.js、view_demo2.js、list_demo.js、condrender_demo.js、resource_demo.js
 - 数据展示:table_demo.js、tree_demo.js
 - 布局与样式:grid_demo.js、elastic_layout_demo.js、model_demo.js、jsx_demo.js

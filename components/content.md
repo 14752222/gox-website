@@ -57,6 +57,34 @@ description: Gox GUI 内容展示与反馈组件：text 文本块（wrap 折行�
 - 不支持网络 URL、无异步加载、无缩放质量选项(总是最近邻)。
 - 加载失败画灰底 + 45° 交叉线占位,并每个路径只往 stderr 警告一次,不影响其它内容。
 
+### `<video>` {#video}
+
+`稳定` · `标签 + 宿主契约` · S8
+
+视频框。**内核不做解码** —— 它只把"在这个窗口区域里放这个文件、播放 / 暂停 / 跳转 / 调音量"这层语义翻译成**平台视频层**的调用(Windows MF / macOS AVPlayerLayer / Android SurfaceView),解码与合成交给系统。后端没接这块能力时降级为**封面 / 占位**,并**诚实报错**(绝不假装在播)。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| src | string | 视频文件路径,**相对进程工作目录**解析,内容交给平台层(内核不读) |
+| poster | string | 封面图,与 `src` 同一套路径规则;不给则画深色底 + 播放三角 |
+| playing / autoplay | boolean | **受控**播放态;`autoplay` 只在没写 `playing` 时充当初始值 |
+| muted / loop / volume | boolean / number | 受控音频态(`volume` 取 0~1,越界钳位) |
+| controls | boolean | 请求平台自带播放控件(有就画,没有就忽略) |
+| fit | `"contain"` / `"cover"` / `"fill"` | 封面缩放方式,缺省 `contain`(留边铺黑);`stretch` 等价 `fill` |
+| width / height | number | 不给用封面自然尺寸,兜底 320×180 |
+| disabled | boolean | 罩一层半透明灰 |
+
+```js
+<video src="movie.mp4" poster="cover.png" controls width={320} height={180}
+       onError={(e) => console.log("playback unavailable:", e.code)} />
+```
+
+事件: `onReady` / `onPlay` / `onPause` / `onEnded` / `onTimeUpdate({currentTime, duration})` —— 都由**宿主**上报,内核转成回调;`onError({code, message})` 的 `code` 为 `"unsupported"` 表示本后端没有平台视频层。要不要把宿主报的播放态写回 `playing` 由脚本决定(与 `input` 的 `value` 同一条受控语义)。
+
+- **先问再选路**: `canIUse("video")` 照实回答本后端能不能内联播放。为 `false` 时,跳到系统播放器([`gx/media`](/components/modules) 的 `preview()`)通常比自造播放器更合适。
+- 桌面三后端(win32 / X11 / cocoa)**目前都没有**平台视频层 ⇒ 桌面上它就是个封面框:脚本收到一次 `onError({code:"unsupported"})`,stderr 打印一次告警,`canIUse("video")` 为 `false`。
+- 为什么不内置解码器、后端要接这块能力要做什么,见仓库 [docs/video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md)。
+
 ### `<progress>` {#progress}
 
 `稳定`

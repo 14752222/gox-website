@@ -57,6 +57,34 @@ Image display. Decodes PNG / JPEG / GIF with the Go standard library (no new dep
 - No network URLs, no async loading, no scaling quality options (always nearest-neighbor).
 - On load failure, a gray placeholder with 45° cross lines is drawn, a warning is printed to stderr once per path, and other content is unaffected.
 
+### `<video>` {#video}
+
+`Stable` · `Tag + host contract` · S8
+
+A video box. **The core does not decode** — it only translates "put this file in this window rectangle, play / pause / seek / set volume" into calls on the **platform video layer** (Windows MF / macOS AVPlayerLayer / Android SurfaceView), delegating decoding and compositing to the OS. Backends that do not implement that layer fall back to a **poster / placeholder** and **report honestly** (they never pretend to be playing).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| src | string | Video file path, resolved **relative to the process working directory**; handed to the platform layer (the core does not read it) |
+| poster | string | Poster image, same path rules as `src`; without it, a dark backdrop + play triangle is drawn |
+| playing / autoplay | boolean | **Controlled** playback state; `autoplay` only acts as the initial value when `playing` is absent |
+| muted / loop / volume | boolean / number | Controlled audio state (`volume` is 0–1, clamped out of range) |
+| controls | boolean | Ask the platform for its built-in controls (drawn if available, ignored otherwise) |
+| fit | `"contain"` / `"cover"` / `"fill"` | Poster scaling mode, default `contain` (letterboxed in black); `stretch` is an alias for `fill` |
+| width / height | number | Without them, the poster's natural size is used, falling back to 320×180 |
+| disabled | boolean | Overlays a translucent gray layer |
+
+```js
+<video src="movie.mp4" poster="cover.png" controls width={320} height={180}
+       onError={(e) => console.log("playback unavailable:", e.code)} />
+```
+
+Events: `onReady` / `onPlay` / `onPause` / `onEnded` / `onTimeUpdate({currentTime, duration})` — all reported by the **host** and turned into callbacks by the core; `onError({code, message})` with `code === "unsupported"` means this backend has no platform video layer. Whether to write the host-reported state back into `playing` is up to the script (the same controlled semantics as `input`'s `value`).
+
+- **Ask before choosing a path**: `canIUse("video")` answers truthfully whether this backend can play inline. When it is `false`, jumping to the system player ([`gx/media`](/en/components/modules) `preview()`) is usually a better fit than hand-rolling a player.
+- The three desktop backends (win32 / X11 / cocoa) **do not implement** the platform video layer today ⇒ on desktop it is a poster box: the script receives one `onError({code:"unsupported"})`, one warning goes to stderr, and `canIUse("video")` is `false`.
+- For why no decoder is built in, and what a backend must do to implement this capability, see the repo's [docs/video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md).
+
 ### `<progress>` {#progress}
 
 `Stable`

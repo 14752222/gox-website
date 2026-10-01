@@ -1,6 +1,6 @@
 ---
 title: GUI Desktop Apps
-description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 41 built-in elements, routing and multi-window — a counter in 16 lines."
+description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 42 built-in elements, routing and multi-window — a counter in 16 lines."
 ---
 
 # GUI Desktop Apps
@@ -37,13 +37,13 @@ gox counter.js          # run directly; a 400x300 window pops up
 
 ## Built-in elements and props
 
-There are **41** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
+There are **42** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
 
 | Category | Elements |
 | --- | --- |
 | Layout containers<br>7 | `<column>`, `<row>`, `<grid>`, `<scroll>`, `<separator>`, `<spacer>`, `<rect>` |
 | Form controls<br>8 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<textarea>`, `<select>`, `<slider>` |
-| Content display<br>15 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
+| Content display<br>16 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<video>` (tag + host contract; decoding is delegated to the platform video layer), `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
 | Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` from `gx/dialog` |
 | Navigation & menus<br>5 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `<tabs>`, `<tab>`, `openContextMenu(x, y, items)` |
 | Media & custom drawing<br>1 | `<canvas>` (`onDraw(ctx)` + 7 drawing primitives) |
@@ -165,4 +165,4 @@ setStorage("theme", "dark");
 const theme = getStorage("theme") ?? "light";   // returns undefined when missing; no default-value parameter
 ```
 
-For complete examples, see the repo's `testdata/` directory: counter `counter_demo.js`, form `form_demo.js`, menu `menu_demo.js`, canvas `canvas_demo.js`, slider `slider_demo.js`, multi-window `multiwindow_demo.js`, routing `router_demo.js`, and more — **42** demo scripts in total, each runnable directly with `gox testdata/xxx_demo.js`.
+For complete examples, see the repo's `testdata/` directory: counter `counter_demo.js`, form `form_demo.js`, menu `menu_demo.js`, canvas `canvas_demo.js`, slider `slider_demo.js`, multi-window `multiwindow_demo.js`, routing `router_demo.js`, and more — **40+** demo scripts in total, each runnable directly with `gox testdata/xxx_demo.js`.
