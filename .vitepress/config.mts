@@ -183,6 +183,13 @@ export default defineConfig({
   base: '/Gox/',
   // 构建时检查站内死链，断链直接构建失败（CI 兜底）
   ignoreDeadLinks: false,
+  // ⚠️ search 必须在顶层 themeConfig 也放一份：vitepress 1.6.x 注入
+  // __VP_LOCAL_SEARCH__ 只看顶层 themeConfig.search.provider（不遍历 locales），
+  // 只写在各 locale 里会静默打成 () => null 空壳，导航栏永远不出搜索按钮。
+  // 运行时各 locale 的 themeConfig.search（含翻译）会覆盖这里，不受影响。
+  themeConfig: {
+    search: { provider: 'local' },
+  },
   markdown: {
     config(md) {
       // inline code 中的 {{ }} 会被 Vue 编译器当作插值（fenced code 块有 v-pre 保护，
