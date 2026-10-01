@@ -120,7 +120,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律。详见 [组件参考 · 列表与条件](/components/patterns#view)。
+**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律; **子节点同理** —— ``count: {count()}`` 是一张快照, 要写 ``{() => `count: ${count()}`}``(这条没有警告)。详见 [组件参考 · 列表与条件](/components/patterns#view)。
 
 ## 路由:用 gx/router
 

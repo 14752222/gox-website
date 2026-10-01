@@ -120,7 +120,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. For details, see [Component Reference · Lists and conditions](/en/components/patterns#view).
+**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. **Children are no exception**: ``count: {count()}`` is a snapshot; write ``{() => `count: ${count()}`}`` (this one has no warning). For details, see [Component Reference · Lists and conditions](/en/components/patterns#view).
 
 ## Routing: gx/router
 
