@@ -1,5 +1,7 @@
 node_modules/
 .vitepress/dist/
 .vitepress/cache/
+# vitepress build 的临时产物 (config.mts.timestamp-*.mjs，构建结束不自动删)
+.vitepress/*.timestamp-*.mjs
 *.log
 .DS_Store
