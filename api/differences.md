@@ -69,7 +69,7 @@ Gox 是**从零实现**的独立运行时,不是 Node 或浏览器的子集实�
 | Node 模块 | `stream`、`child_process`、`os`、`crypto`、`net`、`events`、`util`、`url`、`querystring` |
 | 响应式(需 import) | `batch`、`createContext`、`useContext`、`createStore`(`untrack` 有,已在 `gx/solid` 里) |
 | 内置模块 | `gx/machine`、`gx/kit`(状态机仍是用户态模式;`gx/device` / `gx/app` / `gx/geo` / `gx/media` / `gx/permission` / `gx/viewport` 六个原生能力模块已于 2026-09-21 落地,`gx/router` 与 `gx/screen` 同批落地,均不再是缺口) |
-| 模块里没有的 | `gx/gfx.alert`、`gx/gfx.confirm`、`gx/gfx.openFile`、`gx/view.each`、`gx/view.show`(前者去 `gx/dialog`,后者是元素级指令) |
+| 模块里没有的 | `gx/gfx.alert`、`gx/gfx.confirm`、`gx/gfx.openFile`、`gx/gfx.saveFile`、`gx/view.each`、`gx/view.show`(前者去 `gx/dialog`,后者是元素级指令) |
 
 ::: tip 想确认某个 API 到底有没有
 最直接的办法是在 REPL 里问一句:`typeof someName` —— 得到 `"undefined"` 就是没有。 想列一个模块的全部导出,用命名空间导入 + `Object.keys`: `import * as s from "gx/solid"; Object.keys(s)`。 完整的实现级说明见 [JavaScript Runtime API 实现教程](https://github.com/14752222/Gox/blob/main/docs/js-runtime-api-tutorial.md)。

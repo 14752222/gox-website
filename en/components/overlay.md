@@ -1,6 +1,6 @@
 ---
 title: "Feedback and Overlays: dialog / drawer / toast / Native Dialogs"
-description: "Gox GUI overlays: the modal dialog (40% mask + Esc to close), the side drawer (reusing the same overlay machinery), toast lightweight notifications, and gx/dialog's native system alert/confirm/openFile."
+description: "Gox GUI overlays: the modal dialog (40% mask + Esc to close), the side drawer (reusing the same overlay machinery), toast lightweight notifications, and gx/dialog's native system alert/confirm/openFile/saveFile."
 ---
 
 # Feedback and Overlays: dialog / toast / Native Dialogs
@@ -120,18 +120,19 @@ The bubble is purely presentational and has no event handlers — even when it c
 
 `Stable` · `Windows native only` · `async`
 
-Invokes the **operating system's native** message boxes and file pickers, not self-drawn overlays. All three APIs return a Promise.
+Invokes the **operating system's native** message boxes and file pickers, not self-drawn overlays. All four APIs return a Promise.
 
 | API | Returns | Description |
 | --- | --- | --- |
 | alert(msg, title?) | `Promise<void>` | System message box with a single "OK" |
 | confirm(msg, title?) | `Promise<boolean>` | OK / Cancel; returns the user's choice |
 | openFile({title, filter}) | `Promise<string \| null>` | System "open file" dialog; **canceling returns null**, it doesn't throw |
+| saveFile({title, filter, default}) | `Promise<string \| null>` | System "save file" dialog; the OS asks before overwriting; **canceling returns null**, it doesn't throw |
 
 `filter` is an array of `{name, pattern}`, where multiple wildcards in a pattern are separated by `;`.
 
 ```js
-import { alert, confirm, openFile } from "gx/dialog";
+import { alert, confirm, openFile, saveFile } from "gx/dialog";
 
 // Both event handler styles work: async function () {} and async () => {}
 h("button", {
@@ -152,9 +153,16 @@ h("button", {
     });
     log(path === null ? "cancelled" : "picked " + path);
   }
-}, "Open file")
+}, "Open file"),
+
+h("button", {
+  onClick: async function () {
+    const out = await saveFile({ default: "report.txt" });
+    log(out === null ? "cancelled" : "save to " + out);
+  }
+}, "Save file")
 ```
 
-- Only these three APIs: no custom buttons, no multi-select, no directory picking.
+- Only these four APIs: no custom buttons, no multi-select, no directory picking; saveFile only picks the path — write the file with fs.
 - While the dialog is modal, the UI still repaints (the system pumps messages for us), but no JS callbacks are dispatched.
-- Non-Windows backends degrade: the content is printed to stderr and the call returns immediately — confirm resolves to true, openFile to null (treated as canceled).
+- Non-Windows backends degrade: the content is printed to stderr and the call returns immediately — confirm resolves to true, openFile / saveFile to null (treated as canceled).

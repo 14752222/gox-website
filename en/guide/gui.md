@@ -44,7 +44,7 @@ There are **42** built-in elements scriptable from JS (internal tags constructed
 | Layout containers<br>7 | `<column>`, `<row>`, `<grid>`, `<scroll>`, `<separator>`, `<spacer>`, `<rect>` |
 | Form controls<br>8 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<textarea>`, `<select>`, `<slider>` |
 | Content display<br>16 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<video>` (tag + host contract; decoding is delegated to the platform video layer), `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
-| Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` from `gx/dialog` |
+| Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` / `saveFile` from `gx/dialog` |
 | Navigation & menus<br>5 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `<tabs>`, `<tab>`, `openContextMenu(x, y, items)` |
 | Media & custom drawing<br>1 | `<canvas>` (`onDraw(ctx)` + 7 drawing primitives) |
 | Window<br>1 | `<window>` (only as the root element of `render()`; call it multiple times to open multiple windows; the returned handle provides `close` / `isClosed` / `title` / `setTitle` / `resize`) |
@@ -89,7 +89,7 @@ Window backends: Windows (pure syscall win32), Linux (X11; Wayland goes through 
 | Multi-branch conditions | `import { Switch, Match } from "gx/view"` |
 | Routing | `import { createRouter, RouterView, RouterLink, useRoute } from "gx/router"` |
 | Multi-screen / fold posture | `import { screens, screenOf, usePosture, reportPosture } from "gx/screen"` |
-| Native message boxes / file picker | `import { alert, confirm, openFile } from "gx/dialog"` |
+| Native message boxes / file picker | `import { alert, confirm, openFile, saveFile } from "gx/dialog"` |
 | Local persistence | `import { setAppName, setStorage, getStorage } from "gx/storage"` |
 | Dev-time debug panel | `import { devSnapshot } from "gx/dev"` |
 | Device info / battery / network / vibration / brightness | `import { deviceInfo, battery, isOnline, canIUse } from "gx/device"` |
@@ -103,7 +103,7 @@ Window backends: Windows (pure syscall win32), Linux (X11; Wayland goes through 
 | Can't be bothered to remember module names | `import { h, render, createSignal, createRouter } from "gox"` (the union of the 16 above) |
 
 ::: warning The four most common mix-ups
-**①** `alert` / `confirm` / `openFile` live in **`gx/dialog`**, **not `gx/gfx`** (importing from the latter is now a **compile-time error**).<br> **②** `each` / `show` / `model` are **element-level directives** — written on the element, **no import needed**; `gx/view` only exports `Switch` and `Match`.<br> **③** `gx/screen`'s `useXxx` **returns a getter function** that must be called again: `const r = usePosture(); r()`.<br> **④** The native capability modules' `useBattery()` / `useInsets()` likewise **return getter functions**; action-style APIs (camera / location) **reject** when the capability is missing — check with `canIUse("camera")` first.
+**①** `alert` / `confirm` / `openFile` / `saveFile` live in **`gx/dialog`**, **not `gx/gfx`** (importing from the latter is now a **compile-time error**).<br> **②** `each` / `show` / `model` are **element-level directives** — written on the element, **no import needed**; `gx/view` only exports `Switch` and `Match`.<br> **③** `gx/screen`'s `useXxx` **returns a getter function** that must be called again: `const r = usePosture(); r()`.<br> **④** The native capability modules' `useBattery()` / `useInsets()` likewise **return getter functions**; action-style APIs (camera / location) **reject** when the capability is missing — check with `canIUse("camera")` first.
 
 For every export, signature, and calling convention, see the [API Reference · Built-in modules gx/*](/en/api/gx).
 :::

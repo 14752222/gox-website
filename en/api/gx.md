@@ -55,12 +55,12 @@ import { createSignal } from "gx/solid";
 | `model` / `each` / `show` | **Element-level directives** at the `h()` layer | Written on elements, e.g. `<input model={draft} />`, `<view each={rows}>`. **Not imported, and not in any export table** |
 | `obs` / `computed` / `ever` / `once` | **Global functions** (GetX style) | Call directly; see [§8](/en/api/gx#reactive-globals) |
 | `fs` / `path` / `process` / `http` / `fetch` / `console` | **Global host modules** | Call directly; see [§6](/en/api/host) |
-| `alert` / `confirm` / `openFile` | **`gx/dialog`** | `import { alert } from "gx/dialog"`. **Note: they are not in `gx/gfx`** — grabbing them from `gx/gfx` yields `undefined` |
+| `alert` / `confirm` / `openFile` / `saveFile` | **`gx/dialog`** | `import { alert } from "gx/dialog"`. **Note: they are not in `gx/gfx`** — grabbing them from `gx/gfx` yields `undefined` |
 | `createSignal` family | `gx/solid` | See [gx/solid](/en/api/gx#m-solid) |
 | `<window>` / `<column>` and other elements | JSX intrinsic tags, parsed by `gx/gfx`'s `h` | See the [component reference](/en/components/) |
 
 ::: warning The three most commonly misremembered facts
-**①** `alert` / `confirm` / `openFile` live only in `gx/dialog`; `gx/gfx.alert` is `undefined`.<br> **②** `gx/view` **exports only `Switch` and `Match`** — lists and visibility are the element-level directives `each` / `show`, not in this module.<br> **③** `useXxx` on `gx/screen` **returns a getter function that must be called again**: `const r = usePosture(); r()`. See the gx/screen section below.
+**①** `alert` / `confirm` / `openFile` / `saveFile` live only in `gx/dialog`; `gx/gfx.alert` is `undefined`.<br> **②** `gx/view` **exports only `Switch` and `Match`** — lists and visibility are the element-level directives `each` / `show`, not in this module.<br> **③** `useXxx` on `gx/screen` **returns a getter function that must be called again**: `const r = usePosture(); r()`. See the gx/screen section below.
 :::
 
 ### gx/solid — Reactive Primitives {#m-solid}
@@ -168,7 +168,7 @@ const s  = clipboardReadText();        // empty string when unreadable
 The script and windows live on the **same OS thread**, so calling the native API directly is already the correct thread — no `await` needed. When the backend doesn't support it, degradation is silent (write returns `false`, read returns an empty string).
 
 ::: warning Native dialogs are not in this module
-`alert` / `confirm` / `openFile` are exported by **`gx/dialog`**. Grabbing them from `gx/gfx` yields `undefined`.
+`alert` / `confirm` / `openFile` / `saveFile` are exported by **`gx/dialog`**. Grabbing them from `gx/gfx` yields `undefined`.
 :::
 
 ### gx/view — Multi-Branch {#m-view}
@@ -343,7 +343,7 @@ resetDisplays();                 // undo the report, back to backend enumeration
 ### gx/dialog — Native System Dialogs {#m-dialog}
 
 ```js
-import { alert, confirm, openFile } from "gx/dialog";
+import { alert, confirm, openFile, saveFile } from "gx/dialog";
 ```
 
 | Export | Returns | Description |
@@ -351,11 +351,12 @@ import { alert, confirm, openFile } from "gx/dialog";
 | alert(msg, title?) | `Promise<void>` | System message box, with a single "OK" |
 | confirm(msg, title?) | `Promise<boolean>` | OK / Cancel, returns the user's choice |
 | openFile({title, filter}) | `Promise<string \| null>` | System "open file" dialog; **cancel returns null, no exception** |
+| saveFile({title, filter, default}) | `Promise<string \| null>` | System "save file" dialog; the OS asks before overwriting an existing file; **cancel returns null, no exception** |
 
 `filter` is an array of `{name, pattern}`, with multiple wildcards in a pattern separated by `;`.
 
 ```js
-import { confirm, openFile } from "gx/dialog";
+import { confirm, openFile, saveFile } from "gx/dialog";
 
 // Both handler styles work: async function () {} and async () => {}
 h("button", {
@@ -376,12 +377,19 @@ h("button", {
     });
     log(p === null ? "cancelled" : "picked " + p);
   }
-}, "Open file");
+}, "Open file"),
+
+h("button", {
+  onClick: async function () {
+    const out = await saveFile({ default: "report.txt" });
+    log(out === null ? "cancelled" : "save to " + out);
+  }
+}, "Save file");
 ```
 
-- Only these three APIs: no custom buttons, no multi-select, no directory picking.
+- Only these four APIs: no custom buttons, no multi-select, no directory picking; saveFile only picks the path — write the file with fs.
 - The UI still repaints while modal (the OS pumps messages for us), but no JS callbacks are dispatched.
-- Non-Windows backends degrade: content is printed to stderr and returns immediately — confirm yields true, openFile yields null (treated as cancelled).
+- Non-Windows backends degrade: content is printed to stderr and returns immediately — confirm yields true, openFile / saveFile yield null (treated as cancelled).
 - This module doesn't depend on the element tree, only on "whether there is a current window", which is why it was split out of gx/gfx.
 
 ### gx/storage — Local Persistence {#m-storage}
@@ -607,7 +615,7 @@ import {
 | Symptom | Cause and fix |
 | --- | --- |
 | Used JSX but the window doesn't start, reporting `h is not defined` | **Fixed in the framework (2026-09-22)**: JSX still compiles down to `h(...)` calls, but when the file has no `h`, the compiler auto-inserts `import { h } from "gx/gfx"`. Writing `import { h, render } from "gx/gfx"` explicitly is still recommended and still takes precedence; your own `h` definition/import won't be overridden. On older engines, just add that line manually |
-| `alert is not a function` / getting `undefined` | You grabbed it from `gx/gfx` — `alert` / `confirm` / `openFile` live in **`gx/dialog`** (or use the `gox` aggregate directly). Named imports used to silently yield `undefined` for missing names; **now importing a nonexistent name from a builtin module is a compile-time error**, and it points out which module it's in / whether it's a typo |
+| `alert is not a function` / getting `undefined` | You grabbed it from `gx/gfx` — `alert` / `confirm` / `openFile` / `saveFile` live in **`gx/dialog`** (or use the `gox` aggregate directly). Named imports used to silently yield `undefined` for missing names; **now importing a nonexistent name from a builtin module is a compile-time error**, and it points out which module it's in / whether it's a typo |
 | `usePosture()` doesn't give you a string | By design: all `useXxx()` return **getter functions** (signal semantics; put them in a function prop / function child to be reactive), then call again: `const r = usePosture(); r()`. If you only want "the value right now", use `posture(win)` (returns a string). Don't compare it directly as a string — it's always false and silent |
 | `each` / `show` can't be imported from `gx/view` | By design: they are **element-level directives** (written as JSX props, expanded in `h()`), **not in any module's export table**; `gx/view` exports only `Switch` / `Match`. Mis-importing is now a compile-time error |
 | `const [data, {refetch}] = createResource(f)` doesn't work | **Fixed in the framework (2026-09-22)**: nested destructuring (an object inside array destructuring) used to be a parser bug; now it just works. The equivalent `const [data, res] = createResource(f)` + `res.refetch()` still works |

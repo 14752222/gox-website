@@ -1,6 +1,6 @@
 ---
 title: 反馈与弹层：dialog / drawer / toast / 原生对话框
-description: Gox GUI 弹层：dialog 模态对话框（40% 遮罩 + Esc 关闭）、drawer 侧边抽屉（复用同一套弹层机制）、toast 轻提示，以及 gx/dialog 的系统原生 alert/confirm/openFile。
+description: Gox GUI 弹层：dialog 模态对话框（40% 遮罩 + Esc 关闭）、drawer 侧边抽屉（复用同一套弹层机制）、toast 轻提示，以及 gx/dialog 的系统原生 alert/confirm/openFile/saveFile。
 ---
 
 # 反馈与弹层：dialog / toast / 原生对话框
@@ -120,18 +120,19 @@ const notify = () => {
 
 `稳定` · `仅 Windows 原生` · `async`
 
-调起**操作系统原生**的消息框与文件选择框,而不是自绘弹层。三个 API 都返回 Promise。
+调起**操作系统原生**的消息框与文件选择框,而不是自绘弹层。四个 API 都返回 Promise。
 
 | API | 返回 | 说明 |
 | --- | --- | --- |
 | alert(msg, title?) | `Promise<void>` | 系统消息框,只有一个"确定" |
 | confirm(msg, title?) | `Promise<boolean>` | 确定 / 取消,返回用户选择 |
 | openFile({title, filter}) | `Promise<string \| null>` | 系统"打开文件"对话框;**取消返回 null**,不是抛异常 |
+| saveFile({title, filter, default}) | `Promise<string \| null>` | 系统"保存文件"对话框;目标已存在时由系统询问覆盖;**取消返回 null**,不是抛异常 |
 
 `filter` 是 `{name, pattern}` 数组, pattern 里多个通配符用 `;` 分隔。
 
 ```js
-import { alert, confirm, openFile } from "gx/dialog";
+import { alert, confirm, openFile, saveFile } from "gx/dialog";
 
 // 事件处理器的两种写法都可以: async function () {} 与 async () => {}
 h("button", {
@@ -152,9 +153,16 @@ h("button", {
     });
     log(path === null ? "cancelled" : "picked " + path);
   }
-}, "Open file")
+}, "Open file"),
+
+h("button", {
+  onClick: async function () {
+    const out = await saveFile({ default: "report.txt" });
+    log(out === null ? "cancelled" : "save to " + out);
+  }
+}, "Save file")
 ```
 
-- 只有这三个 API:无自定义按钮、无多选、无选目录。
+- 只有这四个 API:无自定义按钮、无多选、无选目录;saveFile 只选路径,写文件仍用 fs。
 - 模态期间界面仍会重绘(系统替我们泵消息),但不派发任何 JS 回调。
-- 非 Windows 后端会降级:内容打到 stderr 并立即返回 —— confirm 取 true、openFile 取 null(视作已取消)。
+- 非 Windows 后端会降级:内容打到 stderr 并立即返回 —— confirm 取 true、openFile / saveFile 取 null(视作已取消)。

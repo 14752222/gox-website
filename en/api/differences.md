@@ -69,7 +69,7 @@ Handy for quick checks when migrating from another runtime — the names below *
 | Node modules | `stream`, `child_process`, `os`, `crypto`, `net`, `events`, `util`, `url`, `querystring` |
 | Reactive (import required) | `batch`, `createContext`, `useContext`, `createStore` (`untrack` exists — it's in `gx/solid`) |
 | Builtin modules | `gx/machine`, `gx/kit` (the state machine is still a userland pattern; the six native-capability modules `gx/device` / `gx/app` / `gx/geo` / `gx/media` / `gx/permission` / `gx/viewport` landed on 2026-09-21, and `gx/router` / `gx/screen` landed in the same batch — none of these are gaps anymore) |
-| Missing from modules | `gx/gfx.alert`, `gx/gfx.confirm`, `gx/gfx.openFile`, `gx/view.each`, `gx/view.show` (the former live in `gx/dialog`, the latter are element-level directives) |
+| Missing from modules | `gx/gfx.alert`, `gx/gfx.confirm`, `gx/gfx.openFile`, `gx/gfx.saveFile`, `gx/view.each`, `gx/view.show` (the former live in `gx/dialog`, the latter are element-level directives) |
 
 ::: tip Want to check whether an API actually exists?
 The most direct way is to ask the REPL: `typeof someName` — `"undefined"` means no. To list all exports of a module, use a namespace import + `Object.keys`: `import * as s from "gx/solid"; Object.keys(s)`. For full implementation-level details, see the [JavaScript Runtime API implementation tutorial](https://github.com/14752222/Gox/blob/main/docs/js-runtime-api-tutorial.md).

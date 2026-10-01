@@ -44,7 +44,7 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 | 布局容器<br>7 个 | `<column>`、`<row>`、`<grid>`、`<scroll>`、`<separator>`、`<spacer>`、`<rect>` |
 | 表单控件<br>8 个 | `<button>`、`<checkbox>`、`<radio>`、`<switch>`、`<input>`、`<textarea>`、`<select>`、`<slider>` |
 | 内容展示<br>16 个 | `<text>`(`wrap` / `ellipsis`)、`<image>`、`<video>`(标签 + 宿主契约,解码交给平台视频层)、`<progress>`、`<alert>`、`<tag>`、`<badge>`、`<avatar>`、`<empty>`、`<icon>`、`<spinner>`、`<skeleton>`、`<pagination>`、`<table>`、`<tree>`、`<list-item>` |
-| 反馈与弹层<br>4 个 | `<dialog>`、`<drawer>`、`<toast>`、`<tooltip>`,以及 `gx/dialog` 的原生 `alert` / `confirm` / `openFile` |
+| 反馈与弹层<br>4 个 | `<dialog>`、`<drawer>`、`<toast>`、`<tooltip>`,以及 `gx/dialog` 的原生 `alert` / `confirm` / `openFile` / `saveFile` |
 | 导航与菜单<br>5 个 | `<menubar>`、`<menu>`、`<menuitem>`(全局 `shortcut`)、`<tabs>`、`<tab>`、`openContextMenu(x, y, items)` |
 | 媒体与自绘<br>1 个 | `<canvas>`(`onDraw(ctx)` + 7 个绘制原语) |
 | 窗口<br>1 个 | `<window>`(仅作 `render()` 的根元素,可多次调用开多窗口;返回的句柄提供 `close` / `isClosed` / `title` / `setTitle` / `resize`) |
@@ -89,7 +89,7 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 | 多分支条件 | `import { Switch, Match } from "gx/view"` |
 | 路由 | `import { createRouter, RouterView, RouterLink, useRoute } from "gx/router"` |
 | 多屏 / 折叠姿态 | `import { screens, screenOf, usePosture, reportPosture } from "gx/screen"` |
-| 原生消息框 / 选文件 | `import { alert, confirm, openFile } from "gx/dialog"` |
+| 原生消息框 / 选文件 | `import { alert, confirm, openFile, saveFile } from "gx/dialog"` |
 | 本地持久化 | `import { setAppName, setStorage, getStorage } from "gx/storage"` |
 | 开发期调试面板 | `import { devSnapshot } from "gx/dev"` |
 | 设备信息 / 电量 / 网络 / 震动 / 亮度 | `import { deviceInfo, battery, isOnline, canIUse } from "gx/device"` |
@@ -103,7 +103,7 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 | 懒得记模块名 | `import { h, render, createSignal, createRouter } from "gox"`(上面 16 个的并集) |
 
 ::: warning 四个最容易记错的地方
-**①** `alert` / `confirm` / `openFile` 在 **`gx/dialog`**, **不在 `gx/gfx`**(从后者导入现在是**编译期报错**)。<br> **②** `each` / `show` / `model` 是**元素级指令**,写在元素上、**不需要 import**; `gx/view` 只导出 `Switch` 与 `Match`。<br> **③** `gx/screen` 的 `useXxx` **返回取值函数**,要再调一次:`const r = usePosture(); r()`。<br> **④** 原生能力模块的 `useBattery()` / `useInsets()` 同样**返回取值函数**;动作型 API(拍照 / 定位)缺能力时**会 reject**,先用 `canIUse("camera")` 判断。
+**①** `alert` / `confirm` / `openFile` / `saveFile` 在 **`gx/dialog`**, **不在 `gx/gfx`**(从后者导入现在是**编译期报错**)。<br> **②** `each` / `show` / `model` 是**元素级指令**,写在元素上、**不需要 import**; `gx/view` 只导出 `Switch` 与 `Match`。<br> **③** `gx/screen` 的 `useXxx` **返回取值函数**,要再调一次:`const r = usePosture(); r()`。<br> **④** 原生能力模块的 `useBattery()` / `useInsets()` 同样**返回取值函数**;动作型 API(拍照 / 定位)缺能力时**会 reject**,先用 `canIUse("camera")` 判断。
 
 逐个导出、签名与调用约定见 [API 参考 · 内置模块 gx/*](/api/gx)。
 :::

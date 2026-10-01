@@ -55,12 +55,12 @@ import { createSignal } from "gx/solid";
 | `model` / `each` / `show` | `h()` 层的**元素级指令** | 写在元素上,如 `<input model={draft} />`、`<view each={rows}>`。**不 import,也不在任何导出表里** |
 | `obs` / `computed` / `ever` / `once` | **全局函数**(GetX 风格) | 直接调用,见 [§8](/api/gx#reactive-globals) |
 | `fs` / `path` / `process` / `http` / `fetch` / `console` | **全局宿主模块** | 直接调用,见 [§6](/api/host) |
-| `alert` / `confirm` / `openFile` | **`gx/dialog`** | `import { alert } from "gx/dialog"`。**注意:它们不在 `gx/gfx` 里** —— 从 `gx/gfx` 取会得到 `undefined` |
+| `alert` / `confirm` / `openFile` / `saveFile` | **`gx/dialog`** | `import { alert } from "gx/dialog"`。**注意:它们不在 `gx/gfx` 里** —— 从 `gx/gfx` 取会得到 `undefined` |
 | `createSignal` 家族 | `gx/solid` | 见 [gx/solid](/api/gx#m-solid) |
 | `<window>` / `<column>` 等元素 | JSX 内置标签,由 `gx/gfx` 的 `h` 解析 | 见[组件参考](/components/) |
 
 ::: warning 三个最容易记错的点
-**①** `alert` / `confirm` / `openFile` 只在 `gx/dialog`; `gx/gfx.alert` 是 `undefined`。<br> **②** `gx/view` **只导出 `Switch` 与 `Match`** —— 列表与显隐是元素级指令 `each` / `show`,不在这个模块里。<br> **③** `gx/screen` 的 `useXxx` **返回一个取值函数,要再调一次**:`const r = usePosture(); r()`。 详见下面 gx/screen 一节。
+**①** `alert` / `confirm` / `openFile` / `saveFile` 只在 `gx/dialog`; `gx/gfx.alert` 是 `undefined`。<br> **②** `gx/view` **只导出 `Switch` 与 `Match`** —— 列表与显隐是元素级指令 `each` / `show`,不在这个模块里。<br> **③** `gx/screen` 的 `useXxx` **返回一个取值函数,要再调一次**:`const r = usePosture(); r()`。 详见下面 gx/screen 一节。
 :::
 
 ### gx/solid — 响应式原语 {#m-solid}
@@ -168,7 +168,7 @@ const s  = clipboardReadText();        // 读不到是空串
 脚本与窗口在**同一个 OS 线程**,直接调原生 API 就是正确的线程,不需要 `await`。后端不支持时静默降级(写返回 `false`、读返回空串)。
 
 ::: warning 原生对话框不在这个模块里
-`alert` / `confirm` / `openFile` 由 **`gx/dialog`** 导出。 从 `gx/gfx` 取会得到 `undefined`。
+`alert` / `confirm` / `openFile` / `saveFile` 由 **`gx/dialog`** 导出。 从 `gx/gfx` 取会得到 `undefined`。
 :::
 
 ### gx/view — 多分支 {#m-view}
@@ -343,7 +343,7 @@ resetDisplays();                 // 撤销上报,回到后端枚举
 ### gx/dialog — 原生系统对话框 {#m-dialog}
 
 ```js
-import { alert, confirm, openFile } from "gx/dialog";
+import { alert, confirm, openFile, saveFile } from "gx/dialog";
 ```
 
 | 导出 | 返回 | 说明 |
@@ -351,11 +351,12 @@ import { alert, confirm, openFile } from "gx/dialog";
 | alert(msg, title?) | `Promise<void>` | 系统消息框,只有一个"确定" |
 | confirm(msg, title?) | `Promise<boolean>` | 确定 / 取消,返回用户选择 |
 | openFile({title, filter}) | `Promise<string \| null>` | 系统"打开文件"对话框;**取消返回 null,不抛异常** |
+| saveFile({title, filter, default}) | `Promise<string \| null>` | 系统"保存文件"对话框;目标已存在时由系统询问覆盖;**取消返回 null,不抛异常** |
 
 `filter` 是 `{name, pattern}` 数组, pattern 里多个通配符用 `;` 分隔。
 
 ```js
-import { confirm, openFile } from "gx/dialog";
+import { confirm, openFile, saveFile } from "gx/dialog";
 
 // 事件处理器的两种写法都可以: async function () {} 与 async () => {}
 h("button", {
@@ -376,12 +377,19 @@ h("button", {
     });
     log(p === null ? "cancelled" : "picked " + p);
   }
-}, "Open file");
+}, "Open file"),
+
+h("button", {
+  onClick: async function () {
+    const out = await saveFile({ default: "report.txt" });
+    log(out === null ? "cancelled" : "save to " + out);
+  }
+}, "Save file");
 ```
 
-- 只有这三个 API:无自定义按钮、无多选、无选目录。
+- 只有这四个 API:无自定义按钮、无多选、无选目录;saveFile 只选路径,写文件仍用 fs。
 - 模态期间界面仍会重绘(系统替我们泵消息),但不派发任何 JS 回调。
-- 非 Windows 后端会降级:内容打到 stderr 并立即返回 —— confirm 取 true、openFile 取 null(视作已取消)。
+- 非 Windows 后端会降级:内容打到 stderr 并立即返回 —— confirm 取 true、openFile / saveFile 取 null(视作已取消)。
 - 这个模块不依赖元素树,只依赖"当前有没有窗口",所以从 gx/gfx 拆了出来。
 
 ### gx/storage — 本地持久化 {#m-storage}
@@ -607,7 +615,7 @@ import {
 | 现象 | 原因与解法 |
 | --- | --- |
 | 用了 JSX 但窗口起不来,报 `h is not defined` | **已在框架里修掉(2026-09-22)**:JSX 仍是降级成 `h(...)` 调用,但文件里没有 `h` 时编译器会自动补 `import { h } from "gx/gfx"`。显式写 `import { h, render } from "gx/gfx"` 仍推荐、也仍优先,自己定义/导入的 `h` 不会被顶掉。老引擎上手动加那一行即可 |
-| `alert is not a function` / 拿到 `undefined` | 从 `gx/gfx` 取了 —— `alert` / `confirm` / `openFile` 在 **`gx/dialog`**(或直接用 `gox` 聚合)。命名导入取不到时只会静默拿到 `undefined`,所以**现在从内置模块 import 不存在的名字是编译期报错**,并会指出它在哪个模块 / 是不是拼错 |
+| `alert is not a function` / 拿到 `undefined` | 从 `gx/gfx` 取了 —— `alert` / `confirm` / `openFile` / `saveFile` 在 **`gx/dialog`**(或直接用 `gox` 聚合)。命名导入取不到时只会静默拿到 `undefined`,所以**现在从内置模块 import 不存在的名字是编译期报错**,并会指出它在哪个模块 / 是不是拼错 |
 | `usePosture()` 拿到的不是字符串 | 这是设计:所有 `useXxx()` 返回的都是**取值函数**(信号语义,放进函数 prop / 函数子节点才会跟着变),再调一次:`const r = usePosture(); r()`。只要"此刻的值"就用 `posture(win)`(返回字符串)。别把它直接当字符串比 —— 恒为 false 且不报错 |
 | `each` / `show` 从 `gx/view` 里 import 不到 | 这是设计:它们是**元素级指令**(写在 JSX 属性上、在 `h()` 里展开),**不在任何模块的导出表里**;`gx/view` 只导出 `Switch` / `Match`。误 import 现在编译期报错 |
 | `const [data, {refetch}] = createResource(f)` 不起作用 | **已在框架里修掉(2026-09-22)**:嵌套解构(数组里套对象)当年是 parser 的 bug,现在直接可写。等价写法 `const [data, res] = createResource(f)` + `res.refetch()` 照旧可用 |
