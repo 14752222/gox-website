@@ -145,10 +145,12 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.7.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.9.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.9.0 | `table` / `tree` / `list-item` 数据展示组件、`tabs` 选项卡、`tooltip` 悬停提示；设计 token 与主题系统（32 项颜色 token、暗色预设、运行时切换）；`gx/update` v1.1 自动更新（流式下载 / 断点续传 / 进度回调 / pre 通道）；`gox create --ts` TypeScript / TSX 模板；`var` 声明与 class 表达式；运行时错误带源码帧定位 |
+| 0.8.0 | Test262 合规率流水线（定时跑 language 套件、徽章自动回写）；`gox vs node` 性能基准 harness；压力与帧预算测试（万级定时器风暴 / 并发 fetch / 489 节点渲染预算）；3 个示例应用（TODO / 仪表盘 / 贪吃蛇）；计算属性名；滚动条可拖拽与横向滚动 |
 | 0.7.0 | `gox cert` 一键生成各平台签名证书、`gox build android` 自动接入签名、`gox create` 生成 certs/ 目录；`gox build macos --arch universal`（amd64+arm64 合并）；iOS 相册多选保序与 media.preview 多文件预览 |
 | 0.6.0 | macOS 窗口后端 cocoa（桌面 GUI 三平台齐）；`gox dev` 热更新、`gox.json` 项目配置、`gox build` 统一构建入口 |
 | 0.5.0 | 原生能力层六个内置模块（gx/device · gx/app · gx/geo · gx/media · gx/permission · gx/viewport） |

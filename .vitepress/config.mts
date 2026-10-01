@@ -17,7 +17,7 @@ const jsonLdApp = {
   description:
     'Gox 是用 Go 从零实现的 JavaScript 运行时：词法分析 → 语法分析 → 字节码编译 → 栈式虚拟机执行。单二进制、零 cgo、零外部依赖，自带软件光栅化 GUI 与脚本打包器。',
   url: ORIGIN,
-  softwareVersion: '0.7.0',
+  softwareVersion: '0.9.0',
   license: 'https://opensource.org/licenses/Apache-2.0',
   author: { '@type': 'Person', name: '14752222', url: REPO },
   codeRepository: REPO,
