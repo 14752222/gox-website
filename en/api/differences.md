@@ -14,7 +14,7 @@ Gox is an independent runtime **implemented from scratch**, not a subset of Node
 | Item | Gox behavior |
 | --- | --- |
 | `var` | **Supported** (since 0.8.0): function scope plus hoisting. Day-to-day code should still prefer `let` / `const` |
-| `import { x as y }` | **Does not work**: from a file module `y` is silently `undefined`, while from a builtin module it is now a **compile-time error**. Namespace imports (`import * as ns`) and default exports are fine |
+| `import { x as y }` | **Supported**. `x` is the module’s export name, `y` is the local binding. Namespace imports (`import * as ns`) and default exports work as usual |
 | `Date` | **None**. Use `Temporal` |
 | `Intl` | **None**. Number and date formatting you write yourself |
 | `encodeURI` / `decodeURI` | **None**. Assemble one yourself with `String` methods when needed |

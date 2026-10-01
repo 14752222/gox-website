@@ -49,7 +49,7 @@ let host2 = cfg?.db?.host ?? "127.0.0.1"
 | Syntax | Gox's behavior |
 | --- | --- |
 | `var` | Supported (since 0.8.0): function scope plus hoisting. Day-to-day code should still prefer `let` / `const` |
-| `import { x as y }` | Not supported. The alias is treated as an extra named import: from a **file module** `y` is **silently `undefined`**, while from a **builtin module** it is now a **compile-time error**. To rename, write `import { x } from "…"` and assign it to a new variable yourself |
+| `import { x as y }` | Supported. `x` is the module’s export name and `y` is the local binding; `import { x }` is equivalent to `import { x as x }` |
 | `Date` / `Intl` | Not available. Use `Temporal` |
 | `encodeURI` / `btoa` etc. | Not available. Build what you need with `String` methods yourself |
 

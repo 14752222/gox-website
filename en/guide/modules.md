@@ -40,4 +40,4 @@ import("./math_utils.js").then(m => console.log(m.PI))   // dynamic loading
 | --- | --- |
 | ES modules only | No CommonJS: `require` / `module.exports` / `__dirname` do not exist |
 | No npm resolution | No `node_modules` lookup, no bare package names — only relative paths and `gx/*` / `gox` built-in modules |
-| No import aliases | `import { x as y }` is not supported (see [Language Boundaries](/en/guide/language)) |
+| Import aliases | `import { x as y }` is supported; see [Language Boundaries](/en/guide/language) |

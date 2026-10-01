@@ -39,14 +39,15 @@ import { h, render } from "gx/gfx";
 `import` / `export` 是静态的,相对路径以 **当前文件**为基准解析;也支持默认导出、命名空间导入与动态 `import()`。 `gx/` 开头的名字与 `gox` 是保留的内置模块命名空间: 只查内置模块表,查不到直接报错并列出可用模块 —— 拼写错误不会变成文件读取错误, 内置模块也不会被同名文件覆盖。
 
 ```js
-import sq, { PI } from "./math_utils.js";      // 默认 + 命名导出
-import * as math from "./math_utils.js";       // 命名空间导入
-import { h, render, createSignal } from "gox"; // 聚合入口: gx/* 全部导出的并集
-import("./math_utils.js").then(m => m.PI);     // 动态加载
+import sq, { PI } from "./math_utils.js";       // 默认 + 命名导出
+import * as math from "./math_utils.js";        // 命名空间导入
+import { PI as P, area as squareArea } from "./math_utils.js"; // 别名导入
+import { h, render, createSignal } from "gox";  // 聚合入口: gx/* 全部导出的并集
+import("./math_utils.js").then(m => m.PI);      // 动态加载
 ```
 
-::: warning 导入别名 as 不支持
-`import { PI as P } from "…"` **不生效**:解析器会把 `as` 与 `P` 都当成普通命名导入,于是 `P` **静默为 `undefined`**(不报错,最难查的一种)。 要换名字就 `import { PI }` 之后自己赋给新变量。 命名空间形式 `import * as math` 与默认导出不受影响。
+::: tip 导入别名 as
+`import { PI as P } from "…"` 支持(`as` 前是**模块导出的名字**, `as` 后是**本文件绑定的名字**)。从内置模块导入时, 编译期按 `as` 前的名字核对导出表 —— 名字不存在会当场报错并列出可用导出。
 :::
 
 ### globalThis

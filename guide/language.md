@@ -49,7 +49,7 @@ let host2 = cfg?.db?.host ?? "127.0.0.1"
 | 写法 | Gox 的行为 |
 | --- | --- |
 | `var` | 支持(0.8.0 起),函数作用域 + 声明提升。日常仍推荐 `let` / `const` |
-| `import { x as y }` | 不支持。别名会被当成一个额外的命名导入:从**文件模块**导入时 `y` **静默为 `undefined`**,从**内置模块**导入时现在是**编译期报错**。要改名字就写 `import { x } from "…"` 之后自己赋给新变量 |
+| `import { x as y }` | 支持。`x` 是模块导出的名字,`y` 是本文件绑定的名字;`import { x }` 与 `import { x as x }` 等价 |
 | `Date` / `Intl` | 没有。用 `Temporal` |
 | `encodeURI` / `btoa` 等 | 没有。需要时自己用 `String` 方法拼 |
 

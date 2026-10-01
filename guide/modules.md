@@ -40,4 +40,4 @@ import("./math_utils.js").then(m => console.log(m.PI))   // 动态加载
 | --- | --- |
 | 只有 ES 模块 | 没有 CommonJS:`require` / `module.exports` / `__dirname` 都不存在 |
 | 无 npm 解析 | 没有 `node_modules` 查找、没有裸包名,只有相对路径与 `gx/*` / `gox` 内置模块 |
-| 无导入别名 | `import { x as y }` 不支持(见[语言边界](/guide/language)) |
+| 导入别名 | `import { x as y }` 支持,见[语言边界](/guide/language) |

@@ -39,14 +39,15 @@ import { h, render } from "gx/gfx";
 `import` / `export` are static; relative paths resolve against the **current file**. Default exports, namespace imports, and dynamic `import()` are all supported. Names starting with `gx/` and `gox` are reserved builtin module namespaces: they only consult the builtin module table, and an unknown name raises an error listing the available modules — a typo won't turn into a file-read error, and a same-named file can never shadow a builtin module.
 
 ```js
-import sq, { PI } from "./math_utils.js";      // default + named exports
-import * as math from "./math_utils.js";       // namespace import
-import { h, render, createSignal } from "gox"; // aggregate entry: union of all gx/* exports
-import("./math_utils.js").then(m => m.PI);     // dynamic import
+import sq, { PI } from "./math_utils.js";       // default + named exports
+import * as math from "./math_utils.js";        // namespace import
+import { PI as P, area as squareArea } from "./math_utils.js"; // aliased imports
+import { h, render, createSignal } from "gox";  // aggregate entry: union of all gx/* exports
+import("./math_utils.js").then(m => m.PI);      // dynamic import
 ```
 
-::: warning Import alias `as` is not supported
-`import { PI as P } from "…"` **does not work**: the parser treats both `as` and `P` as ordinary named imports, so `P` is **silently `undefined`** (no error — the hardest kind of bug to track down). To rename, do `import { PI }` and assign it to a new variable yourself. Namespace imports (`import * as math`) and default exports are unaffected.
+::: tip Import alias `as`
+`import { PI as P } from "…"` is supported (the name before `as` is the **module's export name**, the name after is the **local binding**). For builtin modules the compiler checks the name *before* `as` against the export table — a missing name fails at compile time with the list of available exports.
 :::
 
 ### globalThis
