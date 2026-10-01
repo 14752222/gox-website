@@ -47,15 +47,16 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | 原生能力(电量 / 网络 / 亮度 / 设置页) | ✅ 走 win32 宿主 | — | — |
 | 原生能力(相机 / 定位 / 相册 / 权限) | ❌ 明说缺(报 unsupported) | — | — |
 
-::: tip 完整演示脚本(共 46 个,都在仓库 testdata/ 下)
+::: tip 完整演示脚本(都在仓库 `testdata/` 下)
 命令行里 `gox testdata/<名字>.js` 即可运行,例如 `gox testdata/menu_demo.js`。
 
-- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js
+- 元素:button_demo.js、form_demo.js、input_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js、tabbar_demo.js
 - 列表与条件:view_demo.js、view_demo2.js、list_demo.js、condrender_demo.js、resource_demo.js
 - 数据展示:table_demo.js、tree_demo.js
 - 布局与样式:grid_demo.js、elastic_layout_demo.js、model_demo.js、jsx_demo.js
 - 交互与动画:events_demo.js、focus_demo.js、hover_demo.js、transition_demo.js、resize_demo.js、clipboard_demo.js、ime_demo.js
-- 模块能力:router_demo.js(+ 懒加载模块 router_page_detail.js)、router_window_demo.js、routing_demo.js、multiwindow_demo.js、storage_demo.js、dev_panel_demo.js、native_demo.js、counter_demo.js、rx_demo.js、kit_demo.js、gui_demo.js
+- 模块能力:router_demo.js(+ 懒加载模块 router_page_detail.js)、router_window_demo.js、routing_demo.js、multiwindow_demo.js、storage_demo.js、dev_panel_demo.js、native_demo.js、counter_demo.js、rx_demo.js、kit_demo.js、gui_demo.js、http_demo.js
+- 运行时与教程对照:demo.js、acceptance.js、tutorial_util.js、tutorial_api.js、tutorial_modules.js、tutorial_gui.js、tutorial_router.js
 
 另有 `routing_demo.js` 是不依赖 `gx/router` 的"用户态路由"写法(一个 signal + 页面表),适合三页以内的小工具对照着看。
 :::

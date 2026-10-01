@@ -36,7 +36,7 @@ features:
     linkText: 语言基础
   - icon: 🖥️
     title: 自研 GUI 渲染层
-    details: 纯 Go 软件光栅化，flex 风格布局 + JSX + 信号驱动更新，脏矩形局部重绘；win32 / X11 / cocoa 三平台窗口后端，25 个内置元素。
+    details: 纯 Go 软件光栅化，flex 风格布局 + JSX + 信号驱动更新，脏矩形局部重绘；win32 / X11 / cocoa 三平台窗口后端，41 个内置元素。
     link: /components/
     linkText: 组件参考
   - icon: 🔌
@@ -137,7 +137,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 标准库 | Object / Array / String / Map / Set / Proxy / Promise / TypedArray / Temporal … | [API · 标准内建](/api/builtins) |
 | 宿主模块（免 import） | `console` / `fs` / `path` / `process` / `http` / `fetch` | [API · 宿主模块](/api/host) |
 | 响应式 | GetX 风格 `obs` / `computed`，SolidJS 风格 `gx/solid` 信号 | [教程 · 响应式](/guide/reactive) |
-| GUI | 25 个内置元素 + JSX + 脏矩形局部重绘、路由、多窗口 | [组件参考](/components/) |
+| GUI | 41 个内置元素 + JSX + 脏矩形局部重绘、路由、多窗口 | [组件参考](/components/) |
 | 内置模块（需 import） | `gx/solid` · `gx/gfx` · `gx/view` · `gx/router` · `gx/screen` · `gx/dialog` · `gx/storage` · `gx/dev` 与原生能力层六模块 | [API · 内置模块](/api/gx) |
 | 工具链 | REPL、`gox create` 脚手架、`gox dev` 热更新、jsbuild 打包、五平台 npm 预编译二进制 | [教程 · 安装](/guide/install) |
 
@@ -157,7 +157,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 0.4.0 | 脚手架 `gox create`；路由 `gx/router` 与屏幕 `gx/screen` 成为内置模块 |
 
 ::: info 已知缺口
-虚拟化长列表、表格、tooltip、图标、富文本等尚未封装；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，需移动宿主实现。逐项见[限制与常见误区](/components/limits)。
+虚拟化长列表与富文本(行内混排样式)尚未封装 —— 表格 / 树 / tooltip / 图标 / spinner / tabs 等数据展示与反馈类组件已在 0.9.0 落地；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，需移动宿主实现。逐项见[限制与常见误区](/components/limits)。
 :::
 
 </div>

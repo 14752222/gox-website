@@ -1,13 +1,13 @@
 ---
 title: "Builtin Modules gx/*: Complete Exports and Calling Conventions"
-description: "Complete Gox builtin module reference: gx/solid reactivity, gx/gfx UI, gx/view, gx/router, gx/screen, gx/dialog, gx/storage, gx/dev and the native capability layer gx/device/gx/app/gx/geo/gx/media/gx/permission/gx/viewport — every export with its signature."
+description: "Complete Gox builtin module reference: gx/solid reactivity, gx/gfx UI, gx/view, gx/router, gx/screen, gx/dialog, gx/storage, gx/theme, gx/update, gx/dev and the native capability layer gx/device/gx/app/gx/geo/gx/media/gx/permission/gx/viewport — every export with its signature."
 ---
 
 # Builtin Modules gx/*: Complete Exports and Calling Conventions
 
 ## Builtin Modules gx/* {#modules}
 
-There are **9 builtin modules** in total: **8 focused modules** (divided by responsibility) plus **1 aggregate entry `gox`** (the union of the 8). They require an `import` and **take precedence over filesystem resolution** — `gx/` and `gox` are reserved namespaces; a typo raises an "unknown module" error listing the available modules rather than degrading into "read some same-named file".
+There are **17 builtin modules** in total: **16 focused modules** (divided by responsibility) plus **1 aggregate entry `gox`** (the union of the 16). They require an `import` and **take precedence over filesystem resolution** — `gx/` and `gox` are reserved namespaces; a typo raises an "unknown module" error listing the available modules rather than degrading into "read some same-named file".
 
 Each module below comes with the **complete export list + signatures + return values + calling conventions**. Every entry has been checked against the `RegisterBuiltinModule` registry and enumerated against the real runtime (`Object.keys(import * as ns)`).
 
@@ -15,15 +15,17 @@ Each module below comes with the **complete export list + signatures + return va
 
 | Module | Exports | What it does | Platform |
 | --- | --- | --- | --- |
-| `gox` | 139 | Aggregate entry: the **union** of the 14 modules below | — |
+| `gox` | 146 | Aggregate entry: the **union** of the 16 modules below | — |
 | `gx/solid` | 8 | Reactive primitives (signals / effects / derived values / async resources / lifecycle) | All platforms |
 | `gx/gfx` | 7 | Element tree construction, window mounting, frame callbacks, tween animations, clipboard, context menu | Requires a window backend |
 | `gx/view` | 2 | Multi-branch conditionals (`Switch` / `Match`) | All platforms |
 | `gx/router` | 7 | Routing: route table / param matching / guards / history stack / lazy loading / multi-window scopes | All platforms |
 | `gx/screen` | 17 | Display enumeration, window geometry, fold posture and hinge | Enumeration needs a backend; posture is reported |
-| `gx/dialog` | 3 | Native system dialogs | Native on Windows only |
+| `gx/dialog` | 3 | Native system dialogs | Native on Windows / macOS; degraded on Linux |
 | `gx/storage` | 7 | App-level key-value persistence | All platforms |
 | `gx/dev` | 1 | Development-time read-only snapshot (frames / caches / tree / warnings) | All platforms |
+| `gx/theme` | 3 | Theme switching and dark mode (`setTheme` / `toggleDark` / `current`) | All platforms |
+| `gx/update` | 4 | Desktop auto-update (`currentVersion` / `checkForUpdate` / `downloadAndInstall` / `cleanupBackup`) | Desktop |
 | `gx/device` | 24 | Device info, battery, network, vibration, screen brightness & keep-awake, opening system settings | Some require a host |
 | `gx/app` | 14 | Foreground/background state, memory warnings, back button, sharing, exit, screen orientation | Requires a host |
 | `gx/geo` | 10 | Location (one-shot / continuous watch), distance between two points | Requires a host; desktop reports unavailable |

@@ -19,7 +19,7 @@ Just want to get it running → [Installation and Creating a Project](/en/guide/
 | --- | --- | --- |
 | 1 | [Installation and Creating a Project](/en/guide/install) | npm install, the `gox create` scaffold, building from source |
 | 2 | [REPL and CLI](/en/guide/repl) | Interactive environment, command cheat sheet, script echo semantics |
-| 3 | [Language Basics and Boundaries](/en/guide/language) | ES6+ subset, what's not supported (var / import as / Date) |
+| 3 | [Language Basics and Boundaries](/en/guide/language) | ES6+ subset, what's not supported (import as / Date) |
 | 4 | [ES Modules](/en/guide/modules) | import/export, dynamic import(), no CommonJS |
 | 5 | [Async and the Event Loop](/en/guide/async) | async/await, timer family, exit semantics |
 | 6 | [Built-in Objects at a Glance](/en/guide/builtins) | Global objects like Object/Array/Map/Set/Promise/Temporal |
@@ -30,4 +30,4 @@ Just want to get it running → [Installation and Creating a Project](/en/guide/
 | 11 | [Packaging Standalone Executables](/en/guide/package) | The jsbuild packager, cross-compilation, single-file distribution |
 | 12 | [FAQ](/en/guide/faq) | Relationship with Node, macOS support, debugging tips |
 
-Next stop: [Component Reference](/en/components/) — full props and examples for all 25 built-in GUI elements.
+Next stop: [Component Reference](/en/components/) — full props and examples for all 41 built-in GUI elements.

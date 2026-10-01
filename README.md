@@ -24,7 +24,7 @@ pnpm preview        # 本地预览构建产物
 │   └── dist/               # 构建产物（gitignore）
 ├── index.md                # 首页（hero + features + 终端演示 + 管线图 + 能力总览）
 ├── guide/                  # 使用教程（12 节，一节一页）
-├── components/             # 组件参考（25 个元素按类分页 + 横切能力 + 限制）
+├── components/             # 组件参考（41 个元素按类分页 + 横切能力 + 限制）
 ├── api/                    # API 参考（运行时 / 内建 / 宿主模块 / gx 模块 / 差异）
 ├── public/                 # 原样拷贝的静态文件
 │   ├── logo.png / favicon.png / og-image.png   # og-image 1200x630 分享图

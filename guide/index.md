@@ -30,4 +30,4 @@ description: Gox 使用教程：安装与 gox create 脚手架、REPL 与命令�
 | 11 | [打包独立可执行文件](/guide/package) | jsbuild 打包器、交叉编译、单文件分发 |
 | 12 | [常见问题 FAQ](/guide/faq) | 与 Node 的关系、macOS 支持、调试方法 |
 
-下一站：[组件参考](/components/) —— 25 个内置 GUI 元素的完整参数与示例。
+下一站：[组件参考](/components/) —— 41 个内置 GUI 元素的完整参数与示例。

@@ -47,15 +47,16 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | Native capabilities (battery / network / brightness / settings page) | ✅ via the win32 host | — | — |
 | Native capabilities (camera / location / photo library / permissions) | ❌ explicitly missing (reports unsupported) | — | — |
 
-::: tip Full demo scripts (46 in total, all under testdata/ in the repo)
+::: tip Full demo scripts (all under testdata/ in the repo)
 Run them from the command line with `gox testdata/<name>.js`, e.g. `gox testdata/menu_demo.js`.
 
-- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js
+- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js, tabbar_demo.js
 - Lists & conditionals: view_demo.js, view_demo2.js, list_demo.js, condrender_demo.js, resource_demo.js
 - Data display: table_demo.js, tree_demo.js
 - Layout & styling: grid_demo.js, elastic_layout_demo.js, model_demo.js, jsx_demo.js
 - Interaction & animation: events_demo.js, focus_demo.js, hover_demo.js, transition_demo.js, resize_demo.js, clipboard_demo.js, ime_demo.js
-- Module capabilities: router_demo.js (+ the lazy-loaded module router_page_detail.js), router_window_demo.js, routing_demo.js, multiwindow_demo.js, storage_demo.js, dev_panel_demo.js, native_demo.js, counter_demo.js, rx_demo.js, kit_demo.js, gui_demo.js
+- Module capabilities: router_demo.js (+ the lazy-loaded module router_page_detail.js), router_window_demo.js, routing_demo.js, multiwindow_demo.js, storage_demo.js, dev_panel_demo.js, native_demo.js, counter_demo.js, rx_demo.js, kit_demo.js, gui_demo.js, http_demo.js
+- Runtime & tutorial walkthroughs: demo.js, acceptance.js, tutorial_util.js, tutorial_api.js, tutorial_modules.js, tutorial_gui.js, tutorial_router.js
 
 There's also `routing_demo.js`, a "userland routing" implementation that doesn't depend on `gx/router` (one signal + a page table) — useful as a reference for small utilities with three pages or fewer.
 :::

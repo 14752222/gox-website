@@ -5,7 +5,7 @@ description: "The ES6+ language subset of Gox: let/const/var, arrow functions, c
 
 # Language Basics and Boundaries
 
-Gox implements an ES6+ language subset. Declare variables with `let` / `const` — **`var` is not supported** (a deliberate design trade-off, see the [FAQ](/en/guide/faq)).
+Gox implements an ES6+ language subset. Declare variables with `let` / `const` (recommended); `var` is also supported — since 0.8.0 it coexists with `let` / `const`, following the traditional semantics (**function scope**, redeclaration allowed, hoisted to the top of the function). See the [FAQ](/en/guide/faq).
 
 ```js
 // Variables and constants
@@ -48,8 +48,8 @@ let host2 = cfg?.db?.host ?? "127.0.0.1"
 
 | Syntax | Gox's behavior |
 | --- | --- |
-| `var` | Not supported. Use `let` / `const` |
-| `import { x as y }` | Not supported. The alias is treated as an extra named import and `y` is **silently `undefined`**. To rename, write `import { x } from "…"` and assign it to a new variable yourself |
+| `var` | Supported (since 0.8.0): function scope plus hoisting. Day-to-day code should still prefer `let` / `const` |
+| `import { x as y }` | Not supported. The alias is treated as an extra named import: from a **file module** `y` is **silently `undefined`**, while from a **builtin module** it is now a **compile-time error**. To rename, write `import { x } from "…"` and assign it to a new variable yourself |
 | `Date` / `Intl` | Not available. Use `Temporal` |
 | `encodeURI` / `btoa` etc. | Not available. Build what you need with `String` methods yourself |
 

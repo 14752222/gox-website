@@ -1,6 +1,6 @@
 ---
 title: 与 Node.js / 浏览器的差异及缺失 API 一览
-description: Gox 与 Node.js/浏览器的差异清单：没有 var/Date/Intl/DOM/npm 生态，缺失 API 一览表（Date、encodeURI、structuredClone、require 等），迁移排查用。
+description: Gox 与 Node.js/浏览器的差异清单：没有 Date/Intl/DOM/npm 生态，缺失 API 一览表（Date、encodeURI、structuredClone、require 等），迁移排查用。
 ---
 
 # 与 Node.js / 浏览器的差异及缺失 API 一览
@@ -13,8 +13,8 @@ Gox 是**从零实现**的独立运行时,不是 Node 或浏览器的子集实�
 
 | 项目 | Gox 的行为 |
 | --- | --- |
-| `var` | **不支持**。只用 `let` / `const` |
-| `import { x as y }` | **不生效**(且不报错):`y` 静默为 `undefined`。命名空间导入 `import * as ns` 与默认导出正常 |
+| `var` | **支持**(0.8.0 起)。函数作用域 + 声明提升;日常仍推荐 `let` / `const` |
+| `import { x as y }` | **不生效**:从文件模块导入时 `y` 静默为 `undefined`,从内置模块导入时现在是**编译期报错**。命名空间导入 `import * as ns` 与默认导出正常 |
 | `Date` | **没有**。用 `Temporal` |
 | `Intl` | **没有**。数字与日期格式化要自己写 |
 | `encodeURI` / `decodeURI` | **没有**。需要时自己用 `String` 方法拼 |

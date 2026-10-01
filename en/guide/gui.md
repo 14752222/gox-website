@@ -1,6 +1,6 @@
 ---
 title: GUI Desktop Apps
-description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 25 built-in elements, routing and multi-window — a counter in 16 lines."
+description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 41 built-in elements, routing and multi-window — a counter in 16 lines."
 ---
 
 # GUI Desktop Apps
@@ -37,15 +37,15 @@ gox counter.js          # run directly; a 400x300 window pops up
 
 ## Built-in elements and props
 
-There are **25** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
+There are **41** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
 
 | Category | Elements |
 | --- | --- |
 | Layout containers<br>7 | `<column>`, `<row>`, `<grid>`, `<scroll>`, `<separator>`, `<spacer>`, `<rect>` |
 | Form controls<br>8 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<textarea>`, `<select>`, `<slider>` |
-| Content display<br>3 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<progress>` |
-| Feedback & overlays<br>2 | `<dialog>`, `<toast>`, plus the native `alert` / `confirm` / `openFile` from `gx/dialog` |
-| Navigation & menus<br>3 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `openContextMenu(x, y, items)` |
+| Content display<br>15 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
+| Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` from `gx/dialog` |
+| Navigation & menus<br>5 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `<tabs>`, `<tab>`, `openContextMenu(x, y, items)` |
 | Media & custom drawing<br>1 | `<canvas>` (`onDraw(ctx)` + 7 drawing primitives) |
 | Window<br>1 | `<window>` (only as the root element of `render()`; call it multiple times to open multiple windows; the returned handle provides `close` / `isClosed` / `title` / `setTitle` / `resize`) |
 
@@ -80,7 +80,7 @@ Window backends: Windows (pure syscall win32), Linux (X11; Wayland goes through 
 
 ## Built-in modules cheat sheet: what to import
 
-`gx/*` are **built-in modules** (resolved before the filesystem): 14 fine-grained modules in total, plus one aggregate entry `gox` that re-exports them all. App code can grab the common set in a single line, while library code is clearer importing per module — both spellings point to the same implementation.
+`gx/*` are **built-in modules** (resolved before the filesystem): 16 fine-grained modules in total, plus one aggregate entry `gox` that re-exports them all. App code can grab the common set in a single line, while library code is clearer importing per module — both spellings point to the same implementation.
 
 | To do what | What to import |
 | --- | --- |
@@ -98,10 +98,12 @@ Window backends: Windows (pure syscall win32), Linux (X11; Wayland goes through 
 | Camera / image & video picker | `import { takePhoto, chooseImage, chooseVideo } from "gx/media"` |
 | Permissions | `import { checkPermission, authorize, requestPermissions } from "gx/permission"` |
 | Safe areas / soft keyboard / split screen | `import { insets, keyboardHeight, isSplit } from "gx/viewport"` |
-| Can't be bothered to remember module names | `import { h, render, createSignal, createRouter } from "gox"` (the union of the 14 above) |
+| Theme and dark mode | `import { setTheme, toggleDark, current } from "gx/theme"` |
+| Desktop auto-update | `import { currentVersion, checkForUpdate, downloadAndInstall } from "gx/update"` |
+| Can't be bothered to remember module names | `import { h, render, createSignal, createRouter } from "gox"` (the union of the 16 above) |
 
 ::: warning The four most common mix-ups
-**①** `alert` / `confirm` / `openFile` live in **`gx/dialog`**, **not `gx/gfx`** (importing from the latter yields `undefined`).<br> **②** `each` / `show` / `model` are **element-level directives** — written on the element, **no import needed**; `gx/view` only exports `Switch` and `Match`.<br> **③** `gx/screen`'s `useXxx` **returns a getter function** that must be called again: `const r = usePosture(); r()`.<br> **④** The native capability modules' `useBattery()` / `useInsets()` likewise **return getter functions**; action-style APIs (camera / location) **reject** when the capability is missing — check with `canIUse("camera")` first.
+**①** `alert` / `confirm` / `openFile` live in **`gx/dialog`**, **not `gx/gfx`** (importing from the latter is now a **compile-time error**).<br> **②** `each` / `show` / `model` are **element-level directives** — written on the element, **no import needed**; `gx/view` only exports `Switch` and `Match`.<br> **③** `gx/screen`'s `useXxx` **returns a getter function** that must be called again: `const r = usePosture(); r()`.<br> **④** The native capability modules' `useBattery()` / `useInsets()` likewise **return getter functions**; action-style APIs (camera / location) **reject** when the capability is missing — check with `canIUse("camera")` first.
 
 For every export, signature, and calling convention, see the [API Reference · Built-in modules gx/*](/en/api/gx).
 :::

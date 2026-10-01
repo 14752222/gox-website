@@ -1,13 +1,13 @@
 ---
 title: 内置模块 gx/*：完整导出与调用约定
-description: Gox 内置模块完整参考：gx/solid 响应式、gx/gfx 界面、gx/view、gx/router 路由、gx/screen 屏幕、gx/dialog、gx/storage、gx/dev 与原生能力层 gx/device/gx/app/gx/geo/gx/media/gx/permission/gx/viewport，逐个导出带签名。
+description: Gox 内置模块完整参考：gx/solid 响应式、gx/gfx 界面、gx/view、gx/router 路由、gx/screen 屏幕、gx/dialog、gx/storage、gx/theme、gx/update、gx/dev 与原生能力层 gx/device/gx/app/gx/geo/gx/media/gx/permission/gx/viewport，逐个导出带签名。
 ---
 
 # 内置模块 gx/*：完整导出与调用约定
 
 ## 内置模块 gx/* {#modules}
 
-内置模块一共 **9 个**:**8 个细分模块**(按职责划分)加 **1 个聚合入口 `gox`**(8 个的并集)。 它们需要 `import`,并且**优先于文件系统解析** —— `gx/` 与 `gox` 是保留命名空间,拼错会直接报"未知模块"并列出可用模块, 不会退化成"读某个同名文件"。
+内置模块一共 **17 个**:**16 个细分模块**(按职责划分)加 **1 个聚合入口 `gox`**(16 个的并集)。 它们需要 `import`,并且**优先于文件系统解析** —— `gx/` 与 `gox` 是保留命名空间,拼错会直接报"未知模块"并列出可用模块, 不会退化成"读某个同名文件"。
 
 下面每个模块都给出**完整导出清单 + 签名 + 返回值 + 调用约定**。 全部条目都对着 `RegisterBuiltinModule` 的注册表核过, 并用真实运行时枚举了一遍(`Object.keys(import * as ns)`)。
 
@@ -15,15 +15,17 @@ description: Gox 内置模块完整参考：gx/solid 响应式、gx/gfx 界面�
 
 | 模块 | 导出数 | 管什么 | 平台 |
 | --- | --- | --- | --- |
-| `gox` | 139 | 聚合入口:下列 14 个模块导出的**并集** | — |
+| `gox` | 146 | 聚合入口:下列 16 个模块导出的**并集** | — |
 | `gx/solid` | 8 | 响应式原语(信号 / 副作用 / 派生值 / 异步资源 / 生命周期) | 全平台 |
 | `gx/gfx` | 7 | 元素树构造、窗口挂载、帧回调、补间动画、剪贴板、右键菜单 | 需要窗口后端 |
 | `gx/view` | 2 | 多分支条件(`Switch` / `Match`) | 全平台 |
 | `gx/router` | 7 | 路由:路由表 / 参数匹配 / 守卫 / 历史栈 / 懒加载 / 多窗口作用域 | 全平台 |
 | `gx/screen` | 17 | 显示器枚举、窗口几何、折叠姿态与折痕 | 枚举需后端;姿态靠上报 |
-| `gx/dialog` | 3 | 原生系统对话框 | 仅 Windows 原生 |
+| `gx/dialog` | 3 | 原生系统对话框 | Windows / macOS 原生;Linux 降级 |
 | `gx/storage` | 7 | 应用级键值持久化 | 全平台 |
 | `gx/dev` | 1 | 开发期只读快照(帧 / 缓存 / 树 / 警告) | 全平台 |
+| `gx/theme` | 3 | 主题切换与暗色模式(`setTheme` / `toggleDark` / `current`) | 全平台 |
+| `gx/update` | 4 | 桌面自动更新(`currentVersion` / `checkForUpdate` / `downloadAndInstall` / `cleanupBackup`) | 桌面 |
 | `gx/device` | 24 | 设备信息、电量、网络、震动、屏幕亮度与常亮、打开系统设置页 | 部分需宿主 |
 | `gx/app` | 14 | 前后台状态、内存告警、返回键、分享、退出、屏幕方向 | 需宿主 |
 | `gx/geo` | 10 | 定位(取一次 / 持续监听)、两点距离 | 需宿主;桌面报 unavailable |

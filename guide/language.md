@@ -5,7 +5,7 @@ description: Gox 的 ES6+ 语言子集：let/const/var 声明、箭头函数、�
 
 # 语言基础与边界
 
-Gox 实现 ES6+ 语言子集。声明变量用 `let` / `const` —— **不支持 `var`**(刻意的设计取舍,见[常见问题](/guide/faq))。
+Gox 实现 ES6+ 语言子集。声明变量用 `let` / `const`(推荐),`var` 也支持 —— 0.8.0 起两者并存:`var` 按传统语义工作(**函数作用域**、允许重复声明、声明提升到函数顶部),见[常见问题](/guide/faq)。
 
 ```js
 // 变量与常量
@@ -48,8 +48,8 @@ let host2 = cfg?.db?.host ?? "127.0.0.1"
 
 | 写法 | Gox 的行为 |
 | --- | --- |
-| `var` | 不支持。用 `let` / `const` |
-| `import { x as y }` | 不支持。别名会被当成一个额外的命名导入,`y` **静默为 `undefined`**。要改名字就写 `import { x } from "…"` 之后自己赋给新变量 |
+| `var` | 支持(0.8.0 起),函数作用域 + 声明提升。日常仍推荐 `let` / `const` |
+| `import { x as y }` | 不支持。别名会被当成一个额外的命名导入:从**文件模块**导入时 `y` **静默为 `undefined`**,从**内置模块**导入时现在是**编译期报错**。要改名字就写 `import { x } from "…"` 之后自己赋给新变量 |
 | `Date` / `Intl` | 没有。用 `Temporal` |
 | `encodeURI` / `btoa` 等 | 没有。需要时自己用 `String` 方法拼 |
 
