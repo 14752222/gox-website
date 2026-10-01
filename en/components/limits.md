@@ -50,7 +50,7 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 ::: tip Full demo scripts (all under testdata/ in the repo)
 Run them from the command line with `gox testdata/<name>.js`, e.g. `gox testdata/menu_demo.js`.
 
-- Elements: button_demo.js, form_demo.js, input_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, video_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js, tabbar_demo.js
+- Elements: button_demo.js, form_demo.js, input_demo.js, search_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, video_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js, tabbar_demo.js
 - Lists & conditionals: view_demo.js, view_demo2.js, list_demo.js, condrender_demo.js, resource_demo.js
 - Data display: table_demo.js, tree_demo.js
 - Layout & styling: grid_demo.js, elastic_layout_demo.js, model_demo.js, jsx_demo.js

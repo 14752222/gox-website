@@ -3,7 +3,7 @@ title: 表单控件：button / input / select / slider
 description: Gox GUI 表单控件：button、checkbox/radio/switch、input、textarea、select 下拉框、slider 滑块 —— 全部受控组件，model 双向绑定一条顶两条。
 ---
 
-# 表单控件：button / input / select / slider
+# 表单控件：button / input / search / select / slider
 
 全部是受控组件,显示只看 prop,交互只派发回调(见[第 0 节约定 ③](/components/))。
 
@@ -135,6 +135,32 @@ tick();
 - 无选区/拖选/复制粘贴按键(剪贴板要走 gx/gfx 的同步 API 手动接)。
 - 单字符直输路径只认 BMP;中文等需经输入法提交通道(Windows 已支持,X11 暂无 IME)。
 - 输入法提交不产生 `onKeyDown` —— 统计"敲了几次键盘"不能用它代替。
+
+### `<search>` {#search}
+
+`稳定` · `IME:仅 Windows`
+
+`<input>` 的字段变体:左侧多一个放大镜,获焦时按 `Enter` **整段提交** `onSearch({value})` —— 逐键 `onInput` 之外再给一个明确的搜索提交点(与 DOM 搜索框一致)。其余(受控 value / model / placeholder / 光标 / 键盘归属 / IME)与 [`<input>`](#input) 完全相同。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| value / model / onInput / placeholder / width / disabled | — | 与 [`<input>`](#input) 完全一致 |
+| onSearch | function | 获焦时按 `Enter` 派发,收到 `{value}`(**string**,当前受控值);带 `Ctrl` / `Alt` 的组合键不抢 |
+
+```js
+const [q, setQ] = createSignal("");
+
+<search
+  model={q}
+  placeholder="Search…"
+  width={260}
+  onSearch={(e) => console.log("search:", e.value)}
+/>
+```
+
+::: tip 与 `<input>` 的分工
+用 `<input>` + `onKeyDown` 判键名也能做"回车提交";`<search>` 把这个最常见的形状做成了组件 —— 图标提示这是搜索位,`Enter` 有专门的 `onSearch` 事件,不必再在 `onKeyDown` 里手判键名。
+:::
 
 ### `<textarea>` {#textarea}
 

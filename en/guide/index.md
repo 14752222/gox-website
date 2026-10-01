@@ -30,4 +30,4 @@ Just want to get it running → [Installation and Creating a Project](/en/guide/
 | 11 | [Packaging Standalone Executables](/en/guide/package) | The jsbuild packager, cross-compilation, single-file distribution |
 | 12 | [FAQ](/en/guide/faq) | Relationship with Node, macOS support, debugging tips |
 
-Next stop: [Component Reference](/en/components/) — full props and examples for all 42 built-in GUI elements.
+Next stop: [Component Reference](/en/components/) — full props and examples for all 43 built-in GUI elements.

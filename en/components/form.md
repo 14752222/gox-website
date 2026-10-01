@@ -3,7 +3,7 @@ title: "Form Controls: button / input / select / slider"
 description: "Gox GUI form controls: button, checkbox/radio/switch, input, textarea, select dropdown, slider — all controlled components, with model two-way binding where one directive replaces two props."
 ---
 
-# Form Controls: button / input / select / slider
+# Form Controls: button / input / search / select / slider
 
 All of these are controlled components: display follows props only, and interaction only dispatches callbacks (see [convention ③ in Section 0](/en/components/)).
 
@@ -135,6 +135,32 @@ tick();
 - No selection / drag-select / copy-paste keys (clipboard must be wired manually via gx/gfx's synchronous API).
 - The direct single-character input path only handles the BMP; Chinese and other characters must go through the IME commit channel (supported on Windows; no IME on X11 yet).
 - IME commits do not produce `onKeyDown` — don't use it to count "how many times keys were pressed".
+
+### `<search>` {#search}
+
+`Stable` · `IME: Windows only`
+
+A variant of `<input>`: a magnifier on the left, and pressing `Enter` while focused **submits the whole query** via `onSearch({value})` — a dedicated commit point on top of per-key `onInput` (like DOM search boxes). Everything else (controlled value / model / placeholder / caret / key ownership / IME) is identical to [`<input>`](#input).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| value / model / onInput / placeholder / width / disabled | — | identical to [`<input>`](#input) |
+| onSearch | function | dispatched on `Enter` while focused, receives `{value}` (**string**, the current controlled value); `Ctrl` / `Alt` combos are not consumed |
+
+```js
+const [q, setQ] = createSignal("");
+
+<search
+  model={q}
+  placeholder="Search…"
+  width={260}
+  onSearch={(e) => console.log("search:", e.value)}
+/>
+```
+
+::: tip `<input>` vs `<search>`
+`<input>` + `onKeyDown` can do "submit on Enter" too; `<search>` bakes the most common shape into a component — the icon signals a search slot, and `Enter` gets its own `onSearch` event, so there is no key-name checking in `onKeyDown`.
+:::
 
 ### `<textarea>` {#textarea}
 
