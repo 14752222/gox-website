@@ -40,10 +40,10 @@ const jsonLdFaq = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'Gox 为什么不支持 var?',
+      name: 'Gox 支持 var 吗?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Gox 刻意只实现 ES6+ 子集：let / const 具备块级作用域，语义更清晰，省去了 var 提升等历史包袱。REPL 启动提示语 "ES6 subset, no var" 说的就是这件事。',
+        text: '支持。0.8.0 起 var 与 let / const 并存：var 按传统语义工作——函数作用域、重复声明允许、声明提升到函数顶部（得到 undefined 而非 TDZ）。日常仍推荐 let / const（块级作用域、语义更清晰），保留 var 是为了让已有的 ES5 风格代码能直接跑起来。',
       },
     },
     {
