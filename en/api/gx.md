@@ -15,12 +15,12 @@ Each module below comes with the **complete export list + signatures + return va
 
 | Module | Exports | What it does | Platform |
 | --- | --- | --- | --- |
-| `gox` | 146 | Aggregate entry: the **union** of the 16 modules below | — |
+| `gox` | 156 | Aggregate entry: the **union** of the 16 modules below | — |
 | `gx/solid` | 8 | Reactive primitives (signals / effects / derived values / async resources / lifecycle) | All platforms |
 | `gx/gfx` | 7 | Element tree construction, window mounting, frame callbacks, tween animations, clipboard, context menu | Requires a window backend |
 | `gx/view` | 2 | Multi-branch conditionals (`Switch` / `Match`) | All platforms |
 | `gx/router` | 7 | Routing: route table / param matching / guards / history stack / lazy loading / multi-window scopes | All platforms |
-| `gx/screen` | 17 | Display enumeration, window geometry, fold posture and hinge | Enumeration needs a backend; posture is reported |
+| `gx/screen` | 19 | Display enumeration, window geometry, fold posture and hinge | Enumeration needs a backend; posture is reported |
 | `gx/dialog` | 3 | Native system dialogs | Native on Windows / macOS; degraded on Linux |
 | `gx/storage` | 7 | App-level key-value persistence | All platforms |
 | `gx/dev` | 1 | Development-time read-only snapshot (frames / caches / tree / warnings) | All platforms |
@@ -31,7 +31,7 @@ Each module below comes with the **complete export list + signatures + return va
 | `gx/geo` | 10 | Location (one-shot / continuous watch), distance between two points | Requires a host; desktop reports unavailable |
 | `gx/media` | 8 | Take photos, pick images / videos, save images, preview | Requires a host; desktop reports unsupported |
 | `gx/permission` | 10 | Permission queries / requests / open app settings | Requires a host |
-| `gx/viewport` | 21 | Safe areas, soft keyboard, split-screen & multi-window forms, width classes | Reported by the host |
+| `gx/viewport` | 28 | Safe areas, soft keyboard, split-screen & multi-window forms, width classes (three tiers), reserved regions | Reported by the host |
 
 #### Which Import Path to Choose
 
@@ -237,7 +237,7 @@ render(
 import {
   screens, primaryScreen, screen, screenOf,
   useScreen, useScreens, windowInfo, useWindowInfo,
-  posture, usePosture, hinge, regions, platform,
+  posture, usePosture, hinge, regions, splitRatio, hingeOrientation, platform,
   reportPosture, resetDisplays, onDisplayChange, offDisplayChange,
 } from "gx/screen";
 ```
@@ -266,7 +266,9 @@ Design rationale: the display table is a large structure, so making it a whole-t
 | posture | (win?) => string | Fold posture: `"flat"` / `"half-open"` / `"folded"` / `"unknown"` |
 | usePosture | (win?) => **getter** | Same, reactive |
 | hinge | (win?) => object \| null | Hinge rectangle `{x, y, width, height, orientation}`; `null` when there is no hinge |
-| regions | (win?) => array | Fold-segmented panels `[{id, x, y, width, height}]` |
+| regions | (win?) => array | Fold-segmented panels `[{id, x, y, width, height, kind, active}]` |
+| splitRatio | (win?) => number | Hinge split ratio: X or Y (per hinge orientation) divided by the **display** length, clamped to `[0.2, 0.8]`; degrades to `0.5` when there is no hinge |
+| hingeOrientation | (win?) => string | `"vertical"` (book-style fold, the crease is a vertical bar) / `"horizontal"` (flip-style fold); **also returns `"vertical"` when there is no hinge** (same defaults as `splitRatio()`'s 0.5) |
 | platform | () => string | Window backend name: `"win32"` / `"x11"` / `"cocoa"` / `"headless"` |
 | reportPosture | (opts) => undefined | **Host / simulator reporting** of posture. Takes an opts object and returns `undefined` — a separate path from `posture()` |
 | resetDisplays | () => undefined | Clears reported overrides, falling back to backend enumeration |
@@ -285,7 +287,7 @@ Design rationale: the display table is a large structure, so making it a whole-t
 | foldable | Whether it's a foldable device |
 | posture | Fold posture string |
 | hinge | Hinge rectangle or `null` |
-| regions | Array of segmented panels |
+| regions | Array of segmented panels (each carries `kind`: `"division"` / `"occlusion"`, plus `active`) |
 
 #### windowInfo() Fields
 
@@ -303,17 +305,20 @@ console.log(info.width, info.screenWidth, info.screenId, info.platform);
 | posture | `"flat"` / `"half-open"` / `"folded"`. Case- and whitespace-insensitive; `halfopen` / `half_open` are also accepted; **unrecognized strings are normalized to `"unknown"`** rather than erroring |
 | foldable | Whether it's a foldable device. Auto-set to `true` if omitted but a non-`flat` posture was reported |
 | width / height | Screen dimensions (for reporting custom screens; omit for existing screens to keep their values) |
-| hinge | `{x, y, w, h, orientation}` — **note these are `w` / `h` here** |
-| regions | `[{id, x, y, width, height}]` |
+| hinge | `{x, y, w, h, orientation}` — **both spellings are accepted** (`w/h` and `width/height`, short names take precedence) |
+| regions | `[{id, x, y, width, height, kind, active}]` — `kind` is `"division"` (the crease band) or `"occlusion"` (e.g. an under-display camera) |
 
-::: warning Writes use w/h, reads give width/height
-`reportPosture`'s `hinge` reads `w` / `h`, while `hinge()` outputs `width` / `height`. Feeding a read-out object straight back yields a 0-width hinge — the easiest naming inconsistency to trip over.
+::: tip Writes use w/h, reads give width/height — but this is now compatible
+`reportPosture`'s `hinge` reads `w` / `h`, while `hinge()` outputs `width` / `height`.
+Historically, feeding a read-out object straight back silently produced a 0-width hinge;
+**since 2026-09-22 both spellings are accepted** (short names take precedence), so
+`reportPosture({ hinge: hinge() })` now works as-is.
 :::
 
 - Desktop backends have no posture-query API (Windows lacks WinRT ⇒ unreachable with zero cgo), and the framework doesn't guess posture: it only provides the reporting channel; with no reports, posture stays flat.
 - The hinge is not cleared when the posture changes: the hinge is device geometry, not a property of the posture. It stays when returning to flat, otherwise the split ratio after "fold and unfold again" would become 0.5. Whether to split is decided by the posture; the hinge only decides "how to split".
-- When reporting a screen not in the table: if it's the first report and backend enumeration is empty ⇒ the whole table is replaced (the host defines the display environment); if there have been prior reports or the backend can enumerate ⇒ a display is appended.
-- The denominator of the split ratio is the display length, not the hinge length.
+- **Hinge coordinates are in display space (device pixels)**: identical to window coordinates when full-screen, but not when split-screen / freeform — to use them for avoidance, subtract the window's origin on the screen (`windowInfo().x` / `.y`). The denominator is the **display** length, not the hinge length.
+- When reporting a screen not in the table: if it's the first report and backend enumeration is empty ⇒ the whole table is replaced (the host defines the display environment); if there have been prior reports or the backend can enumerate ⇒ a display is appended. **The first report must carry id / width / height / scale**, or "the display the window is on" cannot be resolved and posture reads back empty.
 - When half-folded, `<RouterView>` automatically becomes two columns (the previous history entry in the left column); see gx/router.
 
 ```js
@@ -585,14 +590,15 @@ import {
 - permissionKinds() gives the platform vocabulary (the permission types the host can report).
 - onPermissionChange(fn) subscribes to state changes (triggered when the user returns after enabling something in settings).
 
-#### gx/viewport — Safe Areas / Keyboard / Split-Screen (21 exports)
+#### gx/viewport — Safe Areas / Keyboard / Split-Screen / Reserved Regions (28 exports)
 
 ```js
 import {
   viewport, useViewport, insets, useInsets,
   keyboardHeight, useKeyboardHeight, keyboardVisible,
   contentArea, safeAreaStyle,
-  widthClass, isCompactWidth, isTabletLayout,
+  widthClass, isCompactWidth, isMediumWidth, isExpandedWidth, isTabletLayout,
+  reservedRegions, useReservedRegions, hasFold, layoutMode, useLayoutMode,
   multiWindow, useMultiWindow, isSplit, splitInfo,
   onViewportChange, offViewportChange, reportViewport, resetViewport,
   viewportModes,
@@ -603,6 +609,10 @@ import {
 - insets() / keyboardHeight() / splitInfo() all rely on host reports; desktop can't get these values (defaults: all 0 / not split).
 - useInsets() / useViewport() likewise return getter functions, which must be called again.
 - safeAreaStyle(v, withKeyboard?) directly gives the four-edge values usable for padding; with the second argument true, keyboard height is included in the bottom inset.
+- Width classes are now **three tiers**: `widthClass()` returns `"compact"` (<600dp) / `"medium"` (600–840dp) / `"expanded"` (>840dp).
+  `isMediumWidth()` tests the medium tier alone; `isTabletLayout()` keeps its historical meaning (medium or expanded, i.e. true at ≥600dp).
+- Foldable trio: `reservedRegions()` returns `{division, occlusion, all}` (all three keys always present); `hasFold()` is a **structural** signal (always true on a device with a crease — it does not flip-flop as the device folds/unfolds); `layoutMode()` returns `{posture, widthClass, foldAware, suggested}` where `suggested` ∈ `"single"` / `"dual"` / `"tablet"` — **a suggestion only; the framework never changes your layout**.
+- **Never drive layout from posture**: on a flip-style foldable the unfolded width can still be <600dp, and the system fires size changes before fold-state changes ⇒ trust width only. Hinge coordinates are in **display space**; convert yourself when split-screen.
 
 #### Behavior on Desktop (Don't Treat It as a Mobile Platform)
 
@@ -621,6 +631,11 @@ import {
 | `const [data, {refetch}] = createResource(f)` doesn't work | **Fixed in the framework (2026-09-22)**: nested destructuring (an object inside array destructuring) used to be a parser bug; now it just works. The equivalent `const [data, res] = createResource(f)` + `res.refetch()` still works |
 | Fold two-column mode doesn't kick in | By design: Windows / X11 have no posture-query API, **with no report ⇒ posture is always `flat`** ⇒ no split. Call `reportPosture` on the host side; first troubleshooting step: use `posture(win)` to confirm you're reading `"half-open"`. Three-step diagnosis: see the GUI router manual §9.2 |
 | Hinge width reads as 0 | **Fixed in the framework (2026-09-22)**: `hinge()` / `regions()` output uses `width/height`, while `reportPosture` historically only read `w/h` ⇒ silently read as 0 on write-back (affecting only the split ratio, nothing reported). Now **both spellings are accepted** (short names first), and `reportPosture({ hinge: hinge() })` works directly |
+| Layout doesn't go wide after unfolding | This is **expected**: on a flip-style foldable (Pocket series) the unfolded width can still be <600dp, so the breakpoint never changes tier. Don't drive layout from `posture()` — the system fires size changes *before* fold-state changes, so posture-driven layout lags a frame. **Trust `widthClass()` / `useWindowInfo()` only** |
+| `widthClass()` says `"expanded"` but you want tablet layout | Breakpoints are **three tiers** (compact <600 / medium 600–840 / expanded >840). To test "wide enough", use `isTabletLayout()` (true at ≥600dp, historical meaning); to test the middle tier alone, use `isMediumWidth()` |
+| `avoidReserved` on `<scroll>` does nothing | By design: avoidance shrinks the scroll container's usable area and clashes with content/scrollbar semantics ⇒ the kernel ignores it and logs a one-time warning. To avoid inside a scroll region, wrap your content in an extra container carrying `avoidReserved` |
+| `hasFold()` flips true/false unexpectedly | It shouldn't — `hasFold()` is a **structural** signal (always true on a device with a crease; it does not flip-flop as the device folds/unfolds), otherwise column counts would jump with the posture. For "is it folded right now" use `posture()`; for "where/how wide is the crease" use `reservedRegions().division` |
+| Converting hinge coordinates to window space | The hinge is in **display space** (device pixels) — identical to window space when full-screen, but not when split-screen / freeform. Subtract the window's origin on the screen: `windowInfo().x` / `.y` |
 
 ::: tip The four items marked "fixed in the framework"
 JSX's implicit factory, missing-name imports, nested destructuring, and the hinge key names — all four were fixed in the kernel (parser / compiler / `gx/screen`). With a new engine you no longer need the workarounds in the "fix" column; where other docs or manuals still say "you must import `h` yourself" or "nested destructuring isn't supported", this table is authoritative.

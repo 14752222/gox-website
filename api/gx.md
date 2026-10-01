@@ -15,12 +15,12 @@ description: Gox 内置模块完整参考：gx/solid 响应式、gx/gfx 界面�
 
 | 模块 | 导出数 | 管什么 | 平台 |
 | --- | --- | --- | --- |
-| `gox` | 146 | 聚合入口:下列 16 个模块导出的**并集** | — |
+| `gox` | 156 | 聚合入口:下列 16 个模块导出的**并集** | — |
 | `gx/solid` | 8 | 响应式原语(信号 / 副作用 / 派生值 / 异步资源 / 生命周期) | 全平台 |
 | `gx/gfx` | 7 | 元素树构造、窗口挂载、帧回调、补间动画、剪贴板、右键菜单 | 需要窗口后端 |
 | `gx/view` | 2 | 多分支条件(`Switch` / `Match`) | 全平台 |
 | `gx/router` | 7 | 路由:路由表 / 参数匹配 / 守卫 / 历史栈 / 懒加载 / 多窗口作用域 | 全平台 |
-| `gx/screen` | 17 | 显示器枚举、窗口几何、折叠姿态与折痕 | 枚举需后端;姿态靠上报 |
+| `gx/screen` | 19 | 显示器枚举、窗口几何、折叠姿态与折痕 | 枚举需后端;姿态靠上报 |
 | `gx/dialog` | 3 | 原生系统对话框 | Windows / macOS 原生;Linux 降级 |
 | `gx/storage` | 7 | 应用级键值持久化 | 全平台 |
 | `gx/dev` | 1 | 开发期只读快照(帧 / 缓存 / 树 / 警告) | 全平台 |
@@ -31,7 +31,7 @@ description: Gox 内置模块完整参考：gx/solid 响应式、gx/gfx 界面�
 | `gx/geo` | 10 | 定位(取一次 / 持续监听)、两点距离 | 需宿主;桌面报 unavailable |
 | `gx/media` | 8 | 拍照、选图 / 选视频、保存图片、预览 | 需宿主;桌面报 unsupported |
 | `gx/permission` | 10 | 权限查询 / 申请 / 打开应用设置页 | 需宿主 |
-| `gx/viewport` | 21 | 安全区、软键盘、分屏与多窗口形态、宽度档 | 靠宿主上报 |
+| `gx/viewport` | 28 | 安全区、软键盘、分屏与多窗口形态、宽度档(三档)、折叠保留区 | 靠宿主上报 |
 
 #### 选哪条导入路径
 
@@ -237,7 +237,7 @@ render(
 import {
   screens, primaryScreen, screen, screenOf,
   useScreen, useScreens, windowInfo, useWindowInfo,
-  posture, usePosture, hinge, regions, platform,
+  posture, usePosture, hinge, regions, splitRatio, hingeOrientation, platform,
   reportPosture, resetDisplays, onDisplayChange, offDisplayChange,
 } from "gx/screen";
 ```
@@ -267,6 +267,8 @@ const getPosture = usePosture();      // ← 拿到取值函数
 | usePosture | (win?) => **getter** | 同上,响应式 |
 | hinge | (win?) => object \| null | 折痕矩形 `{x, y, width, height, orientation}`;没有折痕时 `null` |
 | regions | (win?) => array | 折叠分段面板 `[{id, x, y, width, height}]` |
+| splitRatio | (win?) => number | 折痕分割比例,按折痕方向取 X 或 Y 除以**显示器**长度,钳 `[0.2, 0.8]`;无折痕时退化为 `0.5` |
+| hingeOrientation | (win?) => string | `"vertical"`(左右折,折痕是竖条) / `"horizontal"`(上下折);**无折痕时也返回 `"vertical"`**(与 `splitRatio()` 无折痕退化 0.5 同一套缺省) |
 | platform | () => string | 窗口后端名:`"win32"` / `"x11"` / `"cocoa"` / `"headless"` |
 | reportPosture | (opts) => undefined | **宿主 / 模拟器上报**姿态。收 opts 对象、返回 `undefined` —— 与 `posture()` 是两条不同的路 |
 | resetDisplays | () => undefined | 清掉上报覆盖,回退到后端枚举结果 |
@@ -285,7 +287,7 @@ const getPosture = usePosture();      // ← 拿到取值函数
 | foldable | 是否折叠设备 |
 | posture | 折叠姿态字符串 |
 | hinge | 折痕矩形或 `null` |
-| regions | 分段面板数组 |
+| regions | 分段面板数组(每项含 `kind`:`"division"`/`"occlusion"` 与 `active`) |
 
 #### windowInfo() 的字段
 
@@ -303,17 +305,19 @@ console.log(info.width, info.screenWidth, info.screenId, info.platform);
 | posture | `"flat"` / `"half-open"` / `"folded"`。 大小写与空格不敏感,`halfopen` / `half_open` 也认; **不认识的字符串会被归一成 `"unknown"`** 而不是报错 |
 | foldable | 是否折叠设备。不传但报了非 `flat` 姿态时自动置 `true` |
 | width / height | 屏尺寸(上报自定义屏时用;已存在的屏不传则保持原值) |
-| hinge | `{x, y, w, h, orientation}` —— **注意这里是 `w` / `h`** |
-| regions | `[{id, x, y, width, height}]` |
+| hinge | `{x, y, w, h, orientation}` —— **两种拼法都认**(`w/h` 与 `width/height`,短名优先) |
+| regions | `[{id, x, y, width, height, kind, active}]` —— `kind` 为 `"division"`(折痕那条带)/`"occlusion"`(屏下摄像头一类遮挡) |
 
-::: warning 写入用 w/h,读出是 width/height
-`reportPosture` 的 `hinge` 读 `w` / `h`,而 `hinge()` 读出来的是 `width` / `height`。 把读出的对象直接喂回去会得到一块 0 宽的折痕 —— 这是最容易踩的一处命名不一致。
+::: tip 写入用 w/h,读出是 width/height —— 但已经兼容了
+`reportPosture` 的 `hinge` 读 `w` / `h`,而 `hinge()` 读出来的是 `width` / `height`。
+历史上把读出的对象直接喂回去会静默回填成一块 0 宽的折痕;**2026-09-22 起两种拼法都认**
+(短名优先),所以 `reportPosture({ hinge: hinge() })` 现在可以直接写。
 :::
 
 - 桌面后端没有姿态查询 API(Windows 无 WinRT ⇒ 零 cgo 不可达),框架不猜姿态: 只提供上报通道,没人上报就恒为平展。
 - 折痕不随姿态清除:折痕是设备几何,不是姿态的属性。回到 flat 时折痕留着, 否则"折回去再折回来"分栏比例会变成 0.5。是否分栏由姿态决定,折痕只决定"怎么分"。
-- 上报一块表里没有的屏时:第一次上报且后端枚举为空 ⇒ 换掉整张表(宿主的显示环境由它定义); 已经有过上报或后端能枚举 ⇒ 追加一块。
-- 分割比例的分母是显示器长度,不是折痕长度。
+- **折痕坐标是显示器坐标(设备像素)**:全屏时等于窗口坐标,分屏 / 自由窗口下不等价 —— 要用它做避让就得减去窗口在屏上的原点(`windowInfo().x` / `.y`)。分母是**显示器**长度,不是折痕长度。
+- 上报一块表里没有的屏时:第一次上报且后端枚举为空 ⇒ 换掉整张表(宿主的显示环境由它定义); 已经有过上报或后端能枚举 ⇒ 追加一块。**首次上报必须带 id / width / height / scale**,否则"窗口所在显示器"解析不到,姿态读了也是空的。
 - 半折时 `<RouterView>` 自动变双栏(左栏放历史的上一条),见 gx/router。
 
 ```js
@@ -585,14 +589,15 @@ import {
 - permissionKinds() 给出平台词表(宿主可报的权限类型)。
 - onPermissionChange(fn) 订阅状态变化(用户去设置页开完回来会触发)。
 
-#### gx/viewport — 安全区 / 键盘 / 分屏(21 个导出)
+#### gx/viewport — 安全区 / 键盘 / 分屏 / 折叠保留区(28 个导出)
 
 ```js
 import {
   viewport, useViewport, insets, useInsets,
   keyboardHeight, useKeyboardHeight, keyboardVisible,
   contentArea, safeAreaStyle,
-  widthClass, isCompactWidth, isTabletLayout,
+  widthClass, isCompactWidth, isMediumWidth, isExpandedWidth, isTabletLayout,
+  reservedRegions, useReservedRegions, hasFold, layoutMode, useLayoutMode,
   multiWindow, useMultiWindow, isSplit, splitInfo,
   onViewportChange, offViewportChange, reportViewport, resetViewport,
   viewportModes,
@@ -603,6 +608,10 @@ import {
 - insets() / keyboardHeight() / splitInfo() 全部靠宿主上报，桌面拿不到这些值(默认全 0 / 非分屏)。
 - useInsets() / useViewport() 同样返回取值函数，要再调一次。
 - safeAreaStyle(v, withKeyboard?) 直接给出可用于 padding 的四边值；第二个参数为 true 时把键盘高度也算进下边距。
+- 宽度档是**三档**:`widthClass()` 返回 `"compact"`(<600dp) / `"medium"`(600–840dp) / `"expanded"`(>840dp)。
+  `isMediumWidth()` 是 medium 单档判定，`isTabletLayout()` 保持历史语义(medium 或 expanded，即 ≥600dp 为真)。
+- 折叠屏三件套:`reservedRegions()` 给 `{division, occlusion, all}`(三个键恒存在)；`hasFold()` 是**结构性**信号(有折痕的机器恒 true，不随折叠/平展跳变)；`layoutMode()` 给 `{posture, widthClass, foldAware, suggested}`，`suggested` ∈ `"single"` / `"dual"` / `"tablet"` —— **只给建议，框架不改布局**。
+- **别用姿态推布局**:上下折展开后宽度可能仍 <600dp，且系统事件里尺寸变化早于折叠状态变化 ⇒ 布局只信宽度。折痕坐标是**显示器坐标**，分屏下要自行换算。
 
 #### 桌面上的行为(不要把它当移动端用)
 
@@ -621,6 +630,11 @@ import {
 | `const [data, {refetch}] = createResource(f)` 不起作用 | **已在框架里修掉(2026-09-22)**:嵌套解构(数组里套对象)当年是 parser 的 bug,现在直接可写。等价写法 `const [data, res] = createResource(f)` + `res.refetch()` 照旧可用 |
 | 折叠双栏不生效 | 这是设计:Windows / X11 没有折叠姿态查询 API,**没人上报 ⇒ 姿态恒为 `flat`** ⇒ 不分栏。宿主侧调 `reportPosture`;排查第一步用 `posture(win)` 确认读到的是 `"half-open"`,三步排查见 GUI 路由手册 §9.2 |
 | 折痕宽度读出来是 0 | **已在框架里修掉(2026-09-22)**:`hinge()` / `regions()` 的输出用 `width/height`,而 `reportPosture` 的入参历史上只读 `w/h` ⇒ 回填时静默读成 0(只影响分栏比例,什么都不报)。现在**两种拼法都认**(短名优先),`reportPosture({ hinge: hinge() })` 可以直接写 |
+| 折叠屏展开后布局没变宽 | 这是**预期行为**:上下折(Pocket 系列)展开后宽度可能仍 <600dp,断点根本没跨档。别用 `posture()` 推布局 —— 官方事件时序里尺寸变化还早于折叠状态变化,用姿态驱动会落后一帧。**布局只认 `widthClass()` / `useWindowInfo()`** |
+| `widthClass()` 拿到 `"expanded"` 却想按平板排版 | 断点是**三档**(compact<600 / medium 600–840 / expanded>840)。只想判"够宽了"用 `isTabletLayout()`(≥600dp 即真,历史语义);只判中档用 `isMediumWidth()` |
+| `avoidReserved` 写在 `<scroll>` 上没反应 | 这是设计:避让会收缩滚动容器的可用区,与内容/滚动条语义打架 ⇒ 内核忽略并打一条一次性告警。要在滚动区里避让,自己在内容外层加一层带 `avoidReserved` 的容器 |
+| `hasFold()` 忽真忽假 | 不该发生 —— `hasFold()` 是**结构性**信号(有折痕的机器恒 true,不随折叠/平展跳变),否则列数会跟着姿态跳。要的是"此刻折没折"就用 `posture()`;要"折痕在哪/多宽"用 `reservedRegions().division` |
+| 折痕坐标换算到窗口坐标 | 折痕是**显示器坐标**(设备像素),全屏时等于窗口坐标,分屏 / 自由窗口下不等价。换算要减去窗口在屏上的原点:`windowInfo().x` / `.y` |
 
 ::: tip 标注"已在框架里修掉"的四条
 JSX 缺省工厂、缺名导入、嵌套解构、折痕键名这四件事都修在了内核里(parser / compiler / `gx/screen`), 换成新版引擎后不必再按"解法"那栏绕行;文档与手册里其它地方若还写着"必须自己 import `h`""嵌套解构不支持",以本表为准。
