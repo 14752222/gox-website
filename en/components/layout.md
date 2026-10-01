@@ -1,6 +1,6 @@
 ---
 title: "Layout Containers: column / row / grid / scroll"
-description: "Gox GUI layout containers: column/row main-axis containers (gap, padding, flexGrow/flexShrink, percentages and clamps), grid equal-width lattice, scroll vertical scrolling, separator/spacer/rect."
+description: "Gox GUI layout containers: column/row main-axis containers (gap, padding, flexGrow/flexShrink, percentages and clamps), grid equal-width lattice, the scroll container (including the vlist virtualized long list), separator/spacer/rect."
 ---
 
 # Layout Containers: column / row / grid / scroll
@@ -105,14 +105,17 @@ A grid container: children are automatically filled **row-first**, in declaratio
 
 ### `<scroll>` {#scroll}
 
-`Stable` · `Vertical scrolling`
+`Stable` · `Vertical / horizontal scrolling` · `Virtualized long list`
 
-A vertical scrolling container: when content exceeds the viewport it can be scrolled with the wheel; an 8px track + proportional thumb automatically appear on the right. **Paint clipping and hit clipping share the same viewport** — rows scrolled out of view can neither be drawn nor clicked, so there are no "invisible but clickable" ghost hits.
+A scrolling container: when content exceeds the viewport it can be scrolled with the wheel; overflow in height produces a right track and overflow in width a bottom track (8px track + proportional thumb). **Paint clipping and hit clipping share the same viewport** — rows scrolled out of view can neither be drawn nor clicked, so there are no "invisible but clickable" ghost hits.
 
 | Prop | Type | Description |
 | --- | --- | --- |
 | width / height | number | **height defaults to 200 when not given**; no scrollbar if content fits within one screen |
 | onWheel | function | Wheel events only bubble out to the script after the container has reached its boundary; the callback receives `{deltaY}` |
+| vlist | boolean | Enables the **virtualized long list**: only visible rows are materialized (see below) |
+| itemHeight | number | Fixed height of each row (required for vlist, must be positive) |
+| buffer | number | Extra rows materialized above and below the viewport, default 2; `0` is allowed |
 | Children | element / array | Array children are expanded into sibling nodes one by one; no manual map needed |
 
 ```js
@@ -129,9 +132,32 @@ for (let i = 0; i < 20; i++) {
 </scroll>
 ```
 
-- Vertical scrolling only; horizontal scrolling and mouse-dragging the scrollbar are not implemented in v1 (wheel or script-driven offsetY only).
-- No virtualization: 20 rows means 20 mounted nodes; for long lists, mount only the visible range yourself.
+- Both axes are supported: overflowing content produces a right track for height and a bottom track for width; `Shift+wheel` scrolls horizontally, and the thumb is **draggable**.
 - Wheel behavior follows DOM scroll-chain semantics: consumed inside the container first, bubbles only at the boundary.
+
+#### Virtualized long list (`vlist`)
+
+With tens of thousands of rows, every row is mounted by default (100 000 rows = 100 000 subtrees, over two seconds on first frame). Adding `vlist itemHeight={N}` decouples cost from row count:
+
+```jsx
+<scroll vlist itemHeight={28} width={420} height={300}>
+  <view each={rows} key="id">
+    {(r, i) => <row height={28}><text>{i} · {r.title}</text></row>}
+  </view>
+</scroll>
+```
+
+The kernel materializes only the **visible range plus `buffer` rows** above and below, and pads the total height with two spacer nodes — so the **scrollbar length and travel match full rendering pixel-for-pixel**, and the index passed to a row is the **global index** (scroll to row 50000 and `i` is 50000).
+
+Measured (`go test ./gfx -bench BenchmarkVlist`, Intel i7-10700K):
+
+| Rows | First frame (full → vlist) | One scroll frame (full → vlist) |
+| --- | --- | --- |
+| 1 000 | 16 ms → **2 ms** | 6.5 ms → **0.17 ms** |
+| 10 000 | 206 ms → **10 ms** | 93 ms → **0.11 ms** |
+| 100 000 | 2 187 ms → **89 ms** | 999 ms → **0.12 ms** |
+
+Two caveats: `itemHeight` must be a positive number (omitting it silently degrades to full rendering with a single warning), and row height must be **fixed** — variable-height rows are not supported (they need measurement plus a second layout pass, and content visibly jumps while scrolling).
 
 ### `<separator>` {#separator}
 

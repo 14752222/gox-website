@@ -41,7 +41,7 @@ const [tab, setTab] = createSignal(0);
 ```
 
 ::: info Function children rebuild the whole group
-When the array or the condition changes, the whole group of children is **rebuilt** (effects in the old subtree are disposed): adding or removing a few rows is fine, but each row's input focus, scroll position, and local signals are lost. For **keyed reuse** (rebuilding only the rows that actually changed) use the [each directive](/en/components/patterns#view); for very long lists you still have to mount only the visible range yourself (no virtualization).
+When the array or the condition changes, the whole group of children is **rebuilt** (effects in the old subtree are disposed): adding or removing a few rows is fine, but each row's input focus, scroll position, and local signals are lost. For **keyed reuse** (rebuilding only the rows that actually changed) use the [each directive](/en/components/patterns#view); for very long lists use [`<scroll vlist>`](/en/components/layout#scroll) to virtualize, materializing only the visible range.
 :::
 
 ## Lists & Conditionals (element-level directives + gx/view) {#view}
@@ -102,7 +102,7 @@ Props are evaluated at the call site: writing `each={rows()}` only captures a sn
 
 - Reuse checks include the index: reordering or deleting a middle item shifts the indexes of later rows, and those rows re-render in place (that's how row numbers track position). Add stable when rows don't display their position to take the index out of the check (the cost: the index argument stays frozen at its mount-time value).
 - show / Switch are not v-if: hiding only removes the subtree from layout flow and keeps it alive — while hidden, the content still follows the signals, and it comes back exactly as it was. For "built fresh on every show" use function children `{() => cond() ? <X/> : null}`.
-- When a row is deleted, its subtree is destroyed (onCleanup runs); keyed "move" animations and virtualized long lists are not implemented.
+- When a row is deleted, its subtree is destroyed (onCleanup runs); keyed "move" animations are not implemented (for virtualized long lists see [`<scroll vlist>`](/en/components/layout#scroll)).
 - The host is a transparent placeholder node: put it in a column for vertical stacking or a row for horizontal stacking; it takes up no box of its own; row wrap does not recognize it for line breaking (use a plain row for wrapping label flows).
 
 ## Events & Focus {#events}

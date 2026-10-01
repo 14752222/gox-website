@@ -1,6 +1,6 @@
 ---
 title: 布局容器：column / row / grid / scroll
-description: Gox GUI 布局容器：column/row 主轴容器（gap、padding、flexGrow/flexShrink、百分比与钳位）、grid 等宽栅格、scroll 纵向滚动、separator/spacer/rect。
+description: Gox GUI 布局容器：column/row 主轴容器（gap、padding、flexGrow/flexShrink、百分比与钳位）、grid 等宽栅格、scroll 滚动容器（含 vlist 虚拟化长列表）、separator/spacer/rect。
 ---
 
 # 布局容器：column / row / grid / scroll
@@ -105,14 +105,17 @@ description: Gox GUI 布局容器：column/row 主轴容器（gap、padding、fl
 
 ### `<scroll>` {#scroll}
 
-`稳定` · `纵向滚动`
+`稳定` · `纵向/横向滚动` · `虚拟化长列表`
 
-纵向滚动容器:内容超出视口时可滚轮滚动,右侧自动出现 8px 轨道 + 比例滑块。 **绘制裁剪与命中裁剪共用同一个视口** —— 滚出视口的行既画不出来也点不中,不会出现"看不见却点得到"的幽灵点击。
+滚动容器:内容超出视口时可滚轮滚动,超高出右轨、超宽出底轨(8px 轨道 + 比例滑块)。 **绘制裁剪与命中裁剪共用同一个视口** —— 滚出视口的行既画不出来也点不中,不会出现"看不见却点得到"的幽灵点击。
 
 | Prop | 类型 | 说明 |
 | --- | --- | --- |
 | width / height | number | **height 不给时缺省 200**;内容不足一屏则不出滚动条 |
 | onWheel | function | 容器滚到边界后,滚轮事件才继续往外冒泡给脚本;回调收到 `{deltaY}` |
+| vlist | boolean | 开启**虚拟化长列表**:只物化可见的行(见下) |
+| itemHeight | number | 每行的固定高(vlist 必给,正数) |
+| buffer | number | 可见区上下各多物化几行,缺省 2;`0` 合法 |
 | 子节点 | 元素 / 数组 | 数组子节点会逐个展开成兄弟节点,不需要手动 map |
 
 ```js
@@ -129,9 +132,36 @@ for (let i = 0; i < 20; i++) {
 </scroll>
 ```
 
-- 只支持纵向滚动;横向滚动与滚动条鼠标拖拽 v1 未实现(只能滚轮或脚本改 offsetY)。
-- 没有虚拟化:20 行就挂 20 个节点,长列表请自行只挂可见区间。
+- 纵向与横向都支持:内容超高出右轨、超宽出底轨,`Shift+滚轮`走横向;滚动条**滑块可拖拽**。
 - 滚轮遵循 DOM 滚动链语义:先在容器内消费,到边界才冒泡。
+
+#### 虚拟化长列表(`vlist`)
+
+行数上万时,默认会把每一行都建成节点(十万行 = 十万棵子树,首帧要两秒多)。加
+`vlist itemHeight={N}` 就让成本与行数**脱钩**:
+
+```jsx
+<scroll vlist itemHeight={28} width={420} height={300}>
+  <view each={rows} key="id">
+    {(r, i) => <row height={28}><text>{i} · {r.title}</text></row>}
+  </view>
+</scroll>
+```
+
+内核只物化**可见区间 + 上下各 `buffer` 行**,上下用两个撑高垫片补出总高,所以
+**滚动条长度、行程与全量渲染逐像素一致**;行内拿到的下标是**全局下标**(滚到第
+50000 行,`i` 就是 50000)。
+
+实测(`go test ./gfx -bench BenchmarkVlist`,本机 i7-10700K):
+
+| 行数 | 首帧(全量 → vlist) | 滚动一帧(全量 → vlist) |
+| --- | --- | --- |
+| 1 000 | 16 ms → **2 ms** | 6.5 ms → **0.17 ms** |
+| 10 000 | 206 ms → **10 ms** | 93 ms → **0.11 ms** |
+| 100 000 | 2 187 ms → **89 ms** | 999 ms → **0.12 ms** |
+
+两点注意:`itemHeight` 必给正数(漏写会退化成全量并告警一次);行高必须**固定**,
+变高行不支持(那需要测量 + 二次布局,且滚动中内容会跳)。
 
 ### `<separator>` {#separator}
 

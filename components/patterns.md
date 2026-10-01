@@ -41,7 +41,7 @@ const [tab, setTab] = createSignal(0);
 ```
 
 ::: info 函数子节点是"整组重建"
-数组或条件变化时整组**重建**子树(旧子树的 effect 会被注销):增删几行没问题, 但每一行的输入焦点、滚动位置、行内 signal 都会丢。要**带 key 的复用**(只重建真正 变了的行)请用 [each 指令](/components/patterns#view);超长列表仍需自行只挂可见区间 (虚拟化未做)。
+数组或条件变化时整组**重建**子树(旧子树的 effect 会被注销):增删几行没问题, 但每一行的输入焦点、滚动位置、行内 signal 都会丢。要**带 key 的复用**(只重建真正 变了的行)请用 [each 指令](/components/patterns#view);超长列表用 [`<scroll vlist>`](/components/layout#scroll) 虚拟化,只物化可见区间。
 :::
 
 ## 列表与条件(元素级指令 + gx/view) {#view}
@@ -102,7 +102,7 @@ import { Switch, Match } from "gx/view";   // each / show 是元素级指令, �
 
 - 复用判定含下标:重排或删除中间一项会让后续行的下标前移,那些行就地重渲染(序号才跟着位置走)。 行不显示位置时加 stable 把下标移出判定(代价:下标参数停在挂载时的值)。
 - show / Switch 不是 v-if:隐藏只摘出布局流、子树保活 —— 隐藏期间内容仍在跟着信号走,再显示状态原样。 要"每次显示都全新构建"就用函数子节点 `{() => cond() ? <X/> : null}`。
-- 行被删除时该行子树销毁(onCleanup 执行);keyed "移动"动画与虚拟化长列表未做。
+- 行被删除时该行子树销毁(onCleanup 执行);keyed "移动"动画未做(虚拟化长列表见 [`<scroll vlist>`](/components/layout#scroll))。
 - 宿主是透明占位节点:放进 column 竖排、放进 row 横排,自己不占盒子; row wrap 的折行不认它(要折行标签流请用普通 row)。
 
 ## 事件与焦点 {#events}

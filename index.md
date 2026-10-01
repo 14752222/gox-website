@@ -157,7 +157,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 0.4.0 | 脚手架 `gox create`；路由 `gx/router` 与屏幕 `gx/screen` 成为内置模块 |
 
 ::: info 已知缺口
-虚拟化长列表与富文本(行内混排样式)尚未封装 —— 表格 / 树 / tooltip / 图标 / spinner / tabs 等数据展示与反馈类组件已在 0.9.0 落地；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，需移动宿主实现。逐项见[限制与常见误区](/components/limits)。
+富文本(行内混排样式)尚未封装(虚拟化长列表已在 [`<scroll vlist>`](/components/layout#scroll) 落地) —— 表格 / 树 / tooltip / 图标 / spinner / tabs 等数据展示与反馈类组件已在 0.9.0 落地；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，需移动宿主实现。逐项见[限制与常见误区](/components/limits)。
 :::
 
 </div>

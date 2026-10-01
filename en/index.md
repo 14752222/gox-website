@@ -155,7 +155,7 @@ Current version **v0.7.0**; see [GitHub Releases](https://github.com/14752222/Go
 | 0.4.0 | `gox create` scaffolding; routing `gx/router` and screen `gx/screen` become built-in modules |
 
 ::: info Known Gaps
-Virtualized long lists and rich text (inline mixed styling) are not yet wrapped — the table / tree / tooltip / icon / spinner / tabs data-display and feedback widgets all landed in 0.9.0; parts of the native-capability layer that depend on real devices (camera / location / photo library / permissions) honestly report `unsupported` on desktop and require a mobile host implementation. See [Limitations and Common Pitfalls](/en/components/limits) for the itemized list.
+Rich text (inline mixed styling) is not yet wrapped (virtualized long lists landed as [`<scroll vlist>`](/en/components/layout#scroll)) — the table / tree / tooltip / icon / spinner / tabs data-display and feedback widgets all landed in 0.9.0; parts of the native-capability layer that depend on real devices (camera / location / photo library / permissions) honestly report `unsupported` on desktop and require a mobile host implementation. See [Limitations and Common Pitfalls](/en/components/limits) for the itemized list.
 :::
 
 </div>
