@@ -1,13 +1,24 @@
 ---
 title: 常见问题 FAQ
-description: Gox 常见问题：为什么不支持 var、与 Node.js/Bun/Deno 的关系、macOS 支持情况、如何调试与参与开发。
+description: Gox 常见问题：语言子集与 var 支持情况、与 Node.js/Bun/Deno 的关系、macOS 支持情况、如何调试与参与开发。
 ---
 
 # 常见问题 FAQ
 
-## 为什么不支持 var?
+## 支持 var 吗?
 
-Gox 刻意只实现 ES6+ 子集:`let` / `const` 具备块级作用域,语义更清晰,省去了 `var` 提升等历史包袱。REPL 启动时的提示语 "ES6 subset, no var" 说的就是这件事。
+支持。0.8.0 起 `var` 与 `let` / `const` 并存:`var` 按传统语义工作 —— **函数作用域**、重复声明允许、声明提升到函数顶部(`undefined` 而非 TDZ)。日常写代码仍推荐 `let` / `const`(块级作用域、语义更清晰),`var` 的保留是为了让已有的 ES5 风格代码能直接跑起来。
+
+在 REPL 里可以直接试:
+
+```
+> var x = 1
+> function f() { var x = 2; return x }
+> f()
+  2
+> x
+  1
+```
 
 ## 和 Node.js / Bun / Deno 是什么关系?
 

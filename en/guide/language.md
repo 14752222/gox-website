@@ -1,6 +1,6 @@
 ---
 title: Language Basics and Boundaries
-description: "The ES6+ language subset of Gox: let/const (no var), arrow functions, closures, class, destructuring, template literals, optional chaining, plus language boundaries like import as, Date, and encodeURI."
+description: "The ES6+ language subset of Gox: let/const/var, arrow functions, closures, class, destructuring, template literals, optional chaining, plus language boundaries like import as, Date, and encodeURI."
 ---
 
 # Language Basics and Boundaries

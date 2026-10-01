@@ -62,7 +62,7 @@ features:
 
 <div class="terminal">
   <div class="terminal-bar"><i></i><i></i><i></i><span>gox — REPL / run scripts / create projects</span></div>
-  <div class="terminal-body"><span class="prompt">$</span> npm i -g @goxjs/goxjs<br><span class="prompt">$</span> gox<br>Gox REPL (ES6 subset, no var)<br>Type :exit to quit, :help for help<br>&nbsp;<br><span class="prompt">&gt;</span> let x = 10<br><span class="prompt">&gt;</span> let y = 20<br><span class="prompt">&gt;</span> x + y<br><span class="out">&nbsp;&nbsp;30</span><br><span class="prompt">&gt;</span> [1, 2, 3].map(v =&gt; v * 2)<br><span class="out">&nbsp;&nbsp;[2, 4, 6]</span><br><span class="prompt">&gt;</span> <span class="caret"></span></div>
+  <div class="terminal-body"><span class="prompt">$</span> npm i -g @goxjs/goxjs<br><span class="prompt">$</span> gox<br>Gox REPL (ES6 subset)<br>Type :exit to quit, :help for help<br>&nbsp;<br><span class="prompt">&gt;</span> let x = 10<br><span class="prompt">&gt;</span> let y = 20<br><span class="prompt">&gt;</span> x + y<br><span class="out">&nbsp;&nbsp;30</span><br><span class="prompt">&gt;</span> [1, 2, 3].map(v =&gt; v * 2)<br><span class="out">&nbsp;&nbsp;[2, 4, 6]</span><br><span class="prompt">&gt;</span> <span class="caret"></span></div>
 </div>
 
 You can also skip the install: `npx goxjs app.js`; or build from source with `go build`. See [Installation and Creating a Project](/en/guide/install) for details.

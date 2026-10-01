@@ -1,13 +1,24 @@
 ---
 title: FAQ
-description: "Gox frequently asked questions: why no var, its relationship to Node.js/Bun/Deno, macOS support, and how to debug and contribute."
+description: "Gox frequently asked questions: the language subset and var support, its relationship to Node.js/Bun/Deno, macOS support, and how to debug and contribute."
 ---
 
 # FAQ
 
-## Why no var?
+## Is `var` supported?
 
-Gox deliberately implements only an ES6+ subset: `let` / `const` have block scoping with clearer semantics, leaving behind historical baggage such as `var` hoisting. That's exactly what the REPL banner "ES6 subset, no var" refers to.
+Yes. Since 0.8.0 `var` coexists with `let` / `const`: `var` follows the traditional semantics — **function scope**, redeclaration allowed, and hoisting to the top of the function (yielding `undefined` rather than a TDZ error). Day-to-day code should still prefer `let` / `const` (block scoping, clearer semantics); `var` is kept so that existing ES5-style code runs directly.
+
+You can try it in the REPL:
+
+```
+> var x = 1
+> function f() { var x = 2; return x }
+> f()
+  2
+> x
+  1
+```
 
 ## How does it relate to Node.js / Bun / Deno?
 

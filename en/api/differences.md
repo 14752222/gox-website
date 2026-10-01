@@ -1,6 +1,6 @@
 ---
 title: Differences from Node.js / Browsers, and Missing APIs
-description: "A list of differences between Gox and Node.js/browsers: no var/Date/Intl/DOM/npm ecosystem, a missing-API cheat sheet (Date, encodeURI, structuredClone, require, etc.) for migration troubleshooting."
+description: "A list of differences between Gox and Node.js/browsers: no Date/Intl/DOM/npm ecosystem, a missing-API cheat sheet (Date, encodeURI, structuredClone, require, etc.) for migration troubleshooting."
 ---
 
 # Differences from Node.js / Browsers, and Missing APIs

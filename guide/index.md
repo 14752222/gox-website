@@ -19,7 +19,7 @@ description: Gox 使用教程：安装与 gox create 脚手架、REPL 与命令�
 | --- | --- | --- |
 | 1 | [安装与创建工程](/guide/install) | npm 安装、`gox create` 脚手架、从源码构建 |
 | 2 | [REPL 与命令行](/guide/repl) | 交互式环境、命令速查、脚本回显语义 |
-| 3 | [语言基础与边界](/guide/language) | ES6+ 子集、写法边界（不支持 var / import as / Date） |
+| 3 | [语言基础与边界](/guide/language) | ES6+ 子集、写法边界（import as / Date 等） |
 | 4 | [ES 模块](/guide/modules) | import/export、动态 import()、没有 CommonJS |
 | 5 | [异步与事件循环](/guide/async) | async/await、定时器家族、退出语义 |
 | 6 | [内置对象速览](/guide/builtins) | Object/Array/Map/Set/Promise/Temporal 等全局对象 |

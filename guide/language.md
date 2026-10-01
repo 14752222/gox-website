@@ -1,6 +1,6 @@
 ---
 title: 语言基础与边界
-description: Gox 的 ES6+ 语言子集：let/const（不支持 var）、箭头函数、闭包、class、解构、模板字符串、可选链，以及 import as、Date、encodeURI 等语言边界。
+description: Gox 的 ES6+ 语言子集：let/const/var 声明、箭头函数、闭包、class、解构、模板字符串、可选链，以及 import as、Date、encodeURI 等语言边界。
 ---
 
 # 语言基础与边界

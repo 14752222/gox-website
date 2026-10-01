@@ -11,7 +11,7 @@ Starting with no arguments opens the interactive environment, great for quick ex
 
 ```bash
 $ gox
-Gox REPL (ES6 subset, no var)
+Gox REPL (ES6 subset)
 Type :exit to quit, :help for help
 
 > let x = 10

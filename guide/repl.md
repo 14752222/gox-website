@@ -11,7 +11,7 @@ description: Gox 交互式 REPL 与命令行速查：gox 运行脚本、gox crea
 
 ```bash
 $ gox
-Gox REPL (ES6 subset, no var)
+Gox REPL (ES6 subset)
 Type :exit to quit, :help for help
 
 > let x = 10
