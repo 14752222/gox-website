@@ -1,6 +1,6 @@
 ---
 title: GUI Desktop Apps
-description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 43 built-in elements, routing and multi-window — a counter in 16 lines."
+description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 44 built-in elements, routing and multi-window — a counter in 16 lines."
 ---
 
 # GUI Desktop Apps
@@ -42,7 +42,7 @@ There are **42** built-in elements scriptable from JS (internal tags constructed
 | Category | Elements |
 | --- | --- |
 | Layout containers<br>7 | `<column>`, `<row>`, `<grid>`, `<scroll>`, `<separator>`, `<spacer>`, `<rect>` |
-| Form controls<br>9 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<search>`, `<textarea>`, `<select>`, `<slider>` |
+| Form controls<br>10 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<search>`, `<textarea>`, `<select>`, `<rating>`, `<slider>` |
 | Content display<br>16 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<video>` (tag + host contract; decoding is delegated to the platform video layer), `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
 | Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` / `saveFile` from `gx/dialog` |
 | Navigation & menus<br>5 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `<tabs>`, `<tab>`, `openContextMenu(x, y, items)` |

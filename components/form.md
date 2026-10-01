@@ -1,9 +1,9 @@
 ---
 title: 表单控件：button / input / select / slider
-description: Gox GUI 表单控件：button、checkbox/radio/switch、input、textarea、select 下拉框、slider 滑块 —— 全部受控组件，model 双向绑定一条顶两条。
+description: Gox GUI 表单控件：button、checkbox/radio/switch、input、textarea、select 下拉框、rating 星级、slider 滑块 —— 全部受控组件，model 双向绑定一条顶两条。
 ---
 
-# 表单控件：button / input / search / select / slider
+# 表单控件：button / input / search / select / rating / slider
 
 全部是受控组件,显示只看 prop,交互只派发回调(见[第 0 节约定 ③](/components/))。
 
@@ -161,6 +161,27 @@ const [q, setQ] = createSignal("");
 ::: tip 与 `<input>` 的分工
 用 `<input>` + `onKeyDown` 判键名也能做"回车提交";`<search>` 把这个最常见的形状做成了组件 —— 图标提示这是搜索位,`Enter` 有专门的 `onSearch` 事件,不必再在 `onKeyDown` 里手判键名。
 :::
+
+### `<rating>` {#rating}
+
+`稳定`
+
+星级评分:每颗星占一个方格,前 `value` 颗实心(可 `color` 覆盖,缺省主题强调色),其余空心描边。**完全受控**(与 [`<select>`](#select) 同一哲学):显示只看 `value`,点击第几格就派发 `onChange({value})`,值不变不派发(与分页器同款)。`model` 口径与 `select` 相同 —— 读 `value` / 写 `onChange`。
+
+| Prop | 类型 | 说明 |
+| --- | --- | --- |
+| value | number | 当前星级(0 = 全空;显示只看它) |
+| max | number | 星数,缺省 5,上限 10 |
+| color | color | 实心星颜色,缺省主题强调色 |
+| disabled | boolean | 禁用(不命中、降饱和) |
+| onChange | function | 点击派发,收到 `{value}`(**number**,第几颗星) |
+
+```js
+const [score, setScore] = createSignal(3);
+
+<rating value={score()} onChange={(e) => setScore(e.value)} />
+<rating value={7} max={10} color="#e01b24" />
+```
 
 ### `<textarea>` {#textarea}
 

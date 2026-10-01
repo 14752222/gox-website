@@ -1,9 +1,9 @@
 ---
-title: "Form Controls: button / input / select / slider"
-description: "Gox GUI form controls: button, checkbox/radio/switch, input, textarea, select dropdown, slider — all controlled components, with model two-way binding where one directive replaces two props."
+title: "Form Controls: button / input / select / rating / slider"
+description: "Gox GUI form controls: button, checkbox/radio/switch, input, textarea, select dropdown, rating stars, slider — all controlled components, with model two-way binding where one directive replaces two props."
 ---
 
-# Form Controls: button / input / search / select / slider
+# Form Controls: button / input / search / select / rating / slider
 
 All of these are controlled components: display follows props only, and interaction only dispatches callbacks (see [convention ③ in Section 0](/en/components/)).
 
@@ -161,6 +161,27 @@ const [q, setQ] = createSignal("");
 ::: tip `<input>` vs `<search>`
 `<input>` + `onKeyDown` can do "submit on Enter" too; `<search>` bakes the most common shape into a component — the icon signals a search slot, and `Enter` gets its own `onSearch` event, so there is no key-name checking in `onKeyDown`.
 :::
+
+### `<rating>` {#rating}
+
+`Stable`
+
+Star rating: each star occupies a cell; the first `value` stars are filled (overridable via `color`, defaults to the theme accent), the rest are outlined. **Fully controlled** (same philosophy as [`<select>`](#select)): display follows `value` only, and clicking the i-th cell dispatches `onChange({value})` — no dispatch when the value is unchanged (like the paginator). The `model` contract matches `select`: read `value`, write `onChange`.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| value | number | current rating (0 = all empty; display follows it) |
+| max | number | star count, default 5, capped at 10 |
+| color | color | filled-star color, defaults to the theme accent |
+| disabled | boolean | disabled (no hit testing, desaturated) |
+| onChange | function | dispatched on click, receives `{value}` (**number**, which star) |
+
+```js
+const [score, setScore] = createSignal(3);
+
+<rating value={score()} onChange={(e) => setScore(e.value)} />
+<rating value={7} max={10} color="#e01b24" />
+```
 
 ### `<textarea>` {#textarea}
 
