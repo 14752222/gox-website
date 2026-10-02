@@ -122,7 +122,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律; **子节点同理** —— ``count: {count()}`` 是一张快照, 要写 ``{() => `count: ${count()}`}``(这条没有警告)。详见 [组件参考 · 列表与条件](/components/patterns#view)。
+**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律; **子节点同理** —— ``count: {count()}`` 是一张快照, 要写 ``{() => `count: ${count()}`}``(这条没有警告)。详见 [组件参考 · 列表与条件](/components/patterns#view)。**三元 / 短路会吃掉订阅**: 订阅型读数(`useXxx()` 一族)写在首帧没走到的分支里就没建立订阅, effect 一个依赖都没有、永不重跑且无警告 —— 先无条件取一次订阅型读数再分支: `const r = useReservedRegions()(); if (!hasFold()) return "未检测到折痕"; …`; 哪些读数带订阅见 [组件参考 · 列表与条件](/components/patterns#view)。
 
 ## 路由:用 gx/router
 

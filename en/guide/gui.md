@@ -122,7 +122,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. **Children are no exception**: ``count: {count()}`` is a snapshot; write ``{() => `count: ${count()}`}`` (this one has no warning). For details, see [Component Reference · Lists and conditions](/en/components/patterns#view).
+**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. **Children are no exception**: ``count: {count()}`` is a snapshot; write ``{() => `count: ${count()}`}`` (this one has no warning). For details, see [Component Reference · Lists and conditions](/en/components/patterns#view). **Ternaries / short-circuits eat subscriptions**: a subscription-type reading (the `useXxx()` family) inside a branch the first frame doesn't take is never called, so no subscription is established — the effect ends up with zero dependencies, never re-runs, and emits no warning. Take the subscription reading unconditionally first, then branch: `const r = useReservedRegions()(); if (!hasFold()) return "no fold";`. Which readings subscribe is listed in [Component Reference · Lists and conditions](/en/components/patterns#view).
 
 ## Routing: gx/router
 

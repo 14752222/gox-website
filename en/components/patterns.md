@@ -98,6 +98,20 @@ import { Switch, Match } from "gx/view";   // each / show are element-level dire
 Props are evaluated at the call site: writing `each={rows()}` only captures a snapshot, and the UI won't re-render when the signal changes; writing `each={() => rows()}` is what "follows the signal". This is the same discipline as the controlled `input`'s `value` having to be a function; passing an array / number literal is a valid **static** list (rendered once).
 
 **The same goes for children — but this one is silent**: ``<text>count: {count()}</text>`` evaluates `count()` before `h()` is even called, so it stays frozen on the first frame; write ``<text>{() => `count: ${count()}`}</text>`` instead. A text child takes a scalar by nature (``<text>hello</text>`` is itself a string child), so at runtime there is no way to tell "static text" from "a snapshot" — this one is on discipline alone.
+
+**Ternaries / short-circuits hide a silent pitfall of the same family**: a subscription-type reading (the `useXxx()` family) written inside a branch the first frame doesn't take is never called at all ⇒ no subscription is established, the effect ends up with zero dependencies and never re-runs, with no warning. Take the subscription reading unconditionally first, then branch:
+
+```js
+// ❌ hasFold() is false on the first frame ⇒ useReservedRegions()() never runs ⇒ never updates
+const bad = () => hasFold() ? useReservedRegions()().division.length + " rows" : "no fold";
+
+// ✅ subscribe first, then branch
+const good = () => {
+  const r = useReservedRegions()();   // establish the subscription first
+  if (!hasFold()) return "no fold";
+  return r.division.length + " rows";
+};
+```
 :::
 
 - Reuse checks include the index: reordering or deleting a middle item shifts the indexes of later rows, and those rows re-render in place (that's how row numbers track position). Add stable when rows don't display their position to take the index out of the check (the cost: the index argument stays frozen at its mount-time value).

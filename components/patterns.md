@@ -98,6 +98,20 @@ import { Switch, Match } from "gx/view";   // each / show 是元素级指令, �
 属性在调用当场求值:写 `each={rows()}` 只拿到一张快照,之后信号再变也不会重渲染; 写 `each={() => rows()}` 才是"跟着信号走"。这与受控 `input` 的 `value` 必须传函数是同一条纪律; 传数组 / 数字字面量是合法的**静态**列表(渲染一次)。
 
 **子节点同理, 但这条不报错也不警告**: ``<text>count: {count()}</text>`` 里的 `count()` 在 `h()` 之前就求值完了, 于是永远停在第一帧; 要写 ``<text>{() => `count: ${count()}`}</text>``。文本子节点天生收标量(``<text>你好</text>`` 就是字符串子节点), 运行期分不出"静态文本"与"快照", 所以这条只能靠纪律。
+
+**三元 / 短路还有一条同族的静默坑**: 订阅型读数(`useXxx()` 一族)写在**首帧没走到的分支**里, 那次调用根本没发生 ⇒ 订阅没建立, effect 一个依赖都没有、之后永不重跑, 且没有任何警告。正解是**先无条件取一次订阅型读数, 再按值分支**:
+
+```js
+// ❌ 首帧 hasFold() 为 false ⇒ useReservedRegions()() 没被调用 ⇒ 之后永不更新
+const bad = () => hasFold() ? "折痕 " + useReservedRegions()().division.length + " 条" : "未检测到折痕";
+
+// ✅ 先订阅, 再分支
+const good = () => {
+  const r = useReservedRegions()();   // 先建立订阅
+  if (!hasFold()) return "未检测到折痕";
+  return "折痕 " + r.division.length + " 条";
+};
+```
 :::
 
 - 复用判定含下标:重排或删除中间一项会让后续行的下标前移,那些行就地重渲染(序号才跟着位置走)。 行不显示位置时加 stable 把下标移出判定(代价:下标参数停在挂载时的值)。
