@@ -7,7 +7,13 @@ description: Gox GUI 表单控件：button、checkbox/radio/switch、input、tex
 
 全部是受控组件,显示只看 prop,交互只派发回调(见[第 0 节约定 ③](/components/))。唯一的例外是 [`<upload>`](#upload):选文件的结果(系统给的路径)无法由脚本自己构造,所以它**受控/非受控两用**。
 
+::: tip 各小节顶部的截图不是画的,是渲染出来的
+截图由 [`testdata/shots/<组件>.js`](https://github.com/14752222/Gox/tree/main/testdata/shots) 经离屏光栅化生成(弹层类拍的是展开态),图上就是渲染层真实会画出的像素。本仓库提交的是 macOS 一套;Windows / Linux 由 [CI 矩阵](https://github.com/14752222/Gox/blob/main/.github/workflows/desktop-shots.yml)各出一套 artifact —— 字体来自各平台系统字体,三平台的像素本来就该不一样。自己重新生成:`GOX_SHOTS_OUT=<目录> go test ./gfx/ -run TestGalleryShotScripts`。
+:::
+
 ### `<button>` {#button}
+
+![button 组件截图](/Gox/components/shots/darwin/button.png)
 
 `稳定` · `受控外观`
 
@@ -37,6 +43,8 @@ description: Gox GUI 表单控件：button、checkbox/radio/switch、input、tex
 **键盘操作**:Tab 停到按钮上之后,`Enter` 或 `Space` = 点一下(走同一个 `onClick` 出口,不另写一份键盘逻辑)。图标按钮(只有图形没有文字)记得给名字:`aria-label="删除"` —— 否则 `focusOrder()` 里它是一个无名控件。
 
 ### `<checkbox> / <radio> / <switch>` {#checkbox}
+
+![checkbox / radio / switch 组件截图](/Gox/components/shots/darwin/checkbox.png)
 
 `稳定` · `纯受控`
 
@@ -86,6 +94,8 @@ const [notify, setNotify] = createSignal(true);
 `radio` 的分组键是 `name` prop;不写时按"同一个父节点"分组 —— 所以"两个 radio 并排当开关用"这种最简用法不用被迫起名,但一个容器里**两组**单选必须给不同的 `name`。
 
 ### `<input>` {#input}
+
+![input 组件截图](/Gox/components/shots/darwin/input.png)
 
 `稳定` · `IME:仅 Windows`
 
@@ -145,6 +155,8 @@ tick();
 
 ### `<search>` {#search}
 
+![search 组件截图](/Gox/components/shots/darwin/search.png)
+
 `稳定` · `IME:仅 Windows`
 
 `<input>` 的字段变体:左侧多一个放大镜,获焦时按 `Enter` **整段提交** `onSearch({value})` —— 逐键 `onInput` 之外再给一个明确的搜索提交点(与 DOM 搜索框一致)。其余(受控 value / model / placeholder / 光标 / 键盘归属 / IME)与 [`<input>`](#input) 完全相同。
@@ -171,6 +183,8 @@ const [q, setQ] = createSignal("");
 
 ### `<rating>` {#rating}
 
+![rating 组件截图](/Gox/components/shots/darwin/rating.png)
+
 `稳定`
 
 星级评分:每颗星占一个方格,前 `value` 颗实心(可 `color` 覆盖,缺省主题强调色),其余空心描边。**完全受控**(与 [`<select>`](#select) 同一哲学):显示只看 `value`,点击第几格就派发 `onChange({value})`,值不变不派发(与分页器同款)。`model` 口径与 `select` 相同 —— 读 `value` / 写 `onChange`。
@@ -193,6 +207,8 @@ const [score, setScore] = createSignal(3);
 **键盘操作**:获焦后 `←` / `→` 减 / 加一颗星(派发 `onChange({value})`,值不变不派发);`Enter` / `Space` 不改变值(评分是"选第几颗",没有"展开"这一步)。
 
 ### `<textarea>` {#textarea}
+
+![textarea 组件截图](/Gox/components/shots/darwin/textarea.png)
 
 `稳定` · `IME:仅 Windows`
 
@@ -231,6 +247,8 @@ const [text, setText] = createSignal("");
 - 无选区、无撤销栈、无横向滚动。
 
 ### `<select>` {#select}
+
+![select 组件截图](/Gox/components/shots/darwin/select.png)
 
 `稳定` · `弹层`
 
@@ -279,6 +297,8 @@ const [city, setCity] = createSignal("sh");
 
 ### `<slider>` {#slider}
 
+![slider 组件截图](/Gox/components/shots/darwin/slider.png)
+
 `稳定` · `拖动独占`
 
 滑块。拖动滑块或**单击轨道任意位置跳值**都会更新;拖动期间鼠标捕获由后端提供,拖出窗口仍然跟手。
@@ -316,6 +336,8 @@ h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true }
 
 ### `<label>` {#label}
 
+![label 组件截图](/Gox/components/shots/darwin/label.png)
+
 `稳定`
 
 字段标签。单行文字 + 可选的**必填星号**;`align="right"` 时整段贴内容区右缘(表单里标签列右对齐是最常见的排版需求)。
@@ -344,6 +366,8 @@ h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true }
 :::
 
 ### `<form>` {#form}
+
+![form 组件截图](/Gox/components/shots/darwin/form.png)
 
 `稳定`
 
@@ -394,6 +418,8 @@ const [files, setFiles] = createSignal([]);
 
 ### `<datepicker>` {#datepicker}
 
+![datepicker 组件截图](/Gox/components/shots/darwin/datepicker.png)
+
 `稳定` · `弹层` · `纯受控`
 
 日期选择器:28px 字段行(当前值 + 右侧日历图标),点击展开**日历弹层**(月份头 `‹ 2026年11月 ›` + 星期行 + 日期格 + 底部回显)。与 [`<select>`](#select) 同一套"字段 + 贴字段弹层"交互模型(弹层自带逃逸裁剪)。
@@ -438,6 +464,8 @@ const [birthday, setBirthday] = createSignal("");
 
 ### `<colorpicker>` {#colorpicker}
 
+![colorpicker 组件截图](/Gox/components/shots/darwin/colorpicker.png)
+
 `稳定` · `弹层` · `纯受控`
 
 取色器:28px 字段行(左侧色块 + 十六进制文本),点击展开**色板弹层**(N×M 色块 + 底部回显光标色)。
@@ -472,6 +500,8 @@ const [tint, setTint] = createSignal("#1e88e5");
 - v1 边界:只有预设色板,没有取色盘(HSV 色环 + 饱和度方块)、没有吸管、没有自定色输入框。想要任意色就自己写一个 `<canvas>` + `onDraw`,或者用 `<input>` 收十六进制串。
 
 ### `<upload>` {#upload}
+
+![upload 组件截图](/Gox/components/shots/darwin/upload.png)
 
 `稳定` · `受控/非受控两用` · `需要平台对话框`
 

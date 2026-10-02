@@ -29,6 +29,7 @@ pnpm preview        # 本地预览构建产物
 ├── public/                 # 原样拷贝的静态文件
 │   ├── logo.png / favicon.png / og-image.png   # og-image 1200x630 分享图
 │   ├── robots.txt          # 指向 sitemap
+│   ├── components/shots/   # 组件画廊截图（<GOOS>/ 一套一平台，由主仓库 gfx/gallery_shot_test.go 生成）
 │   └── guide.html / components.html / api.html # 旧 URL 跳转页（带锚点级精确映射）
 └── deploy/pages.yml        # 放到主仓库 .github/workflows/pages.yml 的部署工作流
 ```

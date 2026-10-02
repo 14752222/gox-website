@@ -39,13 +39,15 @@ No read, no subscription. If you hide `count()` inside a branch like `if (ctx.wi
 
 ### ③ Controlled Components: Display Follows Props Only; Editing Only Dispatches Events
 
-All input components (`input` / `textarea` / `select` / `slider` / `checkbox` / `radio` / `switch` / `progress` / `dialog`) **hold no state of their own**. What they display is decided entirely by props; user interaction only dispatches callbacks.
+All input components (`input` / `search` / `textarea` / `select` / `datepicker` / `colorpicker` / `upload` / `rating` / `slider` / `checkbox` / `radio` / `switch` / `progress` / `dialog`) **hold no state of their own**. What they display is decided entirely by props; user interaction only dispatches callbacks. (The one exception is `upload`: without a `value` prop it keeps its own list of picked files — the result of "picking a file" cannot be constructed by the script; see [`<upload>`](/en/components/form#upload).)
 
 ```js
 // Recommended (since 2026-09-20): one directive wires up both read and write
-<input model={name} />                       // input / textarea / slider / select read and write value
+<input model={name} />                       // input / search / textarea / slider / select
 <checkbox model={agree} />                   // checkbox / switch read and write checked (writes are inverted)
 <radio model={plan} value="pro" />           // radio: writes the value attribute into model when selected
+<datepicker model={due} />                   // datepicker / colorpicker / rating: read and write value
+<upload model={files} />                     // upload: writes back the paths from {files, paths}
 <input model={[() => user().name, (v) => setUser({ ...user(), name: v })]} />   // custom source
 
 // Handwritten equivalent: write the value back to the signal in onInput, or the display won't change
@@ -105,3 +107,7 @@ This is intentional — unregistered components used to silently render as blank
 ::: warning Generic Boxes Don't Lay Out Children
 Tags other than `column` / `row` (including unknown tags and `rect`) stack **all children in the top-left corner** even when sized. For grouping containers, just use `<column>` or `<row>`.
 :::
+
+## One More Thing: The Keyboard
+
+The five sections above are about "how to write"; this one is about "who consumes it". Every component supports both mouse and keyboard, and the keyboard is not an add-on but an **equal path**: `Tab` / `Shift+Tab` traverse back and forth, `Enter` / `Space` = click, composite controls use the arrow keys, `Enter` submits the form, and inside a popup `Tab` cannot escape while `Esc` closes it. For the full contract (focus-order rules / per-component keys / aria / acceptance checklist) see [Accessibility & Keyboard Navigation](/en/components/patterns#a11y).

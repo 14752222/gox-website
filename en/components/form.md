@@ -1,13 +1,19 @@
 ---
-title: "Form Controls: button / input / select / rating / slider"
-description: "Gox GUI form controls: button, checkbox/radio/switch, input, textarea, select dropdown, rating stars, slider — all controlled components, with model two-way binding where one directive replaces two props."
+title: "Form Controls: button / input / select / datepicker / colorpicker / upload"
+description: "Gox GUI form controls: button, checkbox/radio/switch, input, textarea, search, select dropdown, rating stars, slider, label/form containers, datepicker, colorpicker, upload — all controlled components, with model two-way binding where one directive replaces two props."
 ---
 
-# Form Controls: button / input / search / select / rating / slider
+# Form Controls: button / input / search / select / rating / slider / datepicker / colorpicker / upload
 
-All of these are controlled components: display follows props only, and interaction only dispatches callbacks (see [convention ③ in Section 0](/en/components/)).
+All of these are controlled components: display follows props only, and interaction only dispatches callbacks (see [convention ③ in Section 0](/en/components/)). The one exception is [`<upload>`](#upload): the result of picking files (paths handed out by the OS) cannot be constructed by the script, so it is **controlled/uncontrolled dual-mode**.
+
+::: tip The Screenshots Are Rendered, Not Drawn
+The screenshot at the top of each section is produced by offscreen-rasterizing [`testdata/shots/<component>.js`](https://github.com/14752222/Gox/tree/main/testdata/shots) (popup components are captured in their open state) — it is exactly what the render layer paints. The repository carries the macOS set; Windows / Linux sets come from the [CI matrix](https://github.com/14752222/Gox/blob/main/.github/workflows/desktop-shots.yml) as artifacts — fonts come from each platform's system fonts, so the three platforms are *supposed* to differ. Regenerate locally with `GOX_SHOTS_OUT=<dir> go test ./gfx/ -run TestGalleryShotScripts`.
+:::
 
 ### `<button>` {#button}
+
+![Screenshot of the button component](/Gox/components/shots/darwin/button.png)
 
 `Stable` · `Controlled appearance`
 
@@ -34,7 +40,11 @@ A button. Sizes to its content (text + 8px horizontal padding) with vertically c
 <button disabled={true} onClick={() => setCount(c => c + 100)}>禁用按钮</button>
 ```
 
+**Keyboard**: after `Tab` lands on a button, `Enter` or `Space` = click (both go through the same `onClick` outlet — no separate keyboard code path). Icon buttons (graphics without text) need a name: `aria-label="Delete"` — otherwise `focusOrder()` reports an anonymous control.
+
 ### `<checkbox> / <radio> / <switch>` {#checkbox}
+
+![Screenshot of the checkbox / radio / switch components](/Gox/components/shots/darwin/checkbox.png)
 
 `Stable` · `Purely controlled`
 
@@ -79,7 +89,13 @@ const [notify, setNotify] = createSignal(true);
 </row>
 ```
 
+**Keyboard**: all three are in the Tab order; `Enter` / `Space` **= click** (through the same `onClick`), so the toggle logic doesn't need a keyboard rewrite. A group of `radio`s takes **one** Tab stop (the stop is "the currently selected one", or the first in the group when nothing is selected); inside the group, `←` / `↑` / `→` / `↓` move **and selection follows focus** (ARIA convention).
+
+The `radio` grouping key is the `name` prop; without it, "same parent node" is the group — so "two radios side by side as toggles" doesn't force a name onto you, but **two groups** of radios inside one container must get distinct `name`s.
+
 ### `<input>` {#input}
+
+![Screenshot of the input component](/Gox/components/shots/darwin/input.png)
 
 `Stable` · `IME: Windows only`
 
@@ -104,8 +120,9 @@ The input only consumes **editing** keys; everything else passes through to uppe
 | --- | --- |
 | Arrow keys / `Home` / `End` | Consumed by the input (moves the caret), doesn't bubble |
 | `Backspace` / `Delete` | Consumed by the input (deletes characters) |
-| `Enter` | **Passed through** to upper layers — commonly used for "submit on Enter" |
-| `Escape` / `Tab` / function keys | Passed through |
+| `Enter` | **Passed through** to upper layers — the form layer builds "submit on Enter" on it (see [`<form>`](#form)) |
+| `Escape` / function keys | Passed through |
+| `Tab` / `Shift+Tab` | **Consumed by the accessibility layer** (leaves this field, does not insert a tab character); passed through only when the traversal order is empty |
 | Combos with `Ctrl` / `Alt` | Passed through, left for scripts or the global shortcut table |
 
 ```js
@@ -138,6 +155,8 @@ tick();
 
 ### `<search>` {#search}
 
+![Screenshot of the search component](/Gox/components/shots/darwin/search.png)
+
 `Stable` · `IME: Windows only`
 
 A variant of `<input>`: a magnifier on the left, and pressing `Enter` while focused **submits the whole query** via `onSearch({value})` — a dedicated commit point on top of per-key `onInput` (like DOM search boxes). Everything else (controlled value / model / placeholder / caret / key ownership / IME) is identical to [`<input>`](#input).
@@ -164,6 +183,8 @@ const [q, setQ] = createSignal("");
 
 ### `<rating>` {#rating}
 
+![Screenshot of the rating component](/Gox/components/shots/darwin/rating.png)
+
 `Stable`
 
 Star rating: each star occupies a cell; the first `value` stars are filled (overridable via `color`, defaults to the theme accent), the rest are outlined. **Fully controlled** (same philosophy as [`<select>`](#select)): display follows `value` only, and clicking the i-th cell dispatches `onChange({value})` — no dispatch when the value is unchanged (like the paginator). The `model` contract matches `select`: read `value`, write `onChange`.
@@ -183,7 +204,11 @@ const [score, setScore] = createSignal(3);
 <rating value={7} max={10} color="#e01b24" />
 ```
 
+**Keyboard**: after focus, `←` / `→` subtract / add one star (dispatching `onChange({value})`; no dispatch when the value is unchanged); `Enter` / `Space` do not change the value (rating is "pick a star", there is no "open" step).
+
 ### `<textarea>` {#textarea}
+
+![Screenshot of the textarea component](/Gox/components/shots/darwin/textarea.png)
 
 `Stable` · `IME: Windows only`
 
@@ -200,7 +225,7 @@ Multi-line text editing. The caret is two-dimensional `{row, column}`; content t
 | disabled | boolean | Not editable |
 
 ::: info The Only Key Difference from `<input>`
-In a multi-line box, `Enter` is **content** (it inserts a newline), so the editor **consumes** Enter; in a single-line box, Enter passes through to upper layers. All other key handling is identical.
+In a multi-line box, `Enter` is **content** (it inserts a newline), so the editor **consumes** Enter; in a single-line box, Enter passes through to upper layers. All other key handling is identical — including `Tab` (`Shift+Tab`), which the accessibility layer consumes as "leave this field" instead of inserting a tab character.
 :::
 
 ```js
@@ -223,6 +248,8 @@ const [text, setText] = createSignal("");
 
 ### `<select>` {#select}
 
+![Screenshot of the select component](/Gox/components/shots/darwin/select.png)
+
 `Stable` · `Popup`
 
 A dropdown. Clicking opens an options popup (with escape clipping built in — it won't be clipped by the 28px field box, nor covered by later siblings), with keyboard open/close and highlight movement.
@@ -236,7 +263,7 @@ A dropdown. Clicking opens an options popup (with escape clipping built in — i
 | width | number | Field width, defaults to content |
 | disabled | boolean | Cannot be opened |
 
-**Keyboard**: after focus, `Enter` / `Space` opens it, `↑` / `↓` moves the highlight (wrapping), `Enter` selects, `Esc` closes.
+**Keyboard**: after focus, `Enter` / `Space` opens it, `↑` / `↓` moves the highlight (wrapping), `Enter` selects, `Esc` closes. When closed, `↑` / `↓` **opens first**; while open, `Tab` / `Shift+Tab` closes it before moving focus (Tab means "leave this field", and leaving a popup visibly open makes people think focus is still inside the dropdown).
 
 ```js
 const CITIES = [
@@ -270,6 +297,8 @@ When the popup is open, clicking elsewhere only closes the popup; the click does
 
 ### `<slider>` {#slider}
 
+![Screenshot of the slider component](/Gox/components/shots/darwin/slider.png)
+
 `Stable` · `Exclusive dragging`
 
 A slider. Both dragging the thumb and **clicking anywhere on the track to jump to a value** update it; mouse capture during dragging is provided by the backend, so it stays attached even when dragged out of the window.
@@ -300,6 +329,215 @@ h("slider", { width: 200, min: 0, max: 10, step: 2,
 h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true })
 ```
 
-- No vertical slider, no dual-thumb range, no tick/value labels, no keyboard nudging (←/→).
+- No vertical slider, no dual-thumb range, no tick/value labels.
+- **Keyboard nudging works**: after focus, `←` / `↓` subtract one `step` and `→` / `↑` add one (stopping at the endpoints, no wrapping), dispatching the same `onInput({value})` as dragging — so with `step <= 0` (continuous values) arrows move by 1.
 - Dragging is an exclusive gesture: while dragging, hovering over other controls doesn't highlight them.
 - Abnormal range values are handled safely: max < min collapses to min, and NaN never pollutes the geometry.
+
+### `<label>` {#label}
+
+`Stable`
+
+![Screenshot of the label component](/Gox/components/shots/darwin/label.png)
+
+Field label. Single-line text plus an optional **required asterisk**; with `align="right"` the whole label hugs the right edge of the content area (right-aligned label columns are the most common form layout need).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| required | boolean | Draws a red `*` after the text |
+| align | `"right"` | Right-aligned; defaults to left |
+| width / height | number | The label column is aligned via width (see the example below) |
+| color / font | — | Same as every element, inherited along the ancestor chain |
+
+```js
+<row gap={8} alignItems="center">
+  <label width={72} required>手机号</label>
+  <input model={phone} placeholder="11 位手机号" />
+</row>
+
+<row gap={8} alignItems="center">
+  <label width={72} align="right">邮箱</label>
+  <input model={mail} />
+</row>
+```
+
+::: tip The Asterisk Is a Marker, Not Content
+The text content of `<label required>姓名</label>` is still `"姓名"` — the asterisk does not enter `TextContent()`, nor the accessible name, and never leaks into [form values](#form). Purely visual markers must not pollute the data plane.
+:::
+
+### `<form>` {#form}
+
+`Stable`
+
+![Screenshot of the form component](/Gox/components/shots/darwin/form.png)
+
+A form container: vertical stacking (semantics identical to [`<column>`](/components/layout)), default row gap 10px, and the owner node for **Enter-to-submit** and **whole-form value collection**.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| gap | number | Row gap, default 10 |
+| onSubmit | function | Receives `{values}` — a `{name: value}` object |
+| others | — | Same as column (padding / background / width …) |
+
+```js
+const [name, setName] = createSignal("");
+const [note, setNote] = createSignal("");
+const [birthday, setBirthday] = createSignal("");
+const [tint, setTint] = createSignal("#1e88e5");
+const [files, setFiles] = createSignal([]);
+
+<form gap={12} padding={16} onSubmit={(e) => save(e.values)}>
+  <row gap={8} alignItems="center">
+    <label width={72} required>姓名</label>
+    <input name="name" model={name} />
+  </row>
+  <row gap={8} alignItems="center">
+    <label width={72}>出生日期</label>
+    <datepicker name="birthday" model={birthday} />
+  </row>
+  <row gap={8} alignItems="center">
+    <label width={72}>主题色</label>
+    <colorpicker name="theme" model={tint} />
+  </row>
+  <row gap={8} alignItems="center">
+    <label width={72}>附件</label>
+    <upload name="resume" model={files} accept=".pdf,.png" />
+  </row>
+  <row gap={8}>
+    <label width={72}>备注</label>
+    <textarea name="note" model={note} height={60} />
+  </row>
+  <button onClick={() => submitForm()}>保存</button>
+</form>
+```
+
+- **Enter submits**: with focus in an `input` / `search`, pressing `Enter` submits the surrounding form (the same intuition as an HTML `<input>` submitting its form on Enter). With focus on a button / checkbox / dropdown, `Enter` belongs to that control and does not submit as a side effect.
+- **Only fields with a `name` are collected**: same as HTML forms. Fields without `name` don't enter `values`, so the backend doesn't receive a pile of empty keys.
+- Values are always read from the **controlled prop**: so the only reason "the submitted value is stale" is that the script never wrote the `onInput` / `onChange` result back into the signal (that's the definition of controlled, not a bug).
+- Fields inside a *closed* popup don't count (their values don't belong to this submission).
+
+### `<datepicker>` {#datepicker}
+
+`Stable` · `Popup` · `Purely controlled`
+
+![Screenshot of the datepicker component](/Gox/components/shots/darwin/datepicker.png)
+
+A date picker: a 28px field row (current value + calendar icon on the right); clicking opens a **calendar popup** (month header `‹ 2026年11月 ›` + weekday row + day cells + an echo at the bottom). Same "field + field-attached popup" interaction model as [`<select>`](#select) (the popup carries escape clipping).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| value | string / function | Current date, format `"YYYY-MM-DD"`. **Unparseable formats are treated as no value** (the placeholder shows); it never guesses a nearby date |
+| onChange | function | Dispatched on selection, receives `{value}` (string, `"YYYY-MM-DD"`) |
+| min / max | string | Optional range (`"YYYY-MM-DD"`). Out-of-range cells are drawn gray and clicking them does nothing |
+| placeholder | string | Gray text when there is no value, default `请选择日期` |
+| width | number | Field width, defaults to content (no less than 130) |
+| disabled | boolean | Cannot be opened |
+
+**Keyboard** (after focus):
+
+| Key | Closed | Open |
+| --- | --- | --- |
+| `Enter` / `Space` | open | pick the cursor's day |
+| `←` / `→` | open | ± 1 day (may cross months) |
+| `↑` / `↓` | open | ± 1 week |
+| `PageUp` / `PageDown` | open | ± 1 month (day clamped to the target month's length) |
+| `Home` / `End` | — | first / last day of the month |
+| `Esc` | — | close |
+
+```js
+const [birthday, setBirthday] = createSignal("");
+
+<datepicker model={birthday} />
+
+<datepicker
+  value={birthday()}
+  onChange={(e) => setBirthday(e.value)}
+  min="2020-01-01"
+  max="2030-12-31"
+  placeholder="请选择日期"
+/>
+```
+
+- The field displays the `value` verbatim; days outside `min` / `max` are drawn gray (today's cell gets an accent outline).
+- "Today" only drives the outline and "which month to open on when there is no value" — it never participates in the value: the default value is still **empty**, it won't silently pick today for you.
+- v1 boundary: only `"YYYY-MM-DD"` is accepted; no range selection, no time part; the popup does not flip upward (a field hugging the window's bottom edge gets its popup clipped).
+
+### `<colorpicker>` {#colorpicker}
+
+`Stable` · `Popup` · `Purely controlled`
+
+![Screenshot of the colorpicker component](/Gox/components/shots/darwin/colorpicker.png)
+
+A color picker: a 28px field row (a swatch on the left + hex text); clicking opens a **palette popup** (N×M swatches + an echo of the cursor color at the bottom).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| value | string \| `{r,g,b}` / function | Current color. Strings are shown verbatim (`#rgb` / `#rrggbb` / `#rrggbbaa` all parse); objects are converted to `#rrggbb` from `{r,g,b}` (0~255, same field names as the canvas ImageData) |
+| colors | string[] | The palette; default 24 colors (grays + a color ring). **Passing `[]` explicitly means an empty palette** (typically "the palette hasn't loaded yet") — it does not fall back to the default |
+| columns | number | Palette columns, default 8 |
+| onChange | function | Dispatched on selection, receives `{value}` (the clicked palette string) |
+| placeholder | string | Gray text when there is no value, default `选择颜色` |
+| width | number | Field width, defaults to content |
+| disabled | boolean | Cannot be opened |
+
+**Keyboard**: `Enter` / `Space` opens (press again to pick the cursor's swatch); `←` / `→` move one cell, `↑` / `↓` move one **column**; `Home` / `End` first / last cell; `Esc` closes. Arrow keys **stop** at the edges instead of wrapping (the palette is two-dimensional — wrapping would make "press up" jump to the bottom).
+
+```js
+const BRAND = ["#1e88e5", "#43a047", "#fdd835", "#e53935", "#000000"];
+const [tint, setTint] = createSignal("#1e88e5");
+
+<colorpicker model={tint} />
+
+<colorpicker value={tint()} colors={BRAND} columns={5}
+             onChange={(e) => setTint(e.value)} />
+
+// The value can also be written as {r,g,b}
+<colorpicker value={{ r: 30, g: 136, b: 229 }} colors={BRAND} />
+```
+
+- The small swatch on the field is filled with the current value; an unparseable value draws an **empty box** — an empty box makes it easier to notice a typo than "a wrong color".
+- Case / whitespace differences of the same color (`"#FFF"` vs `"#ffffff"`) never cause a spurious dispatch: clicking the current value dispatches no `onChange`.
+- v1 boundary: preset palettes only — no color wheel (HSV ring + saturation square), no eyedropper, no custom color input. For arbitrary colors, write your own `<canvas>` + `onDraw`, or collect a hex string with an `<input>`.
+
+### `<upload>` {#upload}
+
+`Stable` · `Controlled/uncontrolled dual-mode` · `Needs the platform dialog`
+
+![Screenshot of the upload component](/Gox/components/shots/darwin/upload.png)
+
+File picking: a 28px dashed-border field row (folder icon + the **file names** of the chosen files). Clicking directly opens the platform's native "open file" dialog (**no popup**).
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| value | string[] \| `{name, path}`[] / function | **Its presence means controlled**: an array of strings (paths), or of objects (the `path` field is used). Without it the component keeps its own list (uncontrolled) |
+| onChange | function | Dispatched after picking, receives `{files, paths}`: `paths` is a string array, `files` is `[{name, path}]` |
+| multiple | boolean | With `true` each pick **accumulates**; default `false` **replaces** |
+| accept | string | HTML `accept`-style suffix list, e.g. `".png,.jpg"` or `"image/*"` |
+| filter | string \| string[] \| `{name, pattern}` | The full-form filter rules, e.g. `"图片|*.png;*.jpg"`. **When both are written, `filter` wins over `accept`** |
+| title | string | Native dialog title, default `选择文件` |
+| placeholder | string | Gray text when nothing is picked, default `选择文件` |
+| width | number | Field width, no less than 180 |
+| disabled | boolean | No dialog |
+
+**Keyboard**: after focus, `Enter` / `Space` opens the file dialog.
+
+```js
+// Uncontrolled: shows immediately after picking (internal list), onChange as notification
+<upload multiple accept=".png,.jpg" onChange={(e) => upload(e.paths)} />
+
+// Controlled: display follows value only; the script writes back after picking
+const [files, setFiles] = createSignal([]);
+<upload value={files()} multiple
+        onChange={(e) => setFiles(e.paths)} />
+
+// Structured filters + custom title
+<upload title="选择附件" filter={["图片|*.png;*.jpg", "所有文件|*.*"]} />
+```
+
+::: warning A Missing Capability Means "Clicking Does Nothing" — It Never Invents File Names
+`<upload>` relies on the window backend's native dialog capability (the `openFile` of `gx/dialog`). On backends without it (e.g. Linux X11) a hint goes to stderr and the result is "nothing picked"; the `<upload>` field just shows "clicking does nothing" — deliberately: it **never** silently invents a fake file name to fill in, which would make business logic believe a file was actually picked. To know in advance, check `canIUse("dialog")`.
+
+Pressing **cancel** dispatches no `onChange` either: cancel is not "picked nothing".
+:::
+
+- v1 boundary: the underlying dialog returns one path at a time, so `multiple` means "accumulate across picks"; no drag-and-drop into the field, no upload progress (that's `gx/http`'s job — the component only covers "picking files"), and no per-file remove cross — change `value` in the controlled mode, or pick again in the uncontrolled mode.
