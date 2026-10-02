@@ -39,13 +39,15 @@ JSX 标签在编译期被降级成 `h(tag, props, ...children)` 调用,所以 `h
 
 ### ③ 受控组件:显示只看 prop,编辑只派发事件
 
-所有输入类组件(`input` / `textarea` / `select` / `slider` / `checkbox` / `radio` / `switch` / `progress` / `dialog`)都**不存自己的状态**。 它们显示什么完全由 prop 决定,用户操作只派发回调。
+所有输入类组件(`input` / `search` / `textarea` / `select` / `datepicker` / `colorpicker` / `upload` / `rating` / `slider` / `checkbox` / `radio` / `switch` / `progress` / `dialog`)都**不存自己的状态**。 它们显示什么完全由 prop 决定,用户操作只派发回调。(唯一的例外是 `upload`:它没有 `value` 时自己也存一份已选列表 —— "选文件"的结果脚本构造不出来,详见 [`<upload>`](/components/form#upload)。)
 
 ```js
 // 推荐(2026-09-20 起):一条指令接好读与写
-<input model={name} />                       // input / textarea / slider / select 读写 value
+<input model={name} />                       // input / search / textarea / slider / select
 <checkbox model={agree} />                   // checkbox / switch 读写 checked(写入取反)
 <radio model={plan} value="pro" />           // radio:选中时把 value 属性写进 model
+<datepicker model={due} />                   // datepicker / colorpicker / rating:读写 value
+<upload model={files} />                     // upload:写回的是 {files, paths} 里的 paths
 <input model={[() => user().name, (v) => setUser({ ...user(), name: v })]} />   // 自定义来源
 
 // 手写等价物:onInput 里把值写回 signal,显示才会变
@@ -105,3 +107,7 @@ gfx: unknown tag "foo" (rendered as a plain box; see docs/gui-guide.md)
 ::: warning 通用盒子不布局子元素
 非 `column` / `row` 的标签(包括未知标签、`rect`) 即使有了尺寸,子元素也**全部叠在左上角**。需要分组容器就老实用 `<column>` 或 `<row>`。
 :::
+
+## 还得知道的一件事:键盘
+
+上面五条讲的是"怎么写",这一条讲"谁来用"。每个组件都同时支持鼠标与键盘,键盘不是补充而是**并列的一条路**:`Tab` / `Shift+Tab` 前后遍历、`Enter` / `Space` = 点一下、组合控件用方向键、`Enter` 提交表单、弹层里 `Tab` 出不去且 `Esc` 能关。完整口径(焦点序规则 / 每个组件的键位 / aria / 验收清单)见[无障碍与键盘导航](/components/patterns#a11y)。

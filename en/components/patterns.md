@@ -1,9 +1,9 @@
 ---
-title: "Cross-Cutting Capabilities: Reactive Rendering, each/show Directives, Events, Layering, Animations"
-description: "Gox GUI cross-cutting capabilities: gx/solid reactive rendering and function children, each/show element-level directives (keyed reuse), the event and focus model, zIndex/absolute/escapeClipping layering, and transition animations."
+title: "Cross-Cutting Capabilities: Reactive Rendering, each/show Directives, Events, Accessibility, Layering, Animations"
+description: "Gox GUI cross-cutting capabilities: gx/solid reactive rendering and function children, each/show element-level directives (keyed reuse), the event and focus model, accessibility and keyboard navigation (tab order, arrow keys, focus trapping, aria, acceptance checklist), zIndex/absolute/escapeClipping layering, and transition animations."
 ---
 
-# Cross-Cutting Capabilities: Reactive Rendering, each/show Directives, Events, Layering, Animations
+# Cross-Cutting Capabilities: Reactive Rendering, each/show Directives, Events, Accessibility, Layering, Animations
 
 ## Reactive & List Rendering {#reactive}
 
@@ -150,7 +150,7 @@ const wide = createMemo(() => win().width >= 480);
 </window>
 ```
 
-**Focus model**: clicking any node makes it the keyboard focus, and the focused node gets a 1px blue dashed outline. A `disabled` subtree responds to no events and is skipped in focus switching. Tab-key traversal is not implemented in v1; focus can only be changed by mouse click.
+**Focus model**: clicking any node makes it the keyboard focus, and the focused node gets a 1px blue dashed outline. A `disabled` subtree responds to no events and is skipped in focus switching. The keyboard can move focus too (`Tab` / `Shift+Tab` traversal, arrow keys, `Enter` / `Space` activation) — see [Accessibility & Keyboard Navigation](#a11y) below.
 
 ```js
 <rect
@@ -164,6 +164,108 @@ const wide = createMemo(() => win().width >= 480);
   <text>click to focus, then move / scroll / right-click / type</text>
 </rect>
 ```
+
+## Accessibility & Keyboard Navigation {#a11y}
+
+`stable` · `pure computation`
+
+The keyboard is a path **parallel to the mouse**, not a replacement: clicking still changes focus, the keyboard just adds a way to get the job done without touching the mouse. All of it lives in one layer inside the kernel (`gfx/a11y.go`); components only declare their own semantics.
+
+There is **no screen-reader bridge** (Windows UIA / macOS AX / Android AccessibilityService) — three platforms, three APIs, which conflicts with the zero-cgo promise. What it does deliver is "can a keyboard user finish the task", which is pure computation and therefore assertable in CI.
+
+### What is in the Tab order, and in what order
+
+| Prop | Behaviour |
+| --- | --- |
+| omitted | per **tag table**: `button` / `checkbox` / `radio` / `switch` / `slider` / `input` / `search` / `textarea` / `select` / `rating` / `tabs` / `pagination` / `datepicker` / `colorpicker` / `upload` |
+| `focusable={true}` | force into the order (containers / icons) |
+| `focusable={false}` | force out of the order |
+| `tabIndex` | `>0` sorts first (ascending), `0` (default) follows tree order, `<0` leaves the order but can still be focused programmatically |
+
+Containers (`column` / `row` / `view` / `rect` / overlays) are **not** focusable by default — giving a purely visual box a tab stop forces keyboard users to press Tab several times to reach a real control.
+
+Never in the order: `disabled` subtrees, `hidden` / `aria-hidden="true"`, **un-laid-out** nodes (inside a closed overlay, inactive `tabs` pages), nodes **outside the window rect** (scrolled out of view), and overlay **internals** (dropdown options, calendar cells, swatches — arrow keys move inside those, exactly like listbox options in a browser).
+
+### Keys
+
+| Key | Meaning |
+| --- | --- |
+| `Tab` / `Shift+Tab` | move through the order, wrapping at both ends (not consumed when the order is empty) |
+| `Enter` / `Space` | **activate** = click this control (same `onClick` exit as the mouse) |
+| arrows | `radio` group move + select; `slider` one step; `rating` one star; `tabs` / `pagination` page; `select` highlight; `datepicker` a day / a week; `colorpicker` a cell / a **column** |
+| `PageUp` / `PageDown` / `Home` / `End` | month / first & last day of the month in the calendar |
+| `Esc` | close the open overlay (dropdown / calendar / palette / dialog) |
+
+Two general rules: combinations with `Ctrl` / `Alt` are **never** touched (that's the shortcut layer's turf), and boundary behaviour depends on dimensionality — one-dimensional groups (radio / tabs / pagination / select) **wrap**, two-dimensional ones (calendar / palette) **stop**.
+
+Whether a node can be activated is decided by its **role**, not by "it has a click handler": `<rect onClick>` does nothing on `Enter` unless you write `role="button"`.
+
+**Submitting a form with the keyboard**: with focus in an `input` / `search`, `Enter` submits the enclosing `<form>` (`onSubmit({values})`); with focus on a button, `Enter` presses that button.
+
+### Overlays and focus reconciliation
+
+- A modal overlay (`dialog` / `drawer`) traps `Tab` inside itself — no trap stack to maintain, the order is computed from "topmost visible modal overlay";
+- Opening an overlay moves focus to its first focusable control; after `Esc` / backdrop close, focus is **reconciled** to the first focusable control outside it (otherwise the ring stays on something invisible).
+
+### aria
+
+| Concept | Rule |
+| --- | --- |
+| implicit role | one default role per built-in tag (HTML implicit roles first, otherwise the closest ARIA role: `input`→`textbox`, `select`→`combobox`, `rating`→`slider`, `upload`→`group`, …). An explicit `role` prop always wins; a bad value warns once and falls back |
+| accessible name | `aria-label` → `title` → text content → `placeholder` (fields). An empty string means "no readable name" — the kernel does **not** invent "button 3" |
+| `aria-*` | the full ARIA 1.2 set is recognised but not executed (only `aria-hidden` takes part in the tab order). Typos (`aria-lable`) warn **once** — the point is to catch typos, not to limit usage |
+
+### `gx/a11y`: reading the focus chain
+
+```js
+import { focusOrder, focusNode, focusNext, focusPrev, roles } from "gx/a11y";
+```
+
+| API | Returns | Use |
+| --- | --- | --- |
+| `focusOrder()` | array | snapshot of the current order: `{ role, name, tag, tabIndex, disabled, focused, description?, keyHint?, box }` |
+| `focusNode(el)` | boolean | focus programmatically (like `el.focus()`) |
+| `focusNext()` / `focusPrev()` | boolean | the exact same path as `Tab` / `Shift+Tab` |
+| `roles()` | array | implicit role table (`{tag, role, keyHint?}`) |
+
+This is not for screen readers — it is a **self-check**: a `name`-less button in `focusOrder()` means a missing `aria-label`, caught long before a screen-reader user reports "it reads nothing".
+
+### Acceptance checklist
+
+**Fill in a form → submit → close a dialog, using the keyboard only**, step by step:
+
+| # | Action | Expected |
+| --- | --- | --- |
+| 1 | press `Tab` | focus enters the first focusable control, the focus ring is visible |
+| 2 | keep pressing `Tab` | focus advances in tree / `tabIndex` order — nothing skipped, repeated, or invisible |
+| 3 | press `Tab` again at the end | wraps to the first control |
+| 4 | focus an `input`, type | the text lands in the field (`onInput` fires, the controlled value is written back) |
+| 5 | focus `select` / `datepicker` / `colorpicker`, press `Enter` | the overlay opens |
+| 6 | press an arrow key | the highlight / cursor moves inside the overlay |
+| 7 | press `Enter` | selects and closes, `onChange` fires, **focus returns to the field** |
+| 8 | press `Esc` while open | closes, value unchanged |
+| 9 | focus a `radio` group, press `→` | moves inside the group and selects |
+| 10 | focus a button, press `Enter` / `Space` | the button fires (not "submit the form") |
+| 11 | focus an `input`, press `Enter` | submits the enclosing `<form>` (`onSubmit({values})`) |
+| 12 | trigger a `dialog` | the overlay opens with a visible backdrop |
+| 13 | press `Tab` repeatedly inside it | focus cycles inside the overlay, never escaping |
+| 14 | press `Esc` | the overlay closes |
+| 15 | press `Tab` after closing | focus is reconciled to the first focusable control outside it |
+
+Runnable version: `testdata/a11y_form_demo.js` in the repository (`./gox testdata/a11y_form_demo.js`) — one form plus one dialog; line ② shows the submit result and line ③ projects `focusOrder()`.
+
+When adding a new component: is the tag in the natively-focusable table (or explicitly documented as not), does it have an implicit role, can its main action be reached with `Enter` (role-dependent), are overlay internals kept out of the tab order, does it carry a keyboard hint, can every mouse action be done with the keyboard, does an overlay close on `Esc` and restore focus to its trigger, and is the keyboard behaviour covered by an automated test rather than "I tried it once"?
+
+### Known limits
+
+| Symptom | Why |
+| --- | --- |
+| screen readers read nothing | no screen-reader bridge; role / name are merely *readable*, a host can turn `focusOrder()` into a platform tree |
+| focus does not travel between windows | each window has its own focus |
+| no `Home` / `End` / selection / undo in text fields | advanced text editing is out of scope for v1 |
+| `radio` groups without `name` group by parent | two groups in one container merge; give them a `name` |
+| controls inside inactive `tabs` pages are not tabbable | that is what keep-alive means |
+| controls scrolled out of view are not tabbable | intentional: keyboard users should not land somewhere invisible |
 
 ## Layering & Positioning {#layering}
 

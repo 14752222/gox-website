@@ -1,9 +1,9 @@
 ---
-title: 横切能力：响应式渲染、each/show 指令、事件、层叠、动画
-description: Gox GUI 横切能力：gx/solid 响应式渲染与函数子节点、each/show 元素级指令（keyed 复用）、事件与焦点模型、zIndex/absolute/escapeClipping 层叠、transition 过渡动画。
+title: 横切能力：响应式渲染、each/show 指令、事件、无障碍、层叠、动画
+description: Gox GUI 横切能力：gx/solid 响应式渲染与函数子节点、each/show 元素级指令（keyed 复用）、事件与焦点模型、无障碍与键盘导航（ Tab 遍历 / 方向键 / 焦点陷阱 / aria / 验收清单）、zIndex/absolute/escapeClipping 层叠、transition 过渡动画。
 ---
 
-# 横切能力：响应式渲染、each/show 指令、事件、层叠、动画
+# 横切能力：响应式渲染、each/show 指令、事件、无障碍、层叠、动画
 
 ## 响应式与列表渲染 {#reactive}
 
@@ -150,7 +150,7 @@ const wide = createMemo(() => win().width >= 480);
 </window>
 ```
 
-**焦点模型**:点击任意节点即成为键盘焦点,焦点节点会画 1px 蓝色虚线框。 `disabled` 子树不响应任何事件、也不参与焦点切换。Tab 键遍历 v1 未实现,焦点只能靠鼠标点击切换。
+**焦点模型**：点击任意节点即成为键盘焦点，焦点节点会画 1px 蓝色虚线框。`disabled` 子树不响应任何事件、也不参与焦点切换。键盘也能改焦点（`Tab` / `Shift+Tab` 遍历、方向键、`Enter` / `Space` 激活）—— 见下面的[无障碍与键盘导航](#a11y)。
 
 ```js
 <rect
@@ -164,6 +164,127 @@ const wide = createMemo(() => win().width >= 480);
   <text>click to focus, then move / scroll / right-click / type</text>
 </rect>
 ```
+
+## 无障碍与键盘导航 {#a11y}
+
+`稳定` · `纯计算`
+
+键盘是一条**与鼠标并列**的路，不是替代：点击仍然能改焦点，键盘只是多了一条"不碰鼠标也能把事做完"的路。内核把这件事收在一层里（`gfx/a11y.go`），组件只负责声明自己的语义。
+
+**它不做读屏桥**（Windows UIA / macOS AX / Android AccessibilityService）—— 三平台三套 API，与"零 cgo"的承诺冲突。它做的是**键盘用户能不能把事做完**，这是纯计算，能在 CI 里断言。
+
+### 谁进 Tab 序，按什么顺序
+
+| Prop | 行为 |
+| --- | --- |
+| 不写 | 按**标签表**：`button` / `checkbox` / `radio` / `switch` / `slider` / `input` / `search` / `textarea` / `select` / `rating` / `tabs` / `pagination` / `datepicker` / `colorpicker` / `upload` 进序 |
+| `focusable={true}` | 强制进序（给容器 / 图标用） |
+| `focusable={false}` | 强制不进序（"用 Tab 跳过这个搜索框"） |
+| `tabIndex` | `>0` 升序排在最前、`0`（缺省）按树序、`<0` 不进序但仍可被程序聚焦 |
+
+容器类（`column` / `row` / `view` / `rect` / 弹层）**默认不进序** —— 给纯布局盒子加停留点，会让键盘用户为到达真正的控件多按好几次空 Tab。
+
+这些节点永远不进序：`disabled` 子树、`hidden` / `aria-hidden="true"`、**未布局**（关闭弹层里的节点、`tabs` 的非激活页）、**与窗口矩形不相交**（滚出视口的行，"不让键盘用户跳进看不见的地方"）、以及弹层**内部结构**（下拉项 / 日历格 / 色板格 —— 它们是"方向键在里面走"的复合控件内部，与浏览器里 listbox 选项不进 Tab 序一致）。
+
+### 按键
+
+| 键 | 语义 |
+| --- | --- |
+| `Tab` / `Shift+Tab` | 遍历序前后移动，两端**绕回**；遍历序为空时不消费这个键（还给脚本） |
+| `Enter` / `Space` | **激活** = 用鼠标点一下这个控件（走同一个 `onClick` 出口） |
+| `←` `→` / `↑` `↓` | `radio` 组内移动并选中；`slider` ± 一步；`rating` ± 一星；`tabs` / `pagination` 上下页；`select` 移动高亮；`datepicker` 前后一天 / 一周；`colorpicker` 前后一格 / 上下**一列** |
+| `PageUp` / `PageDown` / `Home` / `End` | 日历里翻月、跳本月首末日 |
+| `Esc` | 收起弹层（下拉 / 日历 / 色板 / 弹窗） |
+
+两条通用约定：
+
+1. **带 `Ctrl` / `Alt` 的一律不碰** —— 那是快捷键的地盘；
+2. **边界行为看维度**：一维组（radio / tabs / pagination / select）**环绕**，二维组（日历 / 色板）**停住**（色板上从第一行按 `↑` 绕到最后一行与直觉相反）。
+
+"能不能被激活"看 **role** 而不是"标签能不能点"：浏览器里 `Enter` 触发 click 的是 `button` / `checkbox` / `radio` 这类原生控件，一个普通的 `<div onclick>` 按 `Enter` 什么都不会发生。所以 `<rect onClick>` 想被 `Enter` 激活，要显式写 `role="button"`。
+
+**回车提交表单**：焦点在 `input` / `search` 里按 `Enter` = 提交所在的 `<form>`（派发 `onSubmit({values})`）；焦点在按钮上按 `Enter` 是按下这个按钮。
+
+### 弹层与焦点校正
+
+- 模态弹层（`dialog` / `drawer`）打开时，`Tab` 只在弹层内循环 —— 不需要额外维护"陷阱栈"，遍历序按"最上层可见的模态弹层"算；
+- 弹层打开会把焦点交给弹层内第一个可聚焦控件；`Esc` / 点遮罩关闭后，焦点**自动校正**回弹层外的第一个可聚焦控件（否则焦点框会停在看不见的地方，"Tab 从这里继续走但看不见框"）。
+
+### aria
+
+| 概念 | 口径 |
+| --- | --- |
+| 隐式 role | 每个内置标签有一行默认 role（HTML 隐式 role 优先，HTML 没有对应物的取 ARIA 里最接近的：`input`→`textbox`、`select`→`combobox`、`rating`→`slider`、`upload`→`group`…）。显式 `role` prop 永远覆盖，写错告警一次并回落 |
+| 无障碍名 | `aria-label` → `title` → 文本内容 → `placeholder`（字段类）。空串就是"没有可读名字"，**不会**替你编一个"button 3" |
+| `aria-*` | 认 ARIA 1.2 全集，但不执行语义（只读 `aria-hidden` 参与"是否进序"）。拼错（`aria-lable`）会**告警一次** —— 要挡的是拼错，不是"用得多" |
+
+```jsx
+<button onClick={del} aria-label="删除" />        {/* 图标按钮必须给名字 */}
+<row focusable={true} aria-label="结果列表">…</row> {/* 容器想被 Tab 到就显式声明 */}
+<rect onClick={go} role="button" focusable />      {/* 自定义可点区域: 有 role 才吃 Enter */}
+```
+
+### `gx/a11y`：把焦点链读出来
+
+```js
+import { focusOrder, focusNode, focusNext, focusPrev, roles } from "gx/a11y";
+```
+
+| API | 返回 | 用途 |
+| --- | --- | --- |
+| `focusOrder()` | 数组 | 当前遍历序快照：`{ role, name, tag, tabIndex, disabled, focused, description?, keyHint?, box }` |
+| `focusNode(el)` | boolean | 程序化聚焦（等价 `el.focus()`） |
+| `focusNext()` / `focusPrev()` | boolean | 与 `Tab` / `Shift+Tab` **完全同一条路径**（含绕回与弹层范围） |
+| `roles()` | 数组 | 隐式 role 表（`{tag, role, keyHint?}`） |
+
+它不是"给读屏用的"，而是**自检**：`focusOrder()` 里出现 `name` 为空的按钮或图片，就是漏了 `aria-label` —— 比"读屏用户反馈读不出东西"早得多。
+
+### 验收清单
+
+**纯键盘（不碰鼠标）完成"填表 → 提交 → 关弹窗"**，逐步走一遍：
+
+| # | 操作 | 期望 |
+| --- | --- | --- |
+| 1 | 启动后按 `Tab` | 焦点进第一个可聚焦控件，焦点框可见 |
+| 2 | 继续按 `Tab` | 按树序 / `tabIndex` 前进，**不漏、不重、不跳进不可见的节点** |
+| 3 | 在末尾再按 `Tab` | 绕回第一个控件（不卡死在最后一个） |
+| 4 | 焦点到 `input`，直接打字 | 文字进入输入框（`onInput` 派发，值受控回写） |
+| 5 | 焦点到 `select` / `datepicker` / `colorpicker`，按 `Enter` | 弹层展开 |
+| 6 | 按方向键 | 高亮 / 光标在弹层里移动 |
+| 7 | 按 `Enter` | 选中并收起，`onChange` 派发，**焦点回到字段本身** |
+| 8 | 弹层展开时按 `Esc` | 收起，值不变 |
+| 9 | 焦点到 `radio` 组，按 `→` | 组内移到下一个并选中 |
+| 10 | 焦点到按钮，按 `Enter` / `Space` | 按钮被触发（不是"提交表单"的 Enter） |
+| 11 | 焦点在 `input` 里按 `Enter` | 提交所在的 `<form>`，`onSubmit({values})` 派发 |
+| 12 | 触发一个 `dialog` | 弹层打开，遮罩可见 |
+| 13 | 在 `dialog` 里反复按 `Tab` | 焦点在弹层内循环，**永远不跑到弹层外** |
+| 14 | 按 `Esc` | 弹层关闭 |
+| 15 | 关闭后按 `Tab` | 焦点自动回到弹层外的第一个可聚焦控件（焦点校正生效） |
+
+可跑版本：仓库里的 `testdata/a11y_form_demo.js`（`./gox testdata/a11y_form_demo.js`）—— 一张表单 + 一个弹窗，第 ② / ③ 行分别是提交结果与 `focusOrder()` 投影，走一遍就能看到每一条。
+
+**加新组件时的自检**（内核文档 `docs/accessibility.md` §7.2 的同一份清单）：
+
+- [ ] 标签进了"原生可聚焦"表（如果它天然该被 Tab 到），或明确说明为什么不该；
+- [ ] 标签有隐式 role（否则无障碍层把它当无名容器）；
+- [ ] 有 `onClick` 且"点击 = 主要动作"的控件，确认它的 role 可被激活（否则 `Enter` 激活不到它）；
+- [ ] 复合控件的**内部结构**不进 Tab 序，方向键在内部走；
+- [ ] 写了键盘用法提示（官网这张表与 `focusOrder()` 的 `keyHint` 都读它）；
+- [ ] 键盘能完成它支持的所有鼠标动作（点选、展开、收起、切换、取消）；
+- [ ] 弹层类：`Esc` 能收起、点外部能收起、收起时焦点**回到触发它的字段**；
+- [ ] 缺名字的控件（图标按钮、只有图形的按钮）能通过 `aria-label` 命名；
+- [ ] 键盘行为有自动化用例（不是"手工试过就行"）。
+
+### 已知边界
+
+| 现象 | 说明 |
+| --- | --- |
+| 读屏软件读不出任何东西 | 内核**没有**读屏桥。role / name 只是"可读"，朗读由宿主实现（移动壳可拿 `focusOrder()` 翻成平台无障碍树） |
+| 焦点不能在窗口之间跳 | 多窗口各有独立焦点 |
+| 输入框里没有 `Home` / `End` / 选区 / 撤销 | 文本编辑的高级键不在一期范围（`Home` / `End` 只在日历里生效） |
+| `radio` 不带 `name` 时按"同一个父节点"分组 | 一个容器里放两组单选会串成一组；给 `name` 即可 |
+| `tabs` 非激活页里的控件不能被 Tab | 那正是 keep-alive 的语义（切走再切回来状态还在，但不参与 Tab） |
+| 滚出视口的控件不能被 Tab | 有意的：不让键盘用户跳进看不见的地方。需要时先把 `scroll` 滚到它 |
 
 ## 层叠与定位 {#layering}
 
