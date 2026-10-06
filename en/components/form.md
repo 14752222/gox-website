@@ -13,7 +13,7 @@ The screenshot at the top of each section is produced by offscreen-rasterizing [
 
 ### `<button>` {#button}
 
-![Screenshot of the button component](/Gox/components/shots/darwin/button.png)
+![Screenshot of the button component](/components/shots/darwin/button.png)
 
 `Stable` · `Controlled appearance`
 
@@ -44,7 +44,7 @@ A button. Sizes to its content (text + 8px horizontal padding) with vertically c
 
 ### `<checkbox> / <radio> / <switch>` {#checkbox}
 
-![Screenshot of the checkbox / radio / switch components](/Gox/components/shots/darwin/checkbox.png)
+![Screenshot of the checkbox / radio / switch components](/components/shots/darwin/checkbox.png)
 
 `Stable` · `Purely controlled`
 
@@ -95,7 +95,7 @@ The `radio` grouping key is the `name` prop; without it, "same parent node" is t
 
 ### `<input>` {#input}
 
-![Screenshot of the input component](/Gox/components/shots/darwin/input.png)
+![Screenshot of the input component](/components/shots/darwin/input.png)
 
 `Stable` · `IME: Windows only`
 
@@ -155,7 +155,7 @@ tick();
 
 ### `<search>` {#search}
 
-![Screenshot of the search component](/Gox/components/shots/darwin/search.png)
+![Screenshot of the search component](/components/shots/darwin/search.png)
 
 `Stable` · `IME: Windows only`
 
@@ -183,7 +183,7 @@ const [q, setQ] = createSignal("");
 
 ### `<rating>` {#rating}
 
-![Screenshot of the rating component](/Gox/components/shots/darwin/rating.png)
+![Screenshot of the rating component](/components/shots/darwin/rating.png)
 
 `Stable`
 
@@ -208,7 +208,7 @@ const [score, setScore] = createSignal(3);
 
 ### `<textarea>` {#textarea}
 
-![Screenshot of the textarea component](/Gox/components/shots/darwin/textarea.png)
+![Screenshot of the textarea component](/components/shots/darwin/textarea.png)
 
 `Stable` · `IME: Windows only`
 
@@ -248,7 +248,7 @@ const [text, setText] = createSignal("");
 
 ### `<select>` {#select}
 
-![Screenshot of the select component](/Gox/components/shots/darwin/select.png)
+![Screenshot of the select component](/components/shots/darwin/select.png)
 
 `Stable` · `Popup`
 
@@ -297,7 +297,7 @@ When the popup is open, clicking elsewhere only closes the popup; the click does
 
 ### `<slider>` {#slider}
 
-![Screenshot of the slider component](/Gox/components/shots/darwin/slider.png)
+![Screenshot of the slider component](/components/shots/darwin/slider.png)
 
 `Stable` · `Exclusive dragging`
 
@@ -338,7 +338,7 @@ h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true }
 
 `Stable`
 
-![Screenshot of the label component](/Gox/components/shots/darwin/label.png)
+![Screenshot of the label component](/components/shots/darwin/label.png)
 
 Field label. Single-line text plus an optional **required asterisk**; with `align="right"` the whole label hugs the right edge of the content area (right-aligned label columns are the most common form layout need).
 
@@ -369,7 +369,7 @@ The text content of `<label required>姓名</label>` is still `"姓名"` — the
 
 `Stable`
 
-![Screenshot of the form component](/Gox/components/shots/darwin/form.png)
+![Screenshot of the form component](/components/shots/darwin/form.png)
 
 A form container: vertical stacking (semantics identical to [`<column>`](/components/layout)), default row gap 10px, and the owner node for **Enter-to-submit** and **whole-form value collection**.
 
@@ -420,7 +420,7 @@ const [files, setFiles] = createSignal([]);
 
 `Stable` · `Popup` · `Purely controlled`
 
-![Screenshot of the datepicker component](/Gox/components/shots/darwin/datepicker.png)
+![Screenshot of the datepicker component](/components/shots/darwin/datepicker.png)
 
 A date picker: a 28px field row (current value + calendar icon on the right); clicking opens a **calendar popup** (month header `‹ 2026年11月 ›` + weekday row + day cells + an echo at the bottom). Same "field + field-attached popup" interaction model as [`<select>`](#select) (the popup carries escape clipping).
 
@@ -466,7 +466,7 @@ const [birthday, setBirthday] = createSignal("");
 
 `Stable` · `Popup` · `Purely controlled`
 
-![Screenshot of the colorpicker component](/Gox/components/shots/darwin/colorpicker.png)
+![Screenshot of the colorpicker component](/components/shots/darwin/colorpicker.png)
 
 A color picker: a 28px field row (a swatch on the left + hex text); clicking opens a **palette popup** (N×M swatches + an echo of the cursor color at the bottom).
 
@@ -503,7 +503,7 @@ const [tint, setTint] = createSignal("#1e88e5");
 
 `Stable` · `Controlled/uncontrolled dual-mode` · `Needs the platform dialog`
 
-![Screenshot of the upload component](/Gox/components/shots/darwin/upload.png)
+![Screenshot of the upload component](/components/shots/darwin/upload.png)
 
 File picking: a 28px dashed-border field row (folder icon + the **file names** of the chosen files). Clicking directly opens the platform's native "open file" dialog (**no popup**).
 

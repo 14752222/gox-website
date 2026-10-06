@@ -13,7 +13,7 @@ description: Gox GUI 表单控件：button、checkbox/radio/switch、input、tex
 
 ### `<button>` {#button}
 
-![button 组件截图](/Gox/components/shots/darwin/button.png)
+![button 组件截图](/components/shots/darwin/button.png)
 
 `稳定` · `受控外观`
 
@@ -44,7 +44,7 @@ description: Gox GUI 表单控件：button、checkbox/radio/switch、input、tex
 
 ### `<checkbox> / <radio> / <switch>` {#checkbox}
 
-![checkbox / radio / switch 组件截图](/Gox/components/shots/darwin/checkbox.png)
+![checkbox / radio / switch 组件截图](/components/shots/darwin/checkbox.png)
 
 `稳定` · `纯受控`
 
@@ -95,7 +95,7 @@ const [notify, setNotify] = createSignal(true);
 
 ### `<input>` {#input}
 
-![input 组件截图](/Gox/components/shots/darwin/input.png)
+![input 组件截图](/components/shots/darwin/input.png)
 
 `稳定` · `IME:仅 Windows`
 
@@ -155,7 +155,7 @@ tick();
 
 ### `<search>` {#search}
 
-![search 组件截图](/Gox/components/shots/darwin/search.png)
+![search 组件截图](/components/shots/darwin/search.png)
 
 `稳定` · `IME:仅 Windows`
 
@@ -183,7 +183,7 @@ const [q, setQ] = createSignal("");
 
 ### `<rating>` {#rating}
 
-![rating 组件截图](/Gox/components/shots/darwin/rating.png)
+![rating 组件截图](/components/shots/darwin/rating.png)
 
 `稳定`
 
@@ -208,7 +208,7 @@ const [score, setScore] = createSignal(3);
 
 ### `<textarea>` {#textarea}
 
-![textarea 组件截图](/Gox/components/shots/darwin/textarea.png)
+![textarea 组件截图](/components/shots/darwin/textarea.png)
 
 `稳定` · `IME:仅 Windows`
 
@@ -248,7 +248,7 @@ const [text, setText] = createSignal("");
 
 ### `<select>` {#select}
 
-![select 组件截图](/Gox/components/shots/darwin/select.png)
+![select 组件截图](/components/shots/darwin/select.png)
 
 `稳定` · `弹层`
 
@@ -297,7 +297,7 @@ const [city, setCity] = createSignal("sh");
 
 ### `<slider>` {#slider}
 
-![slider 组件截图](/Gox/components/shots/darwin/slider.png)
+![slider 组件截图](/components/shots/darwin/slider.png)
 
 `稳定` · `拖动独占`
 
@@ -336,7 +336,7 @@ h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true }
 
 ### `<label>` {#label}
 
-![label 组件截图](/Gox/components/shots/darwin/label.png)
+![label 组件截图](/components/shots/darwin/label.png)
 
 `稳定`
 
@@ -367,7 +367,7 @@ h("slider", { width: 200, min: 0, max: 100, step: 5, value: 70, disabled: true }
 
 ### `<form>` {#form}
 
-![form 组件截图](/Gox/components/shots/darwin/form.png)
+![form 组件截图](/components/shots/darwin/form.png)
 
 `稳定`
 
@@ -418,7 +418,7 @@ const [files, setFiles] = createSignal([]);
 
 ### `<datepicker>` {#datepicker}
 
-![datepicker 组件截图](/Gox/components/shots/darwin/datepicker.png)
+![datepicker 组件截图](/components/shots/darwin/datepicker.png)
 
 `稳定` · `弹层` · `纯受控`
 
@@ -464,7 +464,7 @@ const [birthday, setBirthday] = createSignal("");
 
 ### `<colorpicker>` {#colorpicker}
 
-![colorpicker 组件截图](/Gox/components/shots/darwin/colorpicker.png)
+![colorpicker 组件截图](/components/shots/darwin/colorpicker.png)
 
 `稳定` · `弹层` · `纯受控`
 
@@ -501,7 +501,7 @@ const [tint, setTint] = createSignal("#1e88e5");
 
 ### `<upload>` {#upload}
 
-![upload 组件截图](/Gox/components/shots/darwin/upload.png)
+![upload 组件截图](/components/shots/darwin/upload.png)
 
 `稳定` · `受控/非受控两用` · `需要平台对话框`
 
