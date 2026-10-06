@@ -138,6 +138,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 宿主模块（免 import） | `console` / `fs` / `path` / `process` / `http` / `fetch` | [API · 宿主模块](/api/host) |
 | 响应式 | GetX 风格 `obs` / `computed`，SolidJS 风格 `gx/solid` 信号 | [教程 · 响应式](/guide/reactive) |
 | GUI | 44 个内置元素 + JSX + 脏矩形局部重绘、路由、多窗口 | [组件参考](/components/) |
+| 多端 | 桌面 Windows / Linux / macOS(win32 / X11 / cocoa)与移动 Android / iOS / 鸿蒙 —— 平台壳工程驱动同一渲染内核,界面逻辑一份 JS 通用 | [教程 · GUI 应用](/guide/gui) |
 | 内置模块（需 import） | `gx/solid` · `gx/gfx` · `gx/view` · `gx/router` · `gx/screen` · `gx/dialog` · `gx/storage` · `gx/dev` 与原生能力层六模块 | [API · 内置模块](/api/gx) |
 | 工具链 | REPL、`gox create` 脚手架、`gox dev` 热更新、jsbuild 打包、五平台 npm 预编译二进制 | [教程 · 安装](/guide/install) |
 
@@ -157,7 +158,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 0.4.0 | 脚手架 `gox create`；路由 `gx/router` 与屏幕 `gx/screen` 成为内置模块 |
 
 ::: info 已知缺口
-富文本(行内混排样式)尚未封装(虚拟化长列表已在 [`<scroll vlist>`](/components/layout#scroll) 落地) —— 表格 / 树 / tooltip / 图标 / spinner / tabs 等数据展示与反馈类组件已在 0.9.0 落地；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，需移动宿主实现。逐项见[限制与常见误区](/components/limits)。
+富文本(行内混排样式)尚未封装(虚拟化长列表已在 [`<scroll vlist>`](/components/layout#scroll) 落地) —— 表格 / 树 / tooltip / 图标 / spinner / tabs 等数据展示与反馈类组件已在 0.9.0 落地；原生能力层里依赖真机的部分（相机 / 定位 / 相册 / 权限）在桌面上诚实报 `unsupported`，移动端则由平台壳工程提供（Android 已模拟器实测、iOS 待验收、鸿蒙仍是桩）。逐项见[限制与常见误区](/components/limits)。
 :::
 
 </div>

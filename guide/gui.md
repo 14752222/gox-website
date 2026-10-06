@@ -166,3 +166,101 @@ const theme = getStorage("theme") ?? "light";   // 不存在返回 undefined,没
 ```
 
 完整示例见仓库 `testdata/` 目录:计数器 `counter_demo.js`、 表单 `form_demo.js`、菜单 `menu_demo.js`、 画布 `canvas_demo.js`、滑动条 `slider_demo.js`、 多窗口 `multiwindow_demo.js`、路由 `router_demo.js` 等 **40 余个**演示脚本,每个都可直接 `gox testdata/xxx_demo.js` 运行。
+
+## 跑在手机上:Android / iOS / 鸿蒙
+
+桌面之外,同一份 JSX + `gx/gfx` 代码也能跑在手机上 —— 渲染内核(node / layout / raster / font)一行不改,差别只在**宿主外壳**:Windows 用 win32、macOS 用 cocoa,移动端则由各平台的壳工程把同一份 `libgox` 驱动起来。**界面逻辑仍然全部写在 JS 里**,壳工程只负责"上屏 + 输入 + 上报系统状态"。
+
+### 三平台现状
+
+| 平台 | 外壳 | 脚本侧能用到什么 | 验证到哪一步 |
+| --- | --- | --- | --- |
+| **Android** | Kotlin(`SurfaceView` + `Choreographer`) | 上屏 / 触摸 / 软键盘 IME / 安全区 / 折叠姿态;原生能力 `gx/device` `gx/app` `gx/geo` `gx/media` `gx/permission` 基本齐备 | 模拟器 x86_64 / API 34 **实测通过**(渲染、触摸、IME、安全区、折叠屏) |
+| **iOS** | Swift(`UIView` + `CADisplayLink`) | 上屏 / 触摸 / IME / 安全区 / 折叠姿态(`reservedRegions`,iOS 27.1+);原生能力大部分齐备 —— 只有 `exitApp` 例外(iOS 不允许应用自杀) | 壳工程与构建脚本(含 TestFlight 打包)**齐备**,**真机 / 模拟器验收待做** |
+| **鸿蒙** | ArkTS(`PixelMap` + `onTouch`) | 上屏 / 触摸 / 安全区 / 折叠上报 | 交叉编译 + 契约测试 + HAP 构建**通过**,**设备上尚未实跑**;软键盘未接,原生能力六模块仍是桩(只通了安全区与折叠上报) |
+
+::: warning v1 边界(都不是 bug,是没做)
+单缓冲 —— Go 写入与宿主拷贝可能重叠一帧(撕裂)｜多指手势不识别,第二根手指按下即作废整个手势｜**density 只上报不换算** —— `font={20}` 就是 20 个物理像素,在高密度屏上偏小,用 `gx/device` 的 `pixelRatio` 自行换算｜软键盘是**结果提交制**,拼音中间态不逐键上报(逐键属 P1)。
+:::
+
+### 前置环境
+
+移动端打包**需要 Gox 源码仓库**(壳工程与交叉编译脚本都在仓库内;设 `GOX_REPO` 环境变量或在仓库内运行),外加对应平台工具链:
+
+| 平台 | 需要 |
+| --- | --- |
+| Android | Android SDK(platform 35 + build-tools)、NDK r25+、JDK 17、Gradle 8.7+ |
+| iOS | macOS + Xcode |
+| 鸿蒙 | DevEco Studio + HarmonyOS SDK(Native,apiVersion 26) |
+
+### 构建 Android
+
+三平台里 Android 最直接,四步:
+
+```bash
+# 1) 交叉编译 libgox.so(脚本自带 ELF 目标校验,发现"编成功但链错目标")
+bash scripts/build-android.sh                 # arm64-v8a(真机)
+bash scripts/build-android.sh --abi x86_64    # 模拟器(x86 主机上原生执行,比 arm64 转译快得多)
+
+# 2) 拷进壳工程(jniLibs/ 不入库,每次重建都要重新拷)
+mkdir -p app/android/app/src/main/jniLibs/arm64-v8a app/android/app/src/main/jniLibs/x86_64
+cp dist/android/arm64-v8a/libgox.so app/android/app/src/main/jniLibs/arm64-v8a/
+cp dist/android/x86_64/libgox.so   app/android/app/src/main/jniLibs/x86_64/
+
+# 3) 打 APK
+cd app/android && gradle assembleDebug
+
+# 4) 装机看日志
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb logcat -s Gox:I
+```
+
+界面脚本是壳工程里的 `app/android/app/src/main/assets/app.js`。**日志为什么要专门看 `Gox` 这个 tag**:Android 在 fork 应用进程前把 stdout / stderr 接进了 `/dev/null`,原生代码往 fd 2 写的东西真机上根本看不到 —— 所以 Go 侧所有"跳过了、失败了"的分支都走 `Gox` tag。"黑屏 + 无日志"是没法查的,这一条就是为它准备的。
+
+### 构建 iOS:一条命令
+
+iOS 有统一入口,自动 `sync` 注入权限 → `icon` 生成 AppIconSet → 交叉编译 `libgox.a` → xcodebuild 组装 `dist/<name>.app`:
+
+```bash
+gox build ios my-app                        # 缺省模拟器目标,免签名(可直接 simctl install)
+gox build ios my-app --device               # 真机(需签名证书,无证书时给出配置指引)
+gox build ios my-app --entry src/main.js    # 指定入口脚本(缺省 src/main.js)
+DEVELOPMENT_TEAM=<TeamID> bash scripts/build-ios.sh --archive   # 真机 Release + .ipa(TestFlight 用)
+```
+
+iOS 壳**只支持单文件入口**:那份脚本可以 import 内置 `gx/*` 模块,但不能 import 相对路径文件(壳走单文件求值,没有模块基路径)—— 反过来 `--entry` 会把入口自动合并进 `.app`,这一点比 Android 省事(Android 目前要手工替换 `assets/app.js`)。
+
+### 构建鸿蒙:两步(暂无 `gox build` 目标)
+
+```bash
+# 1) 交叉编译(鸿蒙没有 GOOS=openharmony —— 脚本走 GOOS=linux + OHOS clang + musl sysroot)
+bash scripts/build-harmony.sh --abi arm64     # 真机;模拟器用 --abi x86_64
+cp dist/harmony/arm64/libgox.so app/harmony/entry/libs/arm64-v8a/
+
+# 2) 构建 HAP(命令行姿势,不依赖 wrapper)
+export DEVECO_HOME="<DevEco Studio 安装目录>"   # 内含 sdk/ 与 tools/
+export DEVECO_SDK_HOME="$DEVECO_HOME/sdk"
+node "$DEVECO_HOME/tools/ohpm/bin/pm-cli.js" install --all
+node "$DEVECO_HOME/tools/hvigor/bin/hvigorw.js" --mode module \
+     -p module=entry@default -p product=default -p buildMode=debug assembleHap --no-daemon
+```
+
+界面脚本在 `app/harmony/entry/src/main/resources/rawfile/app.js`。`.so` 要放 `entry/libs/<abi>/`,目录名用 `arm64-v8a` 这套**安卓风格的 ABI 名**(不是 LLVM 三元组 `aarch64-linux-ohos`)—— 放错的症状是构建绿、运行时加载失败。
+
+::: info 脚手架只生成 Android / iOS 骨架
+`gox create` 铺出的工程含 `android/`(清单 + gradle)与 `ios/`(Info.plist + 图标)骨架,**不含鸿蒙**。要用鸿蒙请参考仓库里的壳工程 `app/harmony/`。
+:::
+
+### 移动端要消费的三件事
+
+写 UI 时只有三处与桌面不同,而且都是**响应式消费、桌面自动退化**(桌面 insets 恒为 0,同一份代码自然退化成普通 padding):
+
+| 要处理 | 用什么 | 说明 |
+| --- | --- | --- |
+| 安全区(刘海 / 手势条 / 挖孔) | `import { useInsets } from "gx/viewport"` | 贴边组件按 insets 响应式加 padding(顶栏吃 `top`、TabBar 吃 `bottom`、侧栏吃 `left` / `right`),组件内不写死数值 |
+| 软键盘避让 | `useKeyboardHeight()` | 键盘高度是**独立通道**;输入框获焦时容器抬升或压缩内容区,底部贴边组件让位,不得浮在键盘上 |
+| 断点 | `widthClass()` / `isCompactWidth()` | 宽三档 600 / 840dp(`compact` / `medium` / `expanded`),高两档 480dp;手机竖屏单列、平板竖屏双列可选 |
+
+折叠屏再补一条:`import { hasFold, useReservedRegions, layoutMode } from "gx/viewport"`。半折(book 模式)时 `RouterView` 会自动变双栏(左栏放历史的上一条),折痕带上不落任何内容。注意 `hasFold()` / `layoutMode()` 是**纯读数(不订阅)**,订阅型读数是 `useReservedRegions()` / `useLayoutMode()` / `useInsets()` 那一族 —— 把纯读数写进三元条件**短路掉**订阅调用,会让那个 effect 一个依赖都没有、之后永不重跑,**且没有任何警告**;正解是**先无条件取一次订阅型读数再分支**。
+
+移动端交互规范(触控目标 48dp、按压态、compact 断点弹层底部贴边、输入框获焦保持可见等)见仓库 [docs/mobile-adaptation.md](https://github.com/14752222/Gox/blob/main/docs/mobile-adaptation.md);壳工程的构建细节、JNI / NAPI 契约与首帧自检清单见 [app/NATIVE-HOST.md](https://github.com/14752222/Gox/blob/main/app/NATIVE-HOST.md)。

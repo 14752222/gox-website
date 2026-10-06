@@ -138,6 +138,7 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 | Host modules (no import) | `console` / `fs` / `path` / `process` / `http` / `fetch` | [API · Host Modules](/en/api/host) |
 | Reactivity | GetX-style `obs` / `computed`, SolidJS-style `gx/solid` signals | [Tutorial · Reactivity](/en/guide/reactive) |
 | GUI | 44 built-in elements + JSX + dirty-rectangle partial redraw, routing, multi-window | [Component Reference](/en/components/) |
+| Platforms | Desktop Windows / Linux / macOS (win32 / X11 / cocoa) and mobile Android / iOS / HarmonyOS — platform shell projects driving the same rendering core, with one JS UI across all of them | [Tutorial · GUI Apps](/en/guide/gui) |
 | Built-in modules (import required) | `gx/solid` · `gx/gfx` · `gx/view` · `gx/router` · `gx/screen` · `gx/dialog` · `gx/storage` · `gx/dev` plus the six native-capability modules | [API · Built-in Modules](/en/api/gx) |
 | Toolchain | REPL, `gox create` scaffolding, `gox dev` hot reload, jsbuild packaging, prebuilt npm binaries for five platforms | [Tutorial · Installation](/en/guide/install) |
 
@@ -155,7 +156,7 @@ Current version **v0.7.0**; see [GitHub Releases](https://github.com/14752222/Go
 | 0.4.0 | `gox create` scaffolding; routing `gx/router` and screen `gx/screen` become built-in modules |
 
 ::: info Known Gaps
-Rich text (inline mixed styling) is not yet wrapped (virtualized long lists landed as [`<scroll vlist>`](/en/components/layout#scroll)) — the table / tree / tooltip / icon / spinner / tabs data-display and feedback widgets all landed in 0.9.0; parts of the native-capability layer that depend on real devices (camera / location / photo library / permissions) honestly report `unsupported` on desktop and require a mobile host implementation. See [Limitations and Common Pitfalls](/en/components/limits) for the itemized list.
+Rich text (inline mixed styling) is not yet wrapped (virtualized long lists landed as [`<scroll vlist>`](/en/components/layout#scroll)) — the table / tree / tooltip / icon / spinner / tabs data-display and feedback widgets all landed in 0.9.0; parts of the native-capability layer that depend on real devices (camera / location / photo library / permissions) honestly report `unsupported` on desktop; on mobile they are provided by the platform shell projects (Android verified on emulator, iOS pending, HarmonyOS still stubbed). See [Limitations and Common Pitfalls](/en/components/limits) for the itemized list.
 :::
 
 </div>
