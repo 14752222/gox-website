@@ -146,10 +146,12 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 
 ## Versions and Current Status
 
-Current version **v0.7.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.9.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.9.0 | `table` / `tree` / `list-item` data-display components, `tabs`, and `tooltip`; design tokens and a theme system (32 colour tokens, dark preset, runtime switching); `gx/update` v1.1 auto-update (streaming download / resume / progress callbacks / `pre` channel); `gox create --ts` TypeScript / TSX template; `var` declarations and class expressions; runtime errors carry source-frame locations |
+| 0.8.0 | Test262 compliance pipeline (scheduled `language` suite runs, badge auto-writeback); `gox vs node` performance benchmark harness; stress and frame-budget tests (10k-timer storm / concurrent fetch / 489-node render budget); 3 sample apps (TODO / dashboard / Snake); computed property names; draggable scrollbars and horizontal scrolling |
 | 0.7.0 | `gox cert` to generate signing certificates for all platforms in one step, `gox build android` auto-wires signing, `gox create` generates a certs/ directory; `gox build macos --arch universal` (merged amd64+arm64); ordered multi-select photo picking on iOS and multi-file preview in media.preview |
 | 0.6.0 | macOS window backend cocoa (desktop GUI now covers all three platforms); `gox dev` hot reload, `gox.json` project config, unified `gox build` entry point |
 | 0.5.0 | Six built-in native-capability modules (gx/device · gx/app · gx/geo · gx/media · gx/permission · gx/viewport) |
