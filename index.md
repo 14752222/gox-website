@@ -21,7 +21,7 @@ hero:
       text: GitHub 源码
       link: https://github.com/14752222/Gox
   image:
-    src: /logo.png
+    src: /logo-animated.svg
     alt: Gox —— 用 Go 从零实现的 JavaScript 运行时
 features:
   - icon: ⚙️

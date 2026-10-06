@@ -21,7 +21,7 @@ hero:
       text: GitHub Source
       link: https://github.com/14752222/Gox
   image:
-    src: /logo.png
+    src: /logo-animated.svg
     alt: Gox — a JavaScript runtime built from scratch in Go
 features:
   - icon: ⚙️

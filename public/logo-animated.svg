@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Gox logo">
+  <!-- Gox 像素栅格 logo · 动画版。由 gox-logo-concepts/make_animation.py 生成，勿手改。 -->
+  <style>
+    .tile { animation: gtile 4.85s ease-in-out infinite; }
+    .p {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation:
+        gpop 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) var(--d) both,
+        gbreathe 2.6s ease-in-out 2.45s infinite;
+    }
+    @keyframes gpop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    @keyframes gbreathe {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.78; }
+    }
+    @keyframes gtile {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.025); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tile, .p { animation: none; }
+    }
+  </style>
+  <g class="tile" style="transform-box: fill-box; transform-origin: center;">
+    <rect x="9" y="9" width="494" height="494" rx="48" fill="#222429"/>
+    <rect class="p" x="95" y="138" width="34" height="35" rx="8.2" fill="#57eaa9" style="--d:0.000s"/>
+    <rect class="p" x="167" y="66" width="34" height="36" rx="8.2" fill="#55e4a6" style="--d:0.030s"/>
+    <rect class="p" x="131" y="103" width="34" height="35" rx="8.2" fill="#57eaa9" style="--d:0.060s"/>
+    <rect class="p" x="131" y="138" width="34" height="35" rx="8.2" fill="#58e9a9" style="--d:0.089s"/>
+    <rect class="p" x="203" y="66" width="34" height="36" rx="8.2" fill="#55e6a6" style="--d:0.119s"/>
+    <rect class="p" x="167" y="103" width="34" height="34" rx="8.2" fill="#56eaa9" style="--d:0.149s"/>
+    <rect class="p" x="95" y="174" width="34" height="70" rx="8.2" fill="#56e7a7" style="--d:0.179s"/>
+    <rect class="p" x="131" y="174" width="34" height="35" rx="8.2" fill="#56e7a7" style="--d:0.209s"/>
+    <rect class="p" x="203" y="103" width="34" height="34" rx="8.2" fill="#3ac589" style="--d:0.239s"/>
+    <rect class="p" x="167" y="139" width="34" height="34" rx="8.2" fill="#39c187" style="--d:0.268s"/>
+    <rect class="p" x="239" y="66" width="35" height="36" rx="8.4" fill="#54e2a3" style="--d:0.298s"/>
+    <rect class="p" x="131" y="210" width="34" height="34" rx="8.2" fill="#3bc289" style="--d:0.328s"/>
+    <rect class="p" x="95" y="246" width="34" height="34" rx="8.2" fill="#56eaaa" style="--d:0.358s"/>
+    <rect class="p" x="275" y="66" width="35" height="36" rx="8.4" fill="#54e2a4" style="--d:0.388s"/>
+    <rect class="p" x="239" y="103" width="35" height="34" rx="8.4" fill="#54e6a5" style="--d:0.418s"/>
+    <rect class="p" x="131" y="246" width="34" height="34" rx="8.2" fill="#58eaaa" style="--d:0.447s"/>
+    <rect class="p" x="95" y="282" width="34" height="34" rx="8.2" fill="#57eaaa" style="--d:0.477s"/>
+    <rect class="p" x="275" y="103" width="35" height="34" rx="8.4" fill="#39c187" style="--d:0.507s"/>
+    <rect class="p" x="312" y="66" width="34" height="36" rx="8.2" fill="#55e4a5" style="--d:0.537s"/>
+    <rect class="p" x="95" y="318" width="34" height="34" rx="8.2" fill="#57ebaa" style="--d:0.567s"/>
+    <rect class="p" x="131" y="282" width="34" height="35" rx="8.2" fill="#59eaab" style="--d:0.596s"/>
+    <rect class="p" x="312" y="103" width="34" height="34" rx="8.2" fill="#57e8a8" style="--d:0.626s"/>
+    <rect class="p" x="131" y="318" width="34" height="34" rx="8.2" fill="#57e9a9" style="--d:0.656s"/>
+    <rect class="p" x="348" y="102" width="34" height="36" rx="8.2" fill="#55e8a7" style="--d:0.686s"/>
+    <rect class="p" x="312" y="139" width="34" height="34" rx="8.2" fill="#55e8a7" style="--d:0.716s"/>
+    <rect class="p" x="239" y="246" width="34" height="34" rx="8.2" fill="#60f8af" style="--d:0.746s"/>
+    <rect class="p" x="167" y="318" width="34" height="34" rx="8.2" fill="#3ac088" style="--d:0.775s"/>
+    <rect class="p" x="131" y="354" width="34" height="34" rx="8.2" fill="#3bc68a" style="--d:0.805s"/>
+    <rect class="p" x="348" y="139" width="34" height="34" rx="8.2" fill="#56e9a8" style="--d:0.835s"/>
+    <rect class="p" x="274" y="246" width="36" height="34" rx="8.6" fill="#55e4a6" style="--d:0.865s"/>
+    <rect class="p" x="167" y="354" width="34" height="34" rx="8.2" fill="#56e9a9" style="--d:0.895s"/>
+    <rect class="p" x="348" y="174" width="34" height="34" rx="8.2" fill="#3ac589" style="--d:0.925s"/>
+    <rect class="p" x="384" y="139" width="34" height="34" rx="8.2" fill="#57ebaa" style="--d:0.954s"/>
+    <rect class="p" x="203" y="354" width="34" height="34" rx="8.2" fill="#59edac" style="--d:0.984s"/>
+    <rect class="p" x="167" y="390" width="34" height="34" rx="8.2" fill="#56ebaa" style="--d:1.014s"/>
+    <rect class="p" x="275" y="282" width="35" height="34" rx="8.4" fill="#55e8a8" style="--d:1.044s"/>
+    <rect class="p" x="312" y="246" width="34" height="34" rx="8.2" fill="#56e9a9" style="--d:1.074s"/>
+    <rect class="p" x="203" y="390" width="34" height="34" rx="8.2" fill="#57ecab" style="--d:1.104s"/>
+    <rect class="p" x="347" y="246" width="35" height="34" rx="8.4" fill="#57e9a9" style="--d:1.133s"/>
+    <rect class="p" x="239" y="354" width="35" height="34" rx="8.4" fill="#56e9a8" style="--d:1.163s"/>
+    <rect class="p" x="312" y="282" width="34" height="35" rx="8.2" fill="#57e6a7" style="--d:1.193s"/>
+    <rect class="p" x="275" y="354" width="35" height="34" rx="8.4" fill="#57e8a8" style="--d:1.223s"/>
+    <rect class="p" x="239" y="390" width="35" height="34" rx="8.4" fill="#57e8a8" style="--d:1.253s"/>
+    <rect class="p" x="384" y="246" width="34" height="34" rx="8.2" fill="#58ebaa" style="--d:1.282s"/>
+    <rect class="p" x="312" y="318" width="34" height="34" rx="8.2" fill="#38bf86" style="--d:1.312s"/>
+    <rect class="p" x="348" y="282" width="34" height="35" rx="8.2" fill="#56e7a7" style="--d:1.342s"/>
+    <rect class="p" x="347" y="318" width="35" height="34" rx="8.4" fill="#55e7a7" style="--d:1.372s"/>
+    <rect class="p" x="275" y="390" width="35" height="34" rx="8.4" fill="#38c086" style="--d:1.402s"/>
+    <rect class="p" x="239" y="426" width="35" height="34" rx="8.4" fill="#3ac187" style="--d:1.432s"/>
+    <rect class="p" x="384" y="282" width="34" height="34" rx="8.2" fill="#59ecac" style="--d:1.461s"/>
+    <rect class="p" x="312" y="354" width="34" height="34" rx="8.2" fill="#58ebaa" style="--d:1.491s"/>
+    <rect class="p" x="384" y="318" width="34" height="34" rx="8.2" fill="#56e9aa" style="--d:1.521s"/>
+    <rect class="p" x="348" y="354" width="34" height="34" rx="8.2" fill="#39c388" style="--d:1.551s"/>
+    <rect class="p" x="312" y="390" width="34" height="34" rx="8.2" fill="#58ebaa" style="--d:1.581s"/>
+    <rect class="p" x="384" y="354" width="34" height="34" rx="8.2" fill="#59ecab" style="--d:1.611s"/>
+    <rect class="p" x="384" y="390" width="34" height="34" rx="8.2" fill="#59ecab" style="--d:1.640s"/>
+    <rect class="p" x="435" y="406" width="17" height="18" rx="4.1" fill="#59dfa2" style="--d:1.670s"/>
+    <rect class="p" x="414" y="434" width="23" height="24" rx="5.5" fill="#5be9a8" style="--d:1.700s"/>
+  </g>
+</svg>

@@ -27,7 +27,7 @@ pnpm preview        # 本地预览构建产物
 ├── components/             # 组件参考（44 个元素按类分页 + 横切能力 + 限制）
 ├── api/                    # API 参考（运行时 / 内建 / 宿主模块 / gx 模块 / 差异）
 ├── public/                 # 原样拷贝的静态文件
-│   ├── logo.png / favicon.png / og-image.png   # og-image 1200x630 分享图
+│   ├── logo.png / logo-animated.svg / favicon.png / og-image.png   # og-image 1200x630 分享图；动画版由 gox-logo-concepts/make_animation.py 生成
 │   ├── robots.txt          # 指向 sitemap
 │   ├── components/shots/   # 组件画廊截图（<GOOS>/ 一套一平台，由主仓库 gfx/gallery_shot_test.go 生成）
 │   └── guide.html / components.html / api.html # 旧 URL 跳转页（带锚点级精确映射）
