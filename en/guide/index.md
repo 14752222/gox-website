@@ -27,7 +27,9 @@ Just want to get it running → [Installation and Creating a Project](/en/guide/
 | 8 | [HTTP Requests and Servers](/en/guide/http) | Global `fetch`, serving with `http.createServer` |
 | 9 | [Reactive Programming](/en/guide/reactive) | GetX-style `obs` and SolidJS-style `createSignal` |
 | 10 | [GUI Desktop Apps](/en/guide/gui) | JSX + gx/gfx + gx/solid, built-in elements, routing, built-in module cheat sheet |
-| 11 | [Packaging Standalone Executables](/en/guide/package) | The jsbuild packager, cross-compilation, single-file distribution |
-| 12 | [FAQ](/en/guide/faq) | Relationship with Node, macOS support, debugging tips |
+| 11 | [Foldable-Screen Adaptation](/en/guide/foldable) | Posture and hinge readouts, layout suggestions, hinge avoidance, Tabletop, cross-display dragging |
+| 12 | [Packaging Standalone Executables](/en/guide/package) | The jsbuild packager, cross-compilation, single-file distribution |
+| 13 | [Performance and Compliance Data](/en/guide/performance) | Throughput vs goja/V8, frame rate and GC pauses, test262 compliance, third-party compatibility matrix |
+| 14 | [FAQ](/en/guide/faq) | Relationship with Node, macOS support, debugging tips |
 
-Next stop: [Component Reference](/en/components/) — full props and examples for all 44 built-in GUI elements.
+Next stop: [Component Reference](/en/components/) — full props and examples for all 50 built-in GUI elements.

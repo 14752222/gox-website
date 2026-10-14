@@ -36,7 +36,7 @@ features:
     linkText: 语言基础
   - icon: 🖥️
     title: 自研 GUI 渲染层
-    details: 纯 Go 软件光栅化，flex 风格布局 + JSX + 信号驱动更新，脏矩形局部重绘；win32 / X11 / cocoa 三平台窗口后端，44 个内置元素。
+    details: 纯 Go 软件光栅化，flex 风格布局 + JSX + 信号驱动更新，脏矩形局部重绘；win32 / X11 / cocoa 三平台窗口后端，50 个内置元素。
     link: /components/
     linkText: 组件参考
   - icon: 🔌
@@ -137,10 +137,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 | 标准库 | Object / Array / String / Map / Set / Proxy / Promise / TypedArray / Temporal … | [API · 标准内建](/api/builtins) |
 | 宿主模块（免 import） | `console` / `fs` / `path` / `process` / `http` / `fetch` | [API · 宿主模块](/api/host) |
 | 响应式 | GetX 风格 `obs` / `computed`，SolidJS 风格 `gx/solid` 信号 | [教程 · 响应式](/guide/reactive) |
-| GUI | 44 个内置元素 + JSX + 脏矩形局部重绘、路由、多窗口 | [组件参考](/components/) |
+| GUI | 50 个内置元素 + JSX + 脏矩形局部重绘、路由、多窗口 | [组件参考](/components/) |
 | 多端 | 桌面 Windows / Linux / macOS(win32 / X11 / cocoa)与移动 Android / iOS / 鸿蒙 —— 平台壳工程驱动同一渲染内核,界面逻辑一份 JS 通用 | [教程 · GUI 应用](/guide/gui) |
 | 内置模块（需 import） | `gx/solid` · `gx/gfx` · `gx/view` · `gx/router` · `gx/screen` · `gx/dialog` · `gx/storage` · `gx/dev` 与原生能力层六模块 | [API · 内置模块](/api/gx) |
 | 工具链 | REPL、`gox create` 脚手架、`gox dev` 热更新、jsbuild 打包、五平台 npm 预编译二进制 | [教程 · 安装](/guide/install) |
+| 实测数据 | 算力对比 goja / V8、UI 帧率与 GC 毛刺判定、test262 合规率、三方库兼容矩阵 —— 口径与阈值全部公开 | [教程 · 性能与合规](/guide/performance) |
 
 </div>
 
@@ -150,6 +151,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.10.0 | 折叠屏适配：`gx/screen` 的 `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` 读数，`gx/viewport` 的 `reservedRegions` / `hasFold` / `layoutMode` / `widthClass`，opt-in 的 `avoidReserved` 折痕避让；Android / iOS / 鸿蒙三端宿主均已接姿态上报；`scroll vlist` 虚拟化长列表；三档断点（compact / medium / expanded） |
 | 0.9.0 | `table` / `tree` / `list-item` 数据展示组件、`tabs` 选项卡、`tooltip` 悬停提示；设计 token 与主题系统（32 项颜色 token、暗色预设、运行时切换）；`gx/update` v1.1 自动更新（流式下载 / 断点续传 / 进度回调 / pre 通道）；`gox create --ts` TypeScript / TSX 模板；`var` 声明与 class 表达式；运行时错误带源码帧定位 |
 | 0.8.0 | Test262 合规率流水线（定时跑 language 套件、徽章自动回写）；`gox vs node` 性能基准 harness；压力与帧预算测试（万级定时器风暴 / 并发 fetch / 489 节点渲染预算）；3 个示例应用（TODO / 仪表盘 / 贪吃蛇）；计算属性名；滚动条可拖拽与横向滚动 |
 | 0.7.0 | `gox cert` 一键生成各平台签名证书、`gox build android` 自动接入签名、`gox create` 生成 certs/ 目录；`gox build macos --arch universal`（amd64+arm64 合并）；iOS 相册多选保序与 media.preview 多文件预览 |

@@ -36,7 +36,7 @@ features:
     linkText: Language basics
   - icon: 🖥️
     title: In-House GUI Rendering Layer
-    details: Pure Go software rasterization, flex-style layout + JSX + signal-driven updates, dirty-rectangle partial redraw; window backends for win32 / X11 / cocoa across three platforms, with 44 built-in elements.
+    details: Pure Go software rasterization, flex-style layout + JSX + signal-driven updates, dirty-rectangle partial redraw; window backends for win32 / X11 / cocoa across three platforms, with 50 built-in elements.
     link: /en/components/
     linkText: Component reference
   - icon: 🔌
@@ -137,19 +137,21 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 | Standard library | Object / Array / String / Map / Set / Proxy / Promise / TypedArray / Temporal … | [API · Standard Built-ins](/en/api/builtins) |
 | Host modules (no import) | `console` / `fs` / `path` / `process` / `http` / `fetch` | [API · Host Modules](/en/api/host) |
 | Reactivity | GetX-style `obs` / `computed`, SolidJS-style `gx/solid` signals | [Tutorial · Reactivity](/en/guide/reactive) |
-| GUI | 44 built-in elements + JSX + dirty-rectangle partial redraw, routing, multi-window | [Component Reference](/en/components/) |
+| GUI | 50 built-in elements + JSX + dirty-rectangle partial redraw, routing, multi-window | [Component Reference](/en/components/) |
 | Platforms | Desktop Windows / Linux / macOS (win32 / X11 / cocoa) and mobile Android / iOS / HarmonyOS — platform shell projects driving the same rendering core, with one JS UI across all of them | [Tutorial · GUI Apps](/en/guide/gui) |
 | Built-in modules (import required) | `gx/solid` · `gx/gfx` · `gx/view` · `gx/router` · `gx/screen` · `gx/dialog` · `gx/storage` · `gx/dev` plus the six native-capability modules | [API · Built-in Modules](/en/api/gx) |
 | Toolchain | REPL, `gox create` scaffolding, `gox dev` hot reload, jsbuild packaging, prebuilt npm binaries for five platforms | [Tutorial · Installation](/en/guide/install) |
+| Measured data | Throughput vs goja / V8, UI frame-rate and GC-pause verdicts, test262 compliance, third-party compatibility matrix — methodology and thresholds fully published | [Tutorial · Performance](/en/guide/performance) |
 
 </div>
 
 ## Versions and Current Status
 
-Current version **v0.9.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.10.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.10.0 | Foldable-screen adaptation: `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` readouts in `gx/screen`, `reservedRegions` / `hasFold` / `layoutMode` / `widthClass` in `gx/viewport`, opt-in `avoidReserved` hinge avoidance; Android / iOS / HarmonyOS hosts all report fold state; `scroll vlist` virtualised long lists; three breakpoints (compact / medium / expanded) |
 | 0.9.0 | `table` / `tree` / `list-item` data-display components, `tabs`, and `tooltip`; design tokens and a theme system (32 colour tokens, dark preset, runtime switching); `gx/update` v1.1 auto-update (streaming download / resume / progress callbacks / `pre` channel); `gox create --ts` TypeScript / TSX template; `var` declarations and class expressions; runtime errors carry source-frame locations |
 | 0.8.0 | Test262 compliance pipeline (scheduled `language` suite runs, badge auto-writeback); `gox vs node` performance benchmark harness; stress and frame-budget tests (10k-timer storm / concurrent fetch / 489-node render budget); 3 sample apps (TODO / dashboard / Snake); computed property names; draggable scrollbars and horizontal scrolling |
 | 0.7.0 | `gox cert` to generate signing certificates for all platforms in one step, `gox build android` auto-wires signing, `gox create` generates a certs/ directory; `gox build macos --arch universal` (merged amd64+arm64); ordered multi-select photo picking on iOS and multi-file preview in media.preview |

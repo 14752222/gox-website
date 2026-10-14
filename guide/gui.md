@@ -1,6 +1,6 @@
 ---
 title: GUI 桌面应用
-description: 用 Gox 写 GUI 桌面应用：JSX + gx/gfx 声明式 UI、gx/solid 信号驱动、纯 Go 软件光栅化、44 个内置元素、路由与多窗口，16 行代码起一个计数器。
+description: 用 Gox 写 GUI 桌面应用：JSX + gx/gfx 声明式 UI、gx/solid 信号驱动、纯 Go 软件光栅化、50 个内置元素、路由与多窗口，16 行代码起一个计数器。
 ---
 
 # GUI 桌面应用
@@ -37,15 +37,15 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 
 ## 内置元素与属性
 
-共 **44 个**脚本可写的内置元素(`select-popup` / `menu-item` 等由 Go 侧构造的内部标签不计), 按用途分七类;另有布局透明的容器标签 `<view>`(Fragment,自己不占盒子,是 `each` / `show` 指令的宿主)。下面是速查表,每个元素的完整参数与示例见 [组件参考](/components/)。
+共 **50 个**脚本可写的内置元素(`select-popup` / `menu-item` 等由 Go 侧构造的内部标签不计), 按用途分七类;另有布局透明的容器标签 `<view>`(Fragment,自己不占盒子,是 `each` / `show` 指令的宿主)。下面是速查表,每个元素的完整参数与示例见 [组件参考](/components/)。
 
 | 类别 | 元素 |
 | --- | --- |
 | 布局容器<br>7 个 | `<column>`、`<row>`、`<grid>`、`<scroll>`、`<separator>`、`<spacer>`、`<rect>` |
-| 表单控件<br>10 个 | `<button>`、`<checkbox>`、`<radio>`、`<switch>`、`<input>`、`<search>`、`<textarea>`、`<select>`、`<rating>`、`<slider>` |
+| 表单控件<br>15 个 | `<form>`、`<label>`、`<button>`、`<checkbox>`、`<radio>`、`<switch>`、`<input>`、`<search>`、`<textarea>`、`<select>`、`<rating>`、`<slider>`、`<datepicker>`、`<colorpicker>`、`<upload>` |
 | 内容展示<br>16 个 | `<text>`(`wrap` / `ellipsis`)、`<image>`、`<video>`(标签 + 宿主契约,解码交给平台视频层)、`<progress>`、`<alert>`、`<tag>`、`<badge>`、`<avatar>`、`<empty>`、`<icon>`、`<spinner>`、`<skeleton>`、`<pagination>`、`<table>`、`<tree>`、`<list-item>` |
 | 反馈与弹层<br>4 个 | `<dialog>`、`<drawer>`、`<toast>`、`<tooltip>`,以及 `gx/dialog` 的原生 `alert` / `confirm` / `openFile` / `saveFile` |
-| 导航与菜单<br>5 个 | `<menubar>`、`<menu>`、`<menuitem>`(全局 `shortcut`)、`<tabs>`、`<tab>`、`openContextMenu(x, y, items)` |
+| 导航与菜单<br>5 个 | `<menubar>`、`<menu>`、`<menuitem>`(全局 `shortcut`)、`<tabs>`、`<tab>`,外加 `openContextMenu(x, y, items)` |
 | 媒体与自绘<br>1 个 | `<canvas>`(`onDraw(ctx)` + 7 个绘制原语) |
 | 窗口<br>1 个 | `<window>`(仅作 `render()` 的根元素,可多次调用开多窗口;返回的句柄提供 `close` / `isClosed` / `title` / `setTitle` / `resize`) |
 
@@ -80,7 +80,7 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 
 ## 内置模块速查:该 import 什么
 
-`gx/*` 是**内置模块**(优先于文件系统解析),一共 16 个细分模块, 外加一个把它们合起来的聚合入口 `gox`。应用代码可以一行拿常用的那批, 库代码按细分模块导入更清楚 —— 两种写法指向的是同一份实现。
+`gx/*` 是**内置模块**(优先于文件系统解析),一共 18 个细分模块, 外加一个把它们合起来的聚合入口 `gox`。应用代码可以一行拿常用的那批, 库代码按细分模块导入更清楚 —— 两种写法指向的是同一份实现。
 
 | 要做什么 | import 什么 |
 | --- | --- |

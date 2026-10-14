@@ -27,7 +27,9 @@ description: Gox 使用教程：安装与 gox create 脚手架、REPL 与命令�
 | 8 | [网络请求与 HTTP 服务](/guide/http) | 全局 `fetch`、`http.createServer` 起服务 |
 | 9 | [响应式编程](/guide/reactive) | GetX 风格 `obs` 与 SolidJS 风格 `createSignal` |
 | 10 | [GUI 桌面应用](/guide/gui) | JSX + gx/gfx + gx/solid、内置元素、路由、内置模块速查 |
-| 11 | [打包独立可执行文件](/guide/package) | jsbuild 打包器、交叉编译、单文件分发 |
-| 12 | [常见问题 FAQ](/guide/faq) | 与 Node 的关系、macOS 支持、调试方法 |
+| 11 | [折叠屏适配](/guide/foldable) | 姿态与折痕读数、布局建议、折痕避让、Tabletop、跨屏拖拽 |
+| 12 | [打包独立可执行文件](/guide/package) | jsbuild 打包器、交叉编译、单文件分发 |
+| 13 | [性能与合规数据](/guide/performance) | 算力对比 goja/V8、帧率与 GC 毛刺、test262 合规率、三方库兼容矩阵 |
+| 14 | [常见问题 FAQ](/guide/faq) | 与 Node 的关系、macOS 支持、调试方法 |
 
-下一站：[组件参考](/components/) —— 44 个内置 GUI 元素的完整参数与示例。
+下一站：[组件参考](/components/) —— 50 个内置 GUI 元素的完整参数与示例。

@@ -1,6 +1,6 @@
 ---
 title: GUI Desktop Apps
-description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 44 built-in elements, routing and multi-window — a counter in 16 lines."
+description: "Build GUI desktop apps with Gox: declarative UI with JSX + gx/gfx, signal-driven updates via gx/solid, pure-Go software rasterization, 50 built-in elements, routing and multi-window — a counter in 16 lines."
 ---
 
 # GUI Desktop Apps
@@ -37,12 +37,12 @@ gox counter.js          # run directly; a 400x300 window pops up
 
 ## Built-in elements and props
 
-There are **42** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
+There are **50** built-in elements scriptable from JS (internal tags constructed on the Go side such as `select-popup` / `menu-item` are not counted), grouped into seven categories by purpose; plus the layout-transparent container tag `<view>` (a Fragment that takes up no box itself, and hosts the `each` / `show` directives). Below is a cheat sheet; full parameters and examples for each element are in the [Component Reference](/en/components/).
 
 | Category | Elements |
 | --- | --- |
 | Layout containers<br>7 | `<column>`, `<row>`, `<grid>`, `<scroll>`, `<separator>`, `<spacer>`, `<rect>` |
-| Form controls<br>10 | `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<search>`, `<textarea>`, `<select>`, `<rating>`, `<slider>` |
+| Form controls<br>15 | `<form>`, `<label>`, `<button>`, `<checkbox>`, `<radio>`, `<switch>`, `<input>`, `<search>`, `<textarea>`, `<select>`, `<rating>`, `<slider>`, `<datepicker>`, `<colorpicker>`, `<upload>` |
 | Content display<br>16 | `<text>` (`wrap` / `ellipsis`), `<image>`, `<video>` (tag + host contract; decoding is delegated to the platform video layer), `<progress>`, `<alert>`, `<tag>`, `<badge>`, `<avatar>`, `<empty>`, `<icon>`, `<spinner>`, `<skeleton>`, `<pagination>`, `<table>`, `<tree>`, `<list-item>` |
 | Feedback & overlays<br>4 | `<dialog>`, `<drawer>`, `<toast>`, `<tooltip>`, plus the native `alert` / `confirm` / `openFile` / `saveFile` from `gx/dialog` |
 | Navigation & menus<br>5 | `<menubar>`, `<menu>`, `<menuitem>` (global `shortcut`), `<tabs>`, `<tab>`, `openContextMenu(x, y, items)` |
@@ -80,7 +80,7 @@ Window backends: Windows (pure syscall win32), Linux (X11; Wayland goes through 
 
 ## Built-in modules cheat sheet: what to import
 
-`gx/*` are **built-in modules** (resolved before the filesystem): 16 fine-grained modules in total, plus one aggregate entry `gox` that re-exports them all. App code can grab the common set in a single line, while library code is clearer importing per module — both spellings point to the same implementation.
+`gx/*` are **built-in modules** (resolved before the filesystem): 18 fine-grained modules in total, plus one aggregate entry `gox` that re-exports them all. App code can grab the common set in a single line, while library code is clearer importing per module — both spellings point to the same implementation.
 
 | To do what | What to import |
 | --- | --- |
