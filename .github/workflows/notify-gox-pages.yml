@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# 官网仓 → 主仓的「即时部署」通知（路线 A）
+#
+# 背景：官网源码在本仓库（gox-website），真正的构建与部署在主仓库 Gox 的
+#   .github/workflows/pages.yml 里。两仓是独立仓库（2026-10-12 起不再挂子模块），
+#   所以本仓库的 push 不会直接触发主仓工作流 —— 只靠主仓每日 04:00（UTC+8）
+#   的 schedule 兜底，官网改完最多滞后 24 小时才上线。
+#
+# 本文件解决的就是这个滞后：推 main 后立刻向主仓发一次 repository_dispatch，
+#   主仓收到即跑 pages（event_type 必须与主仓 on.repository_dispatch.types 一致）。
+#
+# 本文件不部署、不碰 Pages、不构建 —— 只有一个 curl 式的通知动作。
+#
+# 一次性前置（仓库设置，代码改不了）：
+#   本仓库 Settings → Secrets and variables → Actions → New repository secret，
+#   名称 GOX_DISPATCH_TOKEN，值需能向主仓发起 repository_dispatch：
+#     · classic PAT：勾 repo（或 fine-grained：授权 Gox → Contents: Read and write）
+#     · 只能是 PAT，不能是 GITHUB_TOKEN —— 后者作用域仅限本仓库，跨仓必 404/403
+#
+# 与主仓 pages.yml 的耦合点只有两处，改一处就要同步改另一处：
+#   1) 下面的 event_type: gox-site-updated
+#   2) 下面的 site_sha / site_repo 字段名（主仓用于校验是否过期）
+#
+# 若日后改为官网仓自建 Pages（路线 B），本文件应随主仓定时任务一并删除。
+# ─────────────────────────────────────────────────────────────────────────────
+name: notify-gox-pages
+
+on:
+  push:
+    branches: [main]
+
+# 只是发一次通知，不需要读写本仓库任何东西
+permissions: {}
+
+# 连推多次只保留最后一次通知（主仓那边另有一层 concurrency 兜底）
+concurrency:
+  group: notify-gox-pages
+  cancel-in-progress: true
+
+jobs:
+  dispatch:
+    name: 通知主仓重新部署官网
+    runs-on: ubuntu-latest
+    steps:
+      - name: repository_dispatch → 14752222/Gox
+        env:
+          GH_TOKEN: ${{ secrets.GOX_DISPATCH_TOKEN }}
+          SITE_SHA: ${{ github.sha }}
+          SITE_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::缺少 secrets.GOX_DISPATCH_TOKEN —— 请在本仓库 Settings → Secrets and variables → Actions 配置一个可对主仓发起 repository_dispatch 的 PAT"
+            exit 1
+          fi
+          echo "通知主仓 Gox 重新部署官网：$SITE_REPO@${SITE_SHA:0:8}"
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/14752222/Gox/dispatches \
+            -f event_type=gox-site-updated \
+            -f "client_payload[site_sha]=$SITE_SHA" \
+            -f "client_payload[site_repo]=$SITE_REPO"
+          echo "已投递。主仓 pages 工作流会拉取官网仓最新提交并重新构建部署。"
