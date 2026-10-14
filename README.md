@@ -31,7 +31,8 @@ pnpm preview        # 本地预览构建产物
 │   ├── robots.txt          # 指向 sitemap
 │   ├── components/shots/   # 组件画廊截图（<GOOS>/ 一套一平台，由主仓库 gfx/gallery_shot_test.go 生成）
 │   └── guide.html / components.html / api.html # 旧 URL 跳转页（带锚点级精确映射）
-└── deploy/pages.yml        # 放到主仓库 .github/workflows/pages.yml 的部署工作流
+└── .github/workflows/
+    └── notify-gox-pages.yml # push main 后通知主仓 Gox 立即重新部署官网
 ```
 
 ## 发版时同步版本号（三处）
@@ -44,13 +45,26 @@ pnpm preview        # 本地预览构建产物
 
 ## 部署流程
 
-1. 本仓库提交并推送到 `gox-website` 的 `main`；
-2. 回主仓库 Gox 更新子模块指针并推送 —— `git add website && git commit -m "chore(site): ..." && git push`，
-   这一步触发主仓库的 `pages` 工作流：pnpm install → vitepress build → 部署 dist；
-3. 确认主仓库 Settings → Pages → Source 选的是 **GitHub Actions**。
+官网源码在本仓库，**构建与部署都在主仓库 [Gox](https://github.com/14752222/Gox)** 的
+`.github/workflows/pages.yml`（本仓库不含构建产物、不碰 Pages）。
 
-`deploy/pages.yml` 是给主仓库用的最新工作流（构建 + 产物 sanity check + 部署），
-改动部署逻辑时把这份文件拷到主仓库 `.github/workflows/pages.yml`。
+1. 本仓库提交并推送到 `gox-website` 的 `main`；
+2. 本仓库的 `notify-gox-pages.yml` 随即向主仓发一次 `repository_dispatch`
+   （`event_type: gox-site-updated`），主仓 `pages` 工作流收到后拉取本仓库最新提交
+   （pnpm install → vitepress build → 部署 dist）并上线，通常几分钟内完成；
+3. 若通知失败（如未配置密钥），站点仍会由主仓每日 04:00（UTC+8）的
+   `schedule` 兜底部署，只是滞后到次日。
+
+一次性前置：
+
+- 主仓库 Settings → Pages → Source 选 **GitHub Actions**；
+- 主仓库 Settings → Actions → General → Workflow permissions 选 **Read and write**；
+- 本仓库 Settings → Secrets → Actions 配 `GOX_DISPATCH_TOKEN`
+  （需可对主仓发起 repository_dispatch 的 PAT；`GITHUB_TOKEN` 跨仓无效）。
+
+> 历史说明：2026-10-12 之前 `website/` 是主仓的子模块，改动需回主仓更新子模块指针；
+> 摘除子模块后该流程作废，本仓库原先存放的 `deploy/pages.yml` 也已删除
+> （工作流以主仓 `.github/workflows/pages.yml` 为唯一副本）。
 
 ## 内置的 SEO 设施（改内容时别弄丢）
 
