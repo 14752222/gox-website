@@ -147,10 +147,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.10.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.11.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.11.0 | 媒体组件真的能播：`<video>` / `<audio>` 配上 `gfx/softmedia` 软件媒体后端（视频 GIF / MJPEG，音频 WAV + PulseAudio，Linux 默认构建启用），`<audio>` 为新标签、`<video>` 新增 `fit`，缺能力依旧诚实降级；`gx/datav` 大屏可视化组件库；GPU 呈现后端原型（`-tags gpu`，实验轨）；`for...in` 解构绑定；折叠屏四场景演示应用 |
 | 0.10.0 | 折叠屏适配：`gx/screen` 的 `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` 读数，`gx/viewport` 的 `reservedRegions` / `hasFold` / `layoutMode` / `widthClass`，opt-in 的 `avoidReserved` 折痕避让；Android / iOS / 鸿蒙三端宿主均已接姿态上报；`scroll vlist` 虚拟化长列表；三档断点（compact / medium / expanded） |
 | 0.9.0 | `table` / `tree` / `list-item` 数据展示组件、`tabs` 选项卡、`tooltip` 悬停提示；设计 token 与主题系统（32 项颜色 token、暗色预设、运行时切换）；`gx/update` v1.1 自动更新（流式下载 / 断点续传 / 进度回调 / pre 通道）；`gox create --ts` TypeScript / TSX 模板；`var` 声明与 class 表达式；运行时错误带源码帧定位 |
 | 0.8.0 | Test262 合规率流水线（定时跑 language 套件、徽章自动回写）；`gox vs node` 性能基准 harness；压力与帧预算测试（万级定时器风暴 / 并发 fetch / 489 节点渲染预算）；3 个示例应用（TODO / 仪表盘 / 贪吃蛇）；计算属性名；滚动条可拖拽与横向滚动 |

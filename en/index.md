@@ -147,10 +147,11 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 
 ## Versions and Current Status
 
-Current version **v0.10.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.11.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.11.0 | Media tags that actually play: `<video>` / `<audio>` ship with `gfx/softmedia`, a pure-Go software media backend (GIF / MJPEG video, WAV + PulseAudio audio) enabled in the default Linux build; `<audio>` is a new tag and `<video>` gained `fit`, with the honest-downgrade path unchanged elsewhere; `gx/datav` dashboard component library; GPU presentation backend prototype (`-tags gpu`, experimental); `for...in` destructuring bindings; a foldable-screen demo app |
 | 0.10.0 | Foldable-screen adaptation: `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` readouts in `gx/screen`, `reservedRegions` / `hasFold` / `layoutMode` / `widthClass` in `gx/viewport`, opt-in `avoidReserved` hinge avoidance; Android / iOS / HarmonyOS hosts all report fold state; `scroll vlist` virtualised long lists; three breakpoints (compact / medium / expanded) |
 | 0.9.0 | `table` / `tree` / `list-item` data-display components, `tabs`, and `tooltip`; design tokens and a theme system (32 colour tokens, dark preset, runtime switching); `gx/update` v1.1 auto-update (streaming download / resume / progress callbacks / `pre` channel); `gox create --ts` TypeScript / TSX template; `var` declarations and class expressions; runtime errors carry source-frame locations |
 | 0.8.0 | Test262 compliance pipeline (scheduled `language` suite runs, badge auto-writeback); `gox vs node` performance benchmark harness; stress and frame-budget tests (10k-timer storm / concurrent fetch / 489-node render budget); 3 sample apps (TODO / dashboard / Snake); computed property names; draggable scrollbars and horizontal scrolling |

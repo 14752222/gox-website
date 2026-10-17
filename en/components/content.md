@@ -59,13 +59,13 @@ Image display. Decodes PNG / JPEG / GIF with the Go standard library (no new dep
 
 ### `<video>` {#video}
 
-`Stable` · `Tag + host contract` · S8
+`Stable` · `Tag + host contract + software backend` · S8
 
-A video box. **The core does not decode** — it only translates "put this file in this window rectangle, play / pause / seek / set volume" into calls on the **platform video layer** (Windows MF / macOS AVPlayerLayer / Android SurfaceView), delegating decoding and compositing to the OS. Backends that do not implement that layer fall back to a **poster / placeholder** and **report honestly** (they never pretend to be playing).
+A video box. The contract layer **only translates semantics** — "put this file in this window rectangle, play / pause / seek / set volume" goes to the backend's optional `nativeVideoHost` (the platform video layer: Windows MF / macOS AVPlayerLayer / Android SurfaceView). **The default Linux build wires up `gfx/softmedia`**, a software media backend that really plays everything the standard library can decode: **GIF** (with disposal 0/1/2/3 compositing) and **MJPEG** (a bare-JPEG frame stream at 25fps); decoded frames are composited straight into the framebuffer through a presentation wrapper. Backends without that capability — or formats outside its scope — fall back to a **poster / placeholder** and **report honestly** (they never pretend to be playing).
 
 | Prop | Type | Description |
 | --- | --- | --- |
-| src | string | Video file path, resolved **relative to the process working directory**; handed to the platform layer (the core does not read it) |
+| src | string | Video file path, resolved **relative to the process working directory**; softmedia picks the decoder by extension (GIF / MJPEG are decoded in-process), everything else goes to the platform layer |
 | poster | string | Poster image, same path rules as `src`; without it, a dark backdrop + play triangle is drawn |
 | playing / autoplay | boolean | **Controlled** playback state; `autoplay` only acts as the initial value when `playing` is absent |
 | muted / loop / volume | boolean / number | Controlled audio state (`volume` is 0–1, clamped out of range) |
@@ -82,8 +82,33 @@ A video box. **The core does not decode** — it only translates "put this file 
 Events: `onReady` / `onPlay` / `onPause` / `onEnded` / `onTimeUpdate({currentTime, duration})` — all reported by the **host** and turned into callbacks by the core; `onError({code, message})` with `code === "unsupported"` means this backend has no platform video layer. Whether to write the host-reported state back into `playing` is up to the script (the same controlled semantics as `input`'s `value`).
 
 - **Ask before choosing a path**: `canIUse("video")` answers truthfully whether this backend can play inline. When it is `false`, jumping to the system player ([`gx/media`](/en/components/modules) `preview()`) is usually a better fit than hand-rolling a player.
-- The three desktop backends (win32 / X11 / cocoa) **do not implement** the platform video layer today ⇒ on desktop it is a poster box: the script receives one `onError({code:"unsupported"})`, one warning goes to stderr, and `canIUse("video")` is `false`.
-- For why no decoder is built in, and what a backend must do to implement this capability, see the repo's [docs/video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md).
+- **Desktop status now diverges**: Linux (X11) **ships with softmedia in the default build** ⇒ GIF / MJPEG **really play** (demo: `testdata/media_demo.js`, run it from the repo root); the Windows (win32) and macOS (cocoa) backends **have no platform video layer** ⇒ there it stays a poster box: one `onError({code:"unsupported"})`, one stderr warning, `canIUse("video")` is `false`.
+- **Format boundary**: h264 / hevc / vp9 / av1 and `.mp4` containers are never decoded — out-of-scope sources get one `onError({code:"unsupported"})`; that is the platform media layer's job. Scope and trade-offs: [docs/media-decision.md](https://github.com/14752222/Gox/blob/main/docs/media-decision.md); what a backend must implement: [docs/video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md).
+
+### `<audio>` {#audio}
+
+`New` · `Tag + host contract + software backend` · S9
+
+The **screenless twin of `<video>`**: props, commands and events mirror video word for word; the only difference is that audio has no rectangle and no layer — output is process-level (the sound card), not part of any window region, which is why the host contract `AudioAttach(id, src, opts)` carries no `Rect`. Backends without `nativeAudioHost` draw a **placeholder bar** (light backdrop + waveform bars) and likewise **report honestly**.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| src | string | Audio file path, resolved **relative to the process working directory**; softmedia decodes WAV only |
+| playing / autoplay | boolean | **Controlled** playback state; `autoplay` only acts as the initial value when `playing` is absent |
+| muted / loop / volume | boolean / number | Controlled audio state (`volume` is 0–1, clamped out of range) |
+| controls | boolean | Ask the platform for its built-in controls (drawn if available, ignored otherwise) |
+| width / height | number | Falls back to 300×36 |
+
+```js
+<audio src="testdata/media_demo.wav" playing loop volume={0.8}
+       onEnded={() => console.log("done")} />
+```
+
+Events are the same set as `<video>`: `onReady` / `onPlay` / `onPause` / `onEnded` / `onTimeUpdate({currentTime, duration})`, plus `onError({code, message})`.
+
+- **What it decodes**: softmedia handles **WAV** only (RIFF PCM 8/16/24/32-bit + IEEE float 32/64 + EXTENSIBLE), played out through PulseAudio (`purego` dlopen, zero cgo). mp3 / aac / ogg / flac are never decoded.
+- **No sound is not the same as not playing**: with no libpulse, no Pulse server, or no device it degrades to a **null sink** — silent, but the **playback clock and every event stay real**, so headless environments still verify playback semantics. On the `-tags gpu` track audio is always null sink (a third-party fakecgo conflict).
+- Ask before choosing a path here too: `canIUse("audio")`.
 
 ### `<progress>` {#progress}
 

@@ -32,7 +32,8 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 | 想要 | 现状 / 替代做法 |
 | --- | --- |
 | 富文本 | `text` 支持 `wrap` / `ellipsis`;行内混排样式(粗体 / 彩色片段)暂无,需要时用 `row` 拼装 |
-| 内联视频播放(平台视频层) | `<video>` 的**标签与宿主契约已落地**(S8):能挂载、能收事件、`playing` / `muted` / `loop` / `volume` 全受控。**解码不在内核** —— 交给窗口后端的平台视频层(MF / AVPlayerLayer / SurfaceView),桌面三后端目前都没接 ⇒ 降级为封面 / 占位 + 一次 `onError({code:"unsupported"})`,`canIUse("video")` 为 `false`。选 / 存 / 系统预览见 [`gx/media`](/components/modules);理由与后端接入步骤见[决策记录](https://github.com/14752222/Gox/blob/main/docs/video-decision.md) |
+| 内联视频播放(h264 / hevc / vp9 等平台视频层格式) | `<video>` 的**标签与宿主契约已落地**(S8),且 **0.11.0 起 Linux 默认构建挂 `gfx/softmedia`,标准库够得着的格式真的能播**:GIF(含 disposal 合成)与 MJPEG。**仍然不解的是** h264 / hevc / vp9 / av1 与 `.mp4` 容器 —— 那要窗口后端接平台视频层(MF / AVPlayerLayer / SurfaceView),Windows 与 macOS 两块后端目前都没接 ⇒ 那里降级为封面 + 一次 `onError({code:"unsupported"})`,`canIUse("video")` 为 `false`。选 / 存 / 系统预览见 [`gx/media`](/components/modules);边界见[media-decision.md](https://github.com/14752222/Gox/blob/main/docs/media-decision.md),后端接入步骤见[video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md) |
+| 内联音频播放(mp3 / aac / ogg) | `<audio>` 是 0.11.0 的新标签(S9),与 video 同一套契约与降级。softmedia 只解 **WAV**(PCM / IEEE float);mp3 / aac / ogg / flac 一律不解 ⇒ 一次 `onError({code:"unsupported"})`,`canIUse("audio")` 照实回答。没有 libpulse / 没有服务 / 没有设备时降级 **null sink**(无声但时钟与事件照真) |
 
 ### 平台差异一览
 
@@ -49,7 +50,7 @@ description: Gox GUI 的全局限制与常见误区速查：unknown tag、受控
 ::: tip 完整演示脚本(都在仓库 `testdata/` 下)
 命令行里 `gox testdata/<名字>.js` 即可运行,例如 `gox testdata/menu_demo.js`。
 
-- 元素:button_demo.js、form_demo.js、input_demo.js、search_demo.js、rating_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、video_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js、tabbar_demo.js
+- 元素:button_demo.js、form_demo.js、input_demo.js、search_demo.js、rating_demo.js、textarea_demo.js、multiline_demo.js、select_demo.js、tabs_demo.js、feedback_demo.js、slider_demo.js、progress_demo.js、scroll_demo.js、image_demo.js、video_demo.js、media_demo.js、canvas_demo.js、dialog_demo.js、dialog_native_demo.js、menu_demo.js、tooltip_demo.js、tabbar_demo.js
 - 列表与条件:view_demo.js、view_demo2.js、list_demo.js、vlist_demo.js、condrender_demo.js、resource_demo.js
 - 数据展示:table_demo.js、tree_demo.js
 - 布局与样式:grid_demo.js、elastic_layout_demo.js、model_demo.js、jsx_demo.js

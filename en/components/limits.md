@@ -32,7 +32,8 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 | Want | Status / workaround |
 | --- | --- |
 | Rich text | `text` supports `wrap` / `ellipsis`; inline mixed styling (bold / colored runs) is not available — assemble with `row` if needed |
-| Inline video playback (platform video layer) | The `<video>` **tag and host contract are implemented** (S8): it mounts, receives events, and treats `playing` / `muted` / `loop` / `volume` as controlled props. **Decoding is not in the core** — it is delegated to the backend's platform video layer (MF / AVPlayerLayer / SurfaceView), which none of the three desktop backends implement yet ⇒ falls back to a poster / placeholder plus one `onError({code:"unsupported"})`, with `canIUse("video")` returning `false`. Picking / saving / system preview live in [`gx/media`](/en/components/modules); rationale and backend integration steps are in the [decision record](https://github.com/14752222/Gox/blob/main/docs/video-decision.md) |
+| Inline video playback for h264 / hevc / vp9 and friends | The `<video>` **tag and host contract are implemented** (S8), and **since 0.11.0 the default Linux build wires up `gfx/softmedia`**, so everything the standard library can decode really plays: GIF (with disposal compositing) and MJPEG. **Still not decoded**: h264 / hevc / vp9 / av1 and `.mp4` containers — those need the window backend to implement the platform video layer (MF / AVPlayerLayer / SurfaceView), which the Windows and macOS backends do not ⇒ there it falls back to a poster plus one `onError({code:"unsupported"})`, with `canIUse("video")` returning `false`. Picking / saving / system preview live in [`gx/media`](/en/components/modules); scope in [media-decision.md](https://github.com/14752222/Gox/blob/main/docs/media-decision.md), integration steps in [video-decision.md](https://github.com/14752222/Gox/blob/main/docs/video-decision.md) |
+| Inline audio playback for mp3 / aac / ogg | `<audio>` is a new tag in 0.11.0 (S9) with the same contract and downgrade path as video. softmedia decodes **WAV** only (PCM / IEEE float); mp3 / aac / ogg / flac are never decoded ⇒ one `onError({code:"unsupported"})`, and `canIUse("audio")` answers truthfully. With no libpulse / no server / no device it degrades to a **null sink** (silent, but the clock and every event stay real) |
 
 ### Platform differences at a glance
 
@@ -49,7 +50,7 @@ description: "A quick reference for Gox GUI's global limits and common pitfalls:
 ::: tip Full demo scripts (all under testdata/ in the repo)
 Run them from the command line with `gox testdata/<name>.js`, e.g. `gox testdata/menu_demo.js`.
 
-- Elements: button_demo.js, form_demo.js, input_demo.js, search_demo.js, rating_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, video_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js, tabbar_demo.js
+- Elements: button_demo.js, form_demo.js, input_demo.js, search_demo.js, rating_demo.js, textarea_demo.js, multiline_demo.js, select_demo.js, tabs_demo.js, feedback_demo.js, slider_demo.js, progress_demo.js, scroll_demo.js, image_demo.js, video_demo.js, media_demo.js, canvas_demo.js, dialog_demo.js, dialog_native_demo.js, menu_demo.js, tooltip_demo.js, tabbar_demo.js
 - Lists & conditionals: view_demo.js, view_demo2.js, list_demo.js, vlist_demo.js, condrender_demo.js, resource_demo.js
 - Data display: table_demo.js, tree_demo.js
 - Layout & styling: grid_demo.js, elastic_layout_demo.js, model_demo.js, jsx_demo.js
