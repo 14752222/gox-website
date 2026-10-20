@@ -112,9 +112,10 @@ const p = getP();                       // subscription established unconditiona
 const label = hasFold() ? postureText(p) : "flat";
 ```
 
-The same holds for **element children** — a reactive binding must be written as
-`{() => expr}`. A bare readout inline in JSX is evaluated once and frozen
-(with `GOX_DEV=1`, gfx warns about exactly this class of trap).
+The same holds for **element children** — since 0.14.0 an interpolation `{expr}`
+is wrapped into a function child at parse time, but bare identifiers `{sig}` are
+not wrapped and handwritten `h()` has no such wrapping either, so those still
+evaluate once and freeze (with `GOX_DEV=1`, gfx warns about this class of trap).
 
 ## 4. Rule ③: hinge coordinates are display coordinates
 

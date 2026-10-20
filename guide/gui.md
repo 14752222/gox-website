@@ -17,7 +17,7 @@ const [count, setCount] = createSignal(0)
 render(
   <window title="Counter" width={400} height={300}>
     <column gap={8} padding={16}>
-      <text font={20}>{() => `count: ${count()}`}</text>
+      <text font={20}>计数：{ count()}</text>
       <button onClick={() => setCount(c => c + 1)}>加一</button>
     </column>
   </window>
@@ -31,7 +31,7 @@ gox counter.js          # 直接运行,弹出 400x300 窗口
 ## 它是怎么工作的
 
 - JSX 在编译期降级为 h(tag, props, ...children) 调用 —— 没有虚拟 DOM diff,属性和文本节点直接与信号关联;h 因此必须 import(用了 JSX 的每个文件都要有它)
-- 属性或文本传函数(如 {() => `count: ${count()}`})即为响应式绑定:信号更新 → 依赖该信号的节点标脏 → 脏矩形合并后只重绘受影响区域
+- 响应式绑定:文本插值 `{ count()}` 在解析期自动包成函数子节点(0.14.0 起),属性传函数(如 `value={() => name()}`)同理 —— 信号更新 → 依赖该信号的节点标脏 → 脏矩形合并后只重绘受影响区域
 - 点击按钮 → setCount 更新信号 → 上述链路自动完成,无需手写刷新
 - 输入类组件是受控的:显示只看 value,编辑只派发 onInput / onChange,所以别忘在回调里把值写回 signal;或者直接用双向绑定指令 model={draft},读写一次接好
 
@@ -122,7 +122,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律; **子节点同理** —— ``count: {count()}`` 是一张快照, 要写 ``{() => `count: ${count()}`}``(这条没有警告)。详见 [组件参考 · 列表与条件](/components/patterns#view)。**三元 / 短路会吃掉订阅**: 订阅型读数(`useXxx()` 一族)写在首帧没走到的分支里就没建立订阅, effect 一个依赖都没有、永不重跑且无警告 —— 先无条件取一次订阅型读数再分支: `const r = useReservedRegions()(); if (!hasFold()) return "未检测到折痕"; …`; 哪些读数带订阅见 [组件参考 · 列表与条件](/components/patterns#view)。
+**属性在调用当场求值一次**,所以响应式的 `each` / `show` 要传取值函数(`each={() => rows()}`),这与受控组件的 `value` 必须传函数是同一条纪律; **子节点 0.14.0 起自动响应式** —— ``count: {count()}`` 在解析期被包成函数子节点, 信号变了文本跟着变; 裸标识符 `{sig}` / 显式函数 `{() => …}` 原样传递, 手写 `h()` 时子节点仍要传函数。详见 [组件参考 · 列表与条件](/components/patterns#view)。**三元 / 短路会吃掉订阅**: 订阅型读数(`useXxx()` 一族)写在首帧没走到的分支里就没建立订阅, effect 一个依赖都没有、永不重跑且无警告 —— 先无条件取一次订阅型读数再分支: `const r = useReservedRegions()(); if (!hasFold()) return "未检测到折痕"; …`; 哪些读数带订阅见 [组件参考 · 列表与条件](/components/patterns#view)。
 
 ## 路由:用 gx/router
 

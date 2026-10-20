@@ -22,15 +22,17 @@ JSX tags are lowered at compile time into `h(tag, props, ...children)` calls, so
 
 ### ② Reactivity: Passing a Function Means Binding
 
-Any prop or text child that is passed a **function** gets wrapped in an effect: when a signal read inside the function body changes, the value is re-evaluated and that region is marked dirty.
+Any prop or text child that is passed a **function** gets wrapped in an effect: when a signal read inside the function body changes, the value is re-evaluated and that region is marked dirty. **Since 0.14.0, JSX interpolation children are wrapped into functions at parse time** — no more handwritten closures:
 
 ```js
-<text>静态文本</text>                      // Plain text is evaluated once and never updates (no braces needed)
-<text>{"静态文本"}</text>                 // Braces hold an ordinary expression, also evaluated once (equivalent to the line above)
-<text>{() => `count: ${count()}`}</text>   // Function → reactive binding
+<text>static text</text>                  // Plain text is evaluated once and never updates (no braces needed)
+<text>{"static text"}</text>              // A constant literal: not wrapped, equivalent to the line above
+<text>count: { count()}</text>            // An interpolation: auto-wrapped into a function child → reactive binding
+<text>{() => `count: ${count()}`}</text>   // An explicit function child: still supported, passed as-is
+<text>{sig}</text>                        // A bare identifier: passed as-is (getters stay reactive; plain variables are static)
 
 <rect width={200} />                      // 固定宽
-<rect width={() => count() * 20} />       // 宽度跟随 count
+<rect width={() => count() * 20} />       // 宽度跟随 count (props still need an explicit function)
 ```
 
 ::: info Dependencies Come From What the Function Body Reads

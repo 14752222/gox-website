@@ -20,11 +20,11 @@ Text. It is the **only carrier of text blocks** — bare string children in JSX 
 | width / height | number | Wrapping needs a width constraint (an explicit width, or cross-axis stretch from the parent container) |
 
 ```js
-<text font={20}>{() => `count: ${count()}`}</text>
+<text font={20}>count: { count()}</text>
 
 <!-- Wrapping: give it a width, or place it in a column and rely on stretch -->
 <text wrap width={260} font={12}>
-  {() => `value = "${text()}"`}
+  value = "{ text()}"
 </text>
 
 <!-- At most two lines, ellipsis beyond that -->
@@ -128,7 +128,7 @@ const [step, setStep] = createSignal(0);
 setInterval(() => setStep(s => (s >= 10 ? 0 : s + 1)), 400);
 
 <progress value={() => step() / 10} />
-<text>{() => `value: ${step() * 10}%`}</text>
+<text>value: { step() * 10}%</text>
 ```
 
 ## Feedback & Data Components {#feedback}

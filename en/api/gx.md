@@ -247,7 +247,7 @@ Things like `screens()` / `posture()` are **direct reads**; while `useScreen()` 
 
 ```js
 const getPosture = usePosture();      // ← you get a getter
-<text>{() => getPosture()}</text>      // when the posture changes, this text updates
+<text>{ getPosture()}</text>           // when the posture changes, this text updates (interpolations are reactive since 0.14.0)
 ```
 
 Design rationale: the display table is a large structure, so making it a whole-table signal isn't worth it; hence the "version number + getter" combination — the getter re-reads the current state and subscribes to the version number on every call, isomorphic to `useRoute()`.

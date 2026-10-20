@@ -147,10 +147,13 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 
 ## Versions and Current Status
 
-Current version **v0.11.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.14.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.14.0 | JSX interpolation children are reactive (Solid semantics): `<text>count: { count()}</text>` is wrapped into a function child at parse time — no more handwritten `{() => …}` closures; constants, explicit functions and bare identifiers stay as-is; `gox lint`'s `snapshot-child` now targets handwritten `h()` snapshots |
+| 0.13.0 | Prism design system (S0–S8): a full visual redesign of the base widgets — layered design tokens (semantic / component / prism presets), control refinements (capsule slider track with a larger knob, 36px field rows, adaptive table column widths, real shadows and an animation heartbeat for drawers/dialogs), feedback components (animated ring spinner, colour-interpolated skeletons, reduced-motion support), touch-mode hit-area inflation and unified density constants |
+| 0.12.0 | Coverage-based antialiasing in the raster pipeline: diagonal lines, arcs and rings are no longer hard-edged (`fillRingAA` / `fillDiscAA` and other AA primitives) |
 | 0.11.0 | Media tags that actually play: `<video>` / `<audio>` ship with `gfx/softmedia`, a pure-Go software media backend (GIF / MJPEG video, WAV + PulseAudio audio) enabled in the default Linux build; `<audio>` is a new tag and `<video>` gained `fit`, with the honest-downgrade path unchanged elsewhere; `gx/datav` dashboard component library; GPU presentation backend prototype (`-tags gpu`, experimental); `for...in` destructuring bindings; a foldable-screen demo app |
 | 0.10.0 | Foldable-screen adaptation: `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` readouts in `gx/screen`, `reservedRegions` / `hasFold` / `layoutMode` / `widthClass` in `gx/viewport`, opt-in `avoidReserved` hinge avoidance; Android / iOS / HarmonyOS hosts all report fold state; `scroll vlist` virtualised long lists; three breakpoints (compact / medium / expanded) |
 | 0.9.0 | `table` / `tree` / `list-item` data-display components, `tabs`, and `tooltip`; design tokens and a theme system (32 colour tokens, dark preset, runtime switching); `gx/update` v1.1 auto-update (streaming download / resume / progress callbacks / `pre` channel); `gox create --ts` TypeScript / TSX template; `var` declarations and class expressions; runtime errors carry source-frame locations |

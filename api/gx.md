@@ -247,7 +247,7 @@ import {
 
 ```js
 const getPosture = usePosture();      // ← 拿到取值函数
-<text>{() => getPosture()}</text>      // 姿态一变,这行文本跟着变
+<text>{ getPosture()}</text>           // 姿态一变,这行文本跟着变 (0.14.0 起插值自动响应式)
 ```
 
 设计动机:显示器表结构较大,做成整表 signal 不划算,于是用"版本号 + 取值函数"的组合 —— 取值函数每次调用都重读当前状态并订阅版本号,与 `useRoute()` 同构。

@@ -20,11 +20,11 @@ description: Gox GUI 内容展示与反馈组件：text 文本块（wrap 折行�
 | width / height | number | 折行需要一个宽度约束(显式 width,或父容器交叉轴 stretch) |
 
 ```js
-<text font={20}>{() => `count: ${count()}`}</text>
+<text font={20}>计数：{ count()}</text>
 
 <!-- 折行:给宽度,或者放在 column 里靠 stretch -->
 <text wrap width={260} font={12}>
-  {() => `value = "${text()}"`}
+  value = "{ text()}"
 </text>
 
 <!-- 最多两行,超出显示省略号 -->
@@ -128,7 +128,7 @@ const [step, setStep] = createSignal(0);
 setInterval(() => setStep(s => (s >= 10 ? 0 : s + 1)), 400);
 
 <progress value={() => step() / 10} />
-<text>{() => `value: ${step() * 10}%`}</text>
+<text>value: { step() * 10}%</text>
 ```
 
 ## 反馈与数据类组件 {#feedback}

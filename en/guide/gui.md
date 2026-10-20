@@ -17,7 +17,7 @@ const [count, setCount] = createSignal(0)
 render(
   <window title="Counter" width={400} height={300}>
     <column gap={8} padding={16}>
-      <text font={20}>{() => `count: ${count()}`}</text>
+      <text font={20}>count: { count()}</text>
       <button onClick={() => setCount(c => c + 1)}>Add one</button>
     </column>
   </window>
@@ -31,7 +31,7 @@ gox counter.js          # run directly; a 400x300 window pops up
 ## How it works
 
 - JSX is lowered at compile time into h(tag, props, ...children) calls — no virtual DOM diffing; props and text nodes bind directly to signals; that's why `h` must be imported (every file using JSX needs it)
-- Passing a function as a prop or text (e.g. {() => `count: ${count()}`}) creates a reactive binding: a signal update → nodes depending on it are marked dirty → dirty rectangles are merged and only the affected regions are repainted
+- Reactive bindings: since 0.14.0 a text interpolation like `{ count()}` is automatically wrapped into a function child at parse time; props take functions the same way (e.g. `value={() => name()}`) — a signal update → nodes depending on it are marked dirty → dirty rectangles are merged and only the affected regions are repainted
 - Clicking the button → setCount updates the signal → the chain above runs automatically; no manual refresh code
 - Input components are controlled: the display only reads `value`, and editing only dispatches onInput / onChange — so remember to write the value back to a signal in the callback; or use the two-way binding directive model={draft} to wire it up in one step
 
@@ -122,7 +122,7 @@ import { Switch, Match } from "gx/view";
 <view show={open}><input model={draft} /></view>
 ```
 
-**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. **Children are no exception**: ``count: {count()}`` is a snapshot; write ``{() => `count: ${count()}`}`` (this one has no warning). For details, see [Component Reference · Lists and conditions](/en/components/patterns#view). **Ternaries / short-circuits eat subscriptions**: a subscription-type reading (the `useXxx()` family) inside a branch the first frame doesn't take is never called, so no subscription is established — the effect ends up with zero dependencies, never re-runs, and emits no warning. Take the subscription reading unconditionally first, then branch: `const r = useReservedRegions()(); if (!hasFold()) return "no fold";`. Which readings subscribe is listed in [Component Reference · Lists and conditions](/en/components/patterns#view).
+**Props are evaluated once at call time**, so the reactive `each` / `show` must be passed getter functions (`each={() => rows()}`) — the same discipline as `value` on controlled components. **Children are reactive since 0.14.0**: ``count: {count()}`` is wrapped into a function child at parse time and follows the signal; bare identifiers `{sig}` and explicit functions `{() => …}` are passed as-is, and handwritten `h()` calls still need function children. For details, see [Component Reference · Lists and conditions](/en/components/patterns#view). **Ternaries / short-circuits eat subscriptions**: a subscription-type reading (the `useXxx()` family) inside a branch the first frame doesn't take is never called, so no subscription is established — the effect ends up with zero dependencies, never re-runs, and emits no warning. Take the subscription reading unconditionally first, then branch: `const r = useReservedRegions()(); if (!hasFold()) return "no fold";`. Which readings subscribe is listed in [Component Reference · Lists and conditions](/en/components/patterns#view).
 
 ## Routing: gx/router
 

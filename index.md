@@ -147,10 +147,13 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.11.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.14.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.14.0 | JSX 插值子节点自动响应式（Solid 语义）：`<text>count: { count()}</text>` 在解析期自动包成函数子节点，不再需要 `{() => …}` 手写闭包；常量 / 显式函数 / 裸标识符三类不包；`gox lint` 的 `snapshot-child` 改抓手写 `h()` 快照 |
+| 0.13.0 | Prism 设计系统（S0–S8）：GUI 基础组件全面重设计 —— 设计 token 分层（语义色 / 组件色 / prism 预设）、控件细节（滑块胶囊轨道与大旋钮、字段行高 36、表格列宽自适应、抽屉/弹窗真实阴影与动画心跳）、反馈组件（spinner 环形动画 / skeleton 色彩插值 / reduced-motion 支持）、触控模式命中区放大与密度常量统一 |
+| 0.12.0 | 光栅链路接上覆盖率抗锯齿：斜线 / 圆弧 / 环带不再是硬边（`fillRingAA` / `fillDiscAA` 等 AA 图元） |
 | 0.11.0 | 媒体组件真的能播：`<video>` / `<audio>` 配上 `gfx/softmedia` 软件媒体后端（视频 GIF / MJPEG，音频 WAV + PulseAudio，Linux 默认构建启用），`<audio>` 为新标签、`<video>` 新增 `fit`，缺能力依旧诚实降级；`gx/datav` 大屏可视化组件库；GPU 呈现后端原型（`-tags gpu`，实验轨）；`for...in` 解构绑定；折叠屏四场景演示应用 |
 | 0.10.0 | 折叠屏适配：`gx/screen` 的 `posture` / `hinge` / `regions` / `splitRatio` / `hingeOrientation` 读数，`gx/viewport` 的 `reservedRegions` / `hasFold` / `layoutMode` / `widthClass`，opt-in 的 `avoidReserved` 折痕避让；Android / iOS / 鸿蒙三端宿主均已接姿态上报；`scroll vlist` 虚拟化长列表；三档断点（compact / medium / expanded） |
 | 0.9.0 | `table` / `tree` / `list-item` 数据展示组件、`tabs` 选项卡、`tooltip` 悬停提示；设计 token 与主题系统（32 项颜色 token、暗色预设、运行时切换）；`gx/update` v1.1 自动更新（流式下载 / 断点续传 / 进度回调 / pre 通道）；`gox create --ts` TypeScript / TSX 模板；`var` 声明与 class 表达式；运行时错误带源码帧定位 |
