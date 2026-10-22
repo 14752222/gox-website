@@ -298,7 +298,64 @@
   transform: translateY(-6px);
 }
 
-/* 窄屏隐藏版本切换器，避免挤压导航（移动端可从首页版本历史表进入） */
+/* 桌面导航栏里的切换器在窄屏让位（移动端实例在汉堡菜单面板里，见 .vs-screen） */
 @media (max-width: 768px) {
-  .version-switcher { display: none; }
+  .version-switcher.vs-nav { display: none; }
+}
+
+/* 移动端菜单面板实例：全宽、左对齐 */
+.version-switcher.vs-screen {
+  margin: 8px 0 0;
+  width: 100%;
+}
+.vs-screen .vs-button {
+  width: 100%;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.vs-screen .vs-menu {
+  position: static;
+  width: 100%;
+  box-shadow: none;
+  margin-top: 6px;
+}
+
+/* 键盘可达性：Tab 聚焦高亮 */
+.vs-button:focus-visible,
+.vs-item:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 1px;
+}
+
+/* ===== 一键复制按钮（首页安装命令） ===== */
+.copy-btn {
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.copy-btn:hover {
+  color: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+}
+.copy-btn.copied {
+  color: var(--vp-c-green-1);
+  border-color: var(--vp-c-green-1);
+}
+/* 终端卡标题栏里的复制按钮配色（深色终端背景上保持可读） */
+.terminal-bar .copy-btn {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #c9d4e3;
+}
+.terminal-bar .copy-btn:hover {
+  color: #4ade9c;
+  border-color: #4ade9c;
 }

@@ -61,7 +61,7 @@ features:
 ## 三十秒跑起来
 
 <div class="terminal">
-  <div class="terminal-bar"><i></i><i></i><i></i><span>gox — REPL / 运行脚本 / 创建工程</span></div>
+  <div class="terminal-bar"><i></i><i></i><i></i><span>gox — REPL / 运行脚本 / 创建工程</span><CopyButton text="npm i -g @goxjs/goxjs" /></div>
   <div class="terminal-body"><span class="prompt">$</span> npm i -g @goxjs/goxjs<br><span class="prompt">$</span> gox<br>Gox REPL (ES6 subset)<br>Type :exit to quit, :help for help<br>&nbsp;<br><span class="prompt">&gt;</span> let x = 10<br><span class="prompt">&gt;</span> let y = 20<br><span class="prompt">&gt;</span> x + y<br><span class="out">&nbsp;&nbsp;30</span><br><span class="prompt">&gt;</span> [1, 2, 3].map(v =&gt; v * 2)<br><span class="out">&nbsp;&nbsp;[2, 4, 6]</span><br><span class="prompt">&gt;</span> <span class="caret"></span></div>
 </div>
 

@@ -1,26 +1,34 @@
 <script setup lang="ts">
 // 导航栏版本切换器：显示本站文档版本，下拉可跳到最新 Release 或历史版本对应 tag。
+// 桌面端注入 nav-bar-content-after，移动端注入 nav-screen-content-after（variant=screen）。
 // 数据源见 .vitepress/versions.ts。
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useData, withBase } from 'vitepress'
-import { VERSIONS, CURRENT_VERSION, ALL_RELEASES } from '../../versions'
+import { VERSIONS, CURRENT_VERSION, LATEST_VERSION, ALL_RELEASES } from '../../versions'
+
+const props = defineProps<{ variant?: 'nav' | 'screen' }>()
+const variant = props.variant ?? 'nav'
 
 const { lang } = useData()
 const isEn = computed(() => lang.value.startsWith('en'))
 
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
+const menuId = `vs-menu-${variant}`
+
+// 本站文档版本与最新发布版一致时，徽标合并显示「当前 · 最新」
+const isAlsoLatest = CURRENT_VERSION === LATEST_VERSION
 
 const t = computed(() =>
   isEn.value
     ? {
-        current: 'current docs',
+        current: isAlsoLatest ? 'current · latest' : 'current docs',
         latest: 'latest',
         all: 'All releases & changelog',
         ariaLabel: 'Switch documentation version',
       }
     : {
-        current: '当前文档',
+        current: isAlsoLatest ? '当前 · 最新' : '当前文档',
         latest: '最新版',
         all: '全部版本与更新日志',
         ariaLabel: '切换文档版本',
@@ -50,12 +58,14 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="root" class="version-switcher">
+  <div ref="root" class="version-switcher" :class="`vs-${variant}`">
     <button
       type="button"
       class="vs-button"
       :aria-label="t.ariaLabel"
       :aria-expanded="open"
+      aria-haspopup="menu"
+      :aria-controls="menuId"
       @click.stop="toggle"
     >
       <span class="vs-tag">v{{ CURRENT_VERSION }}</span>
@@ -67,7 +77,7 @@ onBeforeUnmount(() => {
     </button>
 
     <Transition name="vs-flyout">
-      <div v-if="open" class="vs-menu" role="menu">
+      <div v-if="open" :id="menuId" class="vs-menu" role="menu">
         <a
           v-for="v in VERSIONS"
           :key="v.version"
