@@ -147,10 +147,11 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 
 ## Versions and Current Status
 
-Current version **v0.14.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.14.1**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.14.1 | X11 backend fixes (PutImage row-band splitting, event type-switch value types); permission semantics aligned across all three platforms (spec pinned + exhaustive mocks); foldable adaptation landed: foldable_demo sample, 20-round lifecycle regression, adaptation guide; README hero example switched to an adaptive one/two-column list page with a new English README.en.md; three-platform regression matrix in CI |
 | 0.14.0 | JSX interpolation children are reactive (Solid semantics): `<text>count: { count()}</text>` is wrapped into a function child at parse time — no more handwritten `{() => …}` closures; constants, explicit functions and bare identifiers stay as-is; `gox lint`'s `snapshot-child` now targets handwritten `h()` snapshots |
 | 0.13.0 | Prism design system (S0–S8): a full visual redesign of the base widgets — layered design tokens (semantic / component / prism presets), control refinements (capsule slider track with a larger knob, 36px field rows, adaptive table column widths, real shadows and an animation heartbeat for drawers/dialogs), feedback components (animated ring spinner, colour-interpolated skeletons, reduced-motion support), touch-mode hit-area inflation and unified density constants |
 | 0.12.0 | Coverage-based antialiasing in the raster pipeline: diagonal lines, arcs and rings are no longer hard-edged (`fillRingAA` / `fillDiscAA` and other AA primitives) |

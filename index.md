@@ -147,10 +147,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.14.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.14.1**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.14.1 | X11 后端修复（PutImage 行带切分、事件 type-switch 值类型）；权限三端语义对齐（spec 写死 + mock 穷举）；折叠屏适配落地：foldable_demo 示例、20 轮生命周期回归、适配教程；README 首屏示例改为单双栏自适应列表页、新增英文版 README.en.md；三端回归矩阵进 CI |
 | 0.14.0 | JSX 插值子节点自动响应式（Solid 语义）：`<text>count: { count()}</text>` 在解析期自动包成函数子节点，不再需要 `{() => …}` 手写闭包；常量 / 显式函数 / 裸标识符三类不包；`gox lint` 的 `snapshot-child` 改抓手写 `h()` 快照 |
 | 0.13.0 | Prism 设计系统（S0–S8）：GUI 基础组件全面重设计 —— 设计 token 分层（语义色 / 组件色 / prism 预设）、控件细节（滑块胶囊轨道与大旋钮、字段行高 36、表格列宽自适应、抽屉/弹窗真实阴影与动画心跳）、反馈组件（spinner 环形动画 / skeleton 色彩插值 / reduced-motion 支持）、触控模式命中区放大与密度常量统一 |
 | 0.12.0 | 光栅链路接上覆盖率抗锯齿：斜线 / 圆弧 / 环带不再是硬边（`fillRingAA` / `fillDiscAA` 等 AA 图元） |
