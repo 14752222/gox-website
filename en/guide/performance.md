@@ -1,6 +1,6 @@
 ---
 title: Performance and Compliance Data
-description: "Gox measured performance and compliance data: interpreter throughput vs goja / V8, UI frame rate and GC-pause verdicts, test262 language 78.7% and built-ins 35.7% compliance, and a third-party npm compatibility matrix with root-cause grouping. All figures, methodology and thresholds are public."
+description: "Gox measured performance and compliance data: interpreter throughput vs goja / V8, UI frame rate and GC-pause verdicts, test262 language 97.0% and built-ins 62.1% compliance, and a third-party npm compatibility matrix with root-cause grouping. All figures, methodology and thresholds are public."
 ---
 
 # Performance and Compliance Data
@@ -14,8 +14,8 @@ reproducible command, an explicit methodology and a published threshold — incl
 | --- | --- | --- |
 | Interpreter on par with goja | ❌ **Missed** | `fib28` pure compute gox ≈ **311ms** vs goja ≈ **130ms** → **2.4× slower** (±25% threshold) |
 | UI free of GC pauses | ✅ **Passed** | Stressed-run aggregate p95 frame interval **5.95ms** ≤ 16.7ms; single GC pause max **1.382ms** ≤ 5ms |
-| test262 `language` compliance | 78.7% | — |
-| test262 `built-ins` compliance | 35.7% | Failures are highly concentrated: the top 10 of 522 clusters cover 42.75% |
+| test262 `language` compliance | **97.0%** | v0.15.0 — up another **11.4pp** from 85.6% in 0.14.x |
+| test262 `built-ins` compliance | **62.1%** | 14804 / 23823 (up **26.4pp** from 35.7%); failures are still concentrated: the top 10 of 502 clusters cover 30.32% |
 :::
 
 ## 1. Test environment
@@ -178,48 +178,60 @@ Verdict of "no GC pauses" holds iff:
 
 | Suite | Compliance | Passed / total |
 | --- | ---: | --- |
-| `language` | **78.7%** | — |
-| `built-ins` | **35.7%** | 8503 / 23823 |
+| `language` | **97.0%** | v0.15.0 |
+| `built-ins` | **62.1%** | 14804 / 23823 |
 
-### 4.1 The failure surface is highly concentrated
+::: tip What 0.15.0 moved
+`language` went from **85.6%** to **97.0%**; `built-ins` went from **35.7%** to **62.1%**
+(**+6301 tests**). The single biggest block was `TypedArray/prototype`: at 35.7% its baseline
+was **0.00%** (the whole segment unimplemented); it is now implemented in blocks and has dropped
+out of the top 10.
+:::
 
-built-ins failures are **not "fifteen thousand scattered bugs"** — the top 10 of 522 clusters
-alone cover **42.75% of the failure surface**. So work is scheduled by **cluster**, not by
+### 4.1 The failure surface is still concentrated
+
+built-ins failures are **not "nine thousand scattered bugs"** — the top 10 of 502 clusters
+alone cover **30.32% of the failure surface**. So work is scheduled by **cluster**, not by
 individual test.
 
-Breakdown by mode (mutually exclusive; the modes sum to the 15320 failures):
+Breakdown by mode (mutually exclusive; the modes sum to the 9019 failures):
 
-| Mode | Size | Share of failures | Scheduling implication |
-| --- | ---: | ---: | --- |
-| Semantic deviation | 9694 | 63.28% | Capability exists but values/order/boundaries/this-checks diverge — the **main battlefield**, align method by method |
-| Feature absent | 5185 | 33.84% | Stops in the front end or errors "no such thing" at runtime — **implement in blocks** |
-| harness dependency | 369 | 2.41% | The test never reached the engine — **runner side**, cheapest, clear first |
-| crash | 52 | 0.34% | Hangs on timeout — highest priority, it poisons an entire shard |
-| False-positive retreat | 20 | 0.13% | negative-test verdict mismatch (all in RegExp/property-escapes) |
+| Mode | Size | Share of failures | Share of suite | Scheduling implication |
+| --- | ---: | ---: | ---: | --- |
+| Semantic deviation | 5966 | 66.15% | 25.04% | Capability exists but values/order/boundaries/this-checks diverge — the **main battlefield**, align method by method |
+| Feature absent | 2773 | 30.75% | 11.64% | Stops in the front end or errors "no such thing" at runtime — **implement in blocks** |
+| harness dependency | 191 | 2.12% | 0.80% | The test never reached the engine — **runner side**, cheapest, clear first |
+| crash | 69 | 0.77% | 0.29% | Hangs on timeout — highest priority, it poisons an entire shard |
+| False-positive retreat | 20 | 0.22% | 0.08% | negative-test verdict mismatch (all in RegExp/property-escapes) |
 
-In one line: **six tenths are "done wrong", three tenths are "not done"**.
+In one line: **two thirds are "done wrong", three tenths are "not done"** — against the 35.7%
+snapshot (63.28% / 33.84%), the **main battlefield is still semantic alignment**.
 
 Top 10 clusters (family = first 3 path segments of a test):
 
 | # | Directory family | Failure mode | Cluster size | Family baseline (pass/total) |
 | --- | --- | --- | ---: | --- |
-| 1 | `built-ins/Array/prototype` | Semantic deviation | 1708 | 967/2812 = 34.39% |
-| 2 | `built-ins/TypedArray/prototype` | Feature absent | 1311 | 0/1411 = **0.00%** |
-| 3 | `built-ins/Temporal/ZonedDateTime` | Semantic deviation | 605 | 277/901 = 30.74% |
-| 4 | `built-ins/Temporal/PlainDateTime` | Semantic deviation | 531 | 226/773 = 29.24% |
-| 5 | `built-ins/Temporal/PlainDate` | Semantic deviation | 452 | 184/652 = 28.22% |
-| 6 | `built-ins/RegExp/property-escapes` | Feature absent | 447 | 143/613 = 23.33% |
-| 7 | `built-ins/String/prototype` | Semantic deviation | 391 | 571/1073 = 53.22% |
-| 8 | `built-ins/Temporal/PlainYearMonth` | Semantic deviation | 374 | 127/509 = 24.95% |
-| 9 | `built-ins/Temporal/PlainTime` | Semantic deviation | 372 | 117/493 = 23.73% |
-| 10 | `built-ins/Temporal/Duration` | Semantic deviation | 358 | 172/540 = 31.85% |
+| 1 | `built-ins/String/prototype` | Semantic deviation | 501 | 502/1073 = 46.78% |
+| 2 | `built-ins/RegExp/property-escapes` | Feature absent | 447 | 143/613 = 23.33% |
+| 3 | `built-ins/Iterator/prototype` | Feature absent | 295 | 103/513 = 20.08% |
+| 4 | `built-ins/Object/create` | Semantic deviation | 294 | 25/320 = 7.81% |
+| 5 | `built-ins/Array/prototype` | Semantic deviation | 271 | 2486/2812 = 88.41% |
+| 6 | `built-ins/DataView/prototype` | Semantic deviation | 233 | 132/499 = 26.45% |
+| 7 | `built-ins/Object/defineProperty` | Semantic deviation | 198 | 888/1131 = 78.51% |
+| 8 | `built-ins/Set/prototype` | Semantic deviation | 181 | 162/357 = 45.38% |
+| 9 | `built-ins/RegExp/prototype` | Semantic deviation | 158 | 212/487 = 43.53% |
+| 10 | `built-ins/Object/defineProperties` | Semantic deviation | 157 | 466/632 = 73.73% |
 
-**Temporal is "one family, seven clusters"** — 6 of the top 10. `TypedArray/prototype` sits at a
-0.00% baseline, meaning the whole segment is unimplemented (implement in blocks, not test by test).
+**Temporal has dropped out of the top 10** — at 35.7% it held 6 of the 10 slots as a single family;
+this round filled the whole family in. `Array/prototype` also moved from 34.39% to **88.41%**.
+The remaining holes are `Object/create` (7.81%, property-descriptor semantics) and
+`RegExp/property-escapes` (23.33%, Unicode property escapes need the UCD tables).
 
-> How to run: `gox test262 -suite built-ins -jobs 16` (128 fixed shards; 23823 tests in 62.7s).
+> How to run: `gox test262 -suite built-ins -jobs 16` (128 fixed shards; ~100s for 23823 tests).
 > Methodology: the denominator is the tests actually collected; harness dependencies skipped by
-> the runner **count toward the denominator but not toward passes**.
+> the runner **count toward the denominator but not toward passes**. The shard count is fixed at
+> 128 and **decoupled from `-jobs`** — the engine has package-level mutable state, so if the
+> shard count tracked `-jobs`, the pass count would flip with concurrency.
 
 ## 5. Third-party npm compatibility
 

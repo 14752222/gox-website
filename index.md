@@ -147,10 +147,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.14.1**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.15.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.15.0 | **test262 `language` 合规率提到 97%**（较 0.14.x 的 85.6% 再提 11.4pp）；`gfx/hostbridge` 收敛三端宿主协议，宿主契约测试在桌面即可跑；修折叠态回归两个结构性缺陷（APK 缺 x86_64 ABI、skip 闸门从未生效）；三端回归矩阵改探测式、消除 runner 环境硬编码；`parser` / `object` / `gfx` 一批修复（props 不再为 null、children 双通道、正则 `\u` 转义、undefined 键视同没给） |
 | 0.14.1 | X11 后端修复（PutImage 行带切分、事件 type-switch 值类型）；权限三端语义对齐（spec 写死 + mock 穷举）；折叠屏适配落地：foldable_demo 示例、20 轮生命周期回归、适配教程；README 首屏示例改为单双栏自适应列表页、新增英文版 README.en.md；三端回归矩阵进 CI |
 | 0.14.0 | JSX 插值子节点自动响应式（Solid 语义）：`<text>count: { count()}</text>` 在解析期自动包成函数子节点，不再需要 `{() => …}` 手写闭包；常量 / 显式函数 / 裸标识符三类不包；`gox lint` 的 `snapshot-child` 改抓手写 `h()` 快照 |
 | 0.13.0 | Prism 设计系统（S0–S8）：GUI 基础组件全面重设计 —— 设计 token 分层（语义色 / 组件色 / prism 预设）、控件细节（滑块胶囊轨道与大旋钮、字段行高 36、表格列宽自适应、抽屉/弹窗真实阴影与动画心跳）、反馈组件（spinner 环形动画 / skeleton 色彩插值 / reduced-motion 支持）、触控模式命中区放大与密度常量统一 |
