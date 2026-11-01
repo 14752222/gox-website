@@ -147,7 +147,7 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.15.18**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.15.19**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
