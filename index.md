@@ -147,10 +147,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.15.19**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.15.29**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.15.18 ~ 0.15.29 | 补丁系列：test262 批次 17~22 持续入库（Map/Set 迭代器 next 补齐、Promise.allKeyed / allSettledKeyed、thenable 采纳、Date setter 族参数强转修复，built-ins 合规率 71.1% → 73.9%）；引擎与平台壳成对发布闸门对齐（engineVersionRange 0.15.x） |
 | 0.15.1 ~ 0.15.17 | 补丁系列：test262 批次 11~16 持续入库（含 Map/Set 品牌检查）；移动端 libgox 双 ABI NDK 从零重建兑付、density 渲染换算落地；性能收益保持复核（fib28 ~211ms）；C11 SAB.prototype 台账订正 |
 | 0.15.0 | **test262 `language` 合规率提到 97%**（较 0.14.x 的 85.6% 再提 11.4pp）；`gfx/hostbridge` 收敛三端宿主协议，宿主契约测试在桌面即可跑；修折叠态回归两个结构性缺陷（APK 缺 x86_64 ABI、skip 闸门从未生效）；三端回归矩阵改探测式、消除 runner 环境硬编码；`parser` / `object` / `gfx` 一批修复（props 不再为 null、children 双通道、正则 `\u` 转义、undefined 键视同没给） |
 | 0.14.1 | X11 后端修复（PutImage 行带切分、事件 type-switch 值类型）；权限三端语义对齐（spec 写死 + mock 穷举）；折叠屏适配落地：foldable_demo 示例、20 轮生命周期回归、适配教程；README 首屏示例改为单双栏自适应列表页、新增英文版 README.en.md；三端回归矩阵进 CI |
