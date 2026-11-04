@@ -24,7 +24,7 @@ export interface VersionEntry {
 }
 
 /** 最新发布版（与 npm @goxjs/goxjs 对齐） */
-export const LATEST_VERSION = '0.15.33'
+export const LATEST_VERSION = '0.15.34'
 
 /** 本站文档对应的版本 */
 export const CURRENT_VERSION = '0.15.0'
