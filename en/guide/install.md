@@ -1,6 +1,6 @@
 ---
 title: Installation and Creating a Project
-description: "Three ways to install the Gox JavaScript runtime: npm i -g @goxjs/goxjs (prebuilt binaries for 5 platforms included), gox create to scaffold a GUI project in one command, or building from source with go build."
+description: "Three ways to install the Gox JavaScript runtime: npm i -g @goxjs/goxjs@latest (prebuilt binaries for 5 platforms included), gox create to scaffold a GUI project in one command, or building from source with go build."
 ---
 
 # Installation and Creating a Project
@@ -12,7 +12,7 @@ Three entry points — pick one based on your goal. All three install **the same
 The equivalent of `npm create vite` on the frontend: one command lays out a ready-to-run GUI project with the directory structure already in place, so you can just keep adding features. **Requires version 0.4.0 or later**.
 
 ```bash
-npm i -g @goxjs/goxjs
+npm i -g @goxjs/goxjs@latest
 gox create my-app      # new / init are aliases of the same subcommand
 cd my-app
 npm install            # only to get the goxjs command; the runtime itself has zero dependencies
@@ -44,10 +44,10 @@ Generation is **refused by default if the directory is not empty**; pass `--forc
 The [`@goxjs/goxjs`](https://www.npmjs.com/package/@goxjs/goxjs) package ships prebuilt binaries for Windows / Linux / macOS × x64 / arm64 (5 platforms in total, excluding windows-arm64) — no Go environment needed:
 
 ```bash
-npm i -g @goxjs/goxjs   # installs two commands: gox and goxjs
-gox                 # enter the REPL
-gox app.js          # run a script
-npx goxjs app.js    # or run it without a global install
+npm i -g @goxjs/goxjs@latest   # installs two commands: gox and goxjs
+gox                            # enter the REPL
+gox app.js                     # run a script
+npx goxjs app.js               # or run it without a global install
 ```
 
 ## Option 3: Build from Source
