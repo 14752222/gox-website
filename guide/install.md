@@ -1,6 +1,6 @@
 ---
 title: 安装与创建工程
-description: 安装 Gox JavaScript 运行时的三种方式：npm i -g @goxjs/goxjs（内置 5 平台预编译二进制）、gox create 脚手架一键创建 GUI 工程、从源码 go build 构建。
+description: 安装 Gox JavaScript 运行时的三种方式：npm i -g @goxjs/goxjs@latest（内置 5 平台预编译二进制）、gox create 脚手架一键创建 GUI 工程、从源码 go build 构建。
 ---
 
 # 安装与创建工程
@@ -12,7 +12,7 @@ description: 安装 Gox JavaScript 运行时的三种方式：npm i -g @goxjs/go
 等价于前端的 `npm create vite`:一条命令铺出一个开箱即跑的 GUI 工程,目录布局已经排好, 照着一路加功能即可。**需要 0.4.0 及以上版本**。
 
 ```bash
-npm i -g @goxjs/goxjs
+npm i -g @goxjs/goxjs@latest
 gox create my-app      # new / init 是同一个子命令的别名
 cd my-app
 npm install            # 只为拿到 goxjs 命令,运行时本身零依赖
@@ -44,10 +44,10 @@ npm run dev            # = goxjs src/main.js
 [`@goxjs/goxjs`](https://www.npmjs.com/package/@goxjs/goxjs) 包内置 Windows / Linux / macOS × x64 / arm64(windows-arm64 除外共 5 个平台)的预编译二进制,无需 Go 环境:
 
 ```bash
-npm i -g @goxjs/goxjs   # 安装后得到 gox 与 goxjs 两个命令
-gox                 # 进入 REPL
-gox app.js          # 运行脚本
-npx goxjs app.js    # 或者不全局安装,直接跑
+npm i -g @goxjs/goxjs@latest   # 安装后得到 gox 与 goxjs 两个命令
+gox                            # 进入 REPL
+gox app.js                     # 运行脚本
+npx goxjs app.js               # 或者不全局安装,直接跑
 ```
 
 ## 方式三:从源码构建
