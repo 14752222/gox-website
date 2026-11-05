@@ -104,7 +104,7 @@ features:
 
 ## 16 行写一个桌面 GUI 应用
 
-```js
+```jsx
 import { createSignal } from "gx/solid";
 import { h, render } from "gx/gfx";
 
@@ -113,7 +113,7 @@ const [count, setCount] = createSignal(0);
 render(
   <window title="Counter" width={400} height={300}>
     <column gap={8} padding={16}>
-      <text font={20}>{() => `count: ${count()}`}</text>
+      <text font={20}>count: {count()}</text>
       <button onClick={() => setCount(c => c + 1)}>加一</button>
     </column>
   </window>
@@ -125,7 +125,7 @@ gox counter.js          # 直接运行，弹出 400x300 窗口
 go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 ```
 
-属性或文本传**函数**即为响应式绑定：信号更新 → 依赖节点标脏 → 脏矩形合并后只重绘受影响区域。更多见[GUI 桌面应用教程](/guide/gui)。
+属性传**函数**即为响应式绑定（`value={() => x()}`），文本里写 `{count()}` 也已是活的（解析期自动包成响应式子节点，Solid 语义）：信号更新 → 依赖节点标脏 → 脏矩形合并后只重绘受影响区域。更多见[GUI 桌面应用教程](/guide/gui)。
 
 ## 能力总览
 
