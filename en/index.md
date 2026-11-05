@@ -104,7 +104,7 @@ Key design decisions: GC-free explicit memory management (with dedicated handlin
 
 ## A Desktop GUI App in 16 Lines
 
-```js
+```jsx
 import { createSignal } from "gx/solid";
 import { h, render } from "gx/gfx";
 
@@ -113,8 +113,8 @@ const [count, setCount] = createSignal(0);
 render(
   <window title="Counter" width={400} height={300}>
     <column gap={8} padding={16}>
-      <text font={20}>{() => `count: ${count()}`}</text>
-      <button onClick={() => setCount(c => c + 1)}>加一</button>
+      <text font={20}>count: {count()}</text>
+      <button onClick={() => setCount(c => c + 1)}>+1</button>
     </column>
   </window>
 );
@@ -125,7 +125,7 @@ gox counter.js          # Run directly — opens a 400x300 window
 go run ./packager counter.js --gui -o counter.exe   # Package into a standalone GUI app
 ```
 
-Passing a **function** as a prop or text makes it a reactive binding: signal update → dependent nodes marked dirty → dirty rectangles merged so only affected regions are redrawn. See the [GUI desktop app tutorial](/en/guide/gui) for more.
+Passing a **function** as a prop makes it a reactive binding (`value={() => x()}`), and `{count()}` inside text is already live (wrapped into a reactive child at parse time, Solid semantics): signal update → dependent nodes marked dirty → dirty rectangles merged so only affected regions are redrawn. See the [GUI desktop app tutorial](/en/guide/gui) for more.
 
 ## Capability Overview
 
