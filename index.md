@@ -147,10 +147,11 @@ go run ./packager counter.js --gui -o counter.exe   # 打包成独立 GUI 程序
 
 ## 版本与现状
 
-当前版本 **v0.15.34**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
+当前版本 **v0.16.0**，完整条目见 [GitHub Releases](https://github.com/14752222/Gox/releases)。
 
 | 版本 | 内容 |
 | --- | --- |
+| 0.16.0 | `ArrayBuffer.prototype.transfer` / `transferToFixedLength`（ES2024）落地 —— 分离转移语义与 TypedArray 视图同步；test262 口径核销完成：`docs/test262-gate.md` 成为合规率唯一权威口径，批次地板（language 85% / built-ins 50% / 全量 80%）进 CI 闸门（`test262-gate-floors.json` + `check-compliance.py` 强化），未登记 harness 全部登记、skipped 归零；现编现跑 language 86.3%、built-ins 75.1%、全量 80.7% |
 | 0.15.34 | 新增 `apps/devtools/` 交互式 GUI 调试面板（Inspector v2，纯脚本零内核改动）：元素树展开/选中/多窗口切换、按 path 回查节点 props 与布局盒、console 留存级别过滤、`devEval` 跨调用保持状态的 REPL（历史 100 条）、`devSnapshot` 性能摘要行；纳入 apps 无头冒烟套件 |
 | 0.15.30 ~ 0.15.33 | 引擎：test262 批次 23~26 入库（正则 unicodeSets `v` 标志、闭包外层绑定读取走活 binding cell、`Number.prototype.toString` 任意进制最短往返、`Math.f16round`（ES2024）、`Error.prototype` 原型链装配与实例 `name`/`message` 覆写语义），built-ins 合规率 73.9% → 75.0%。工程化：`release.yml` 判重升级为包级 `versions` 列表交叉核对（防单条 `npm view` 抖动误判未发布）；`pages.yml` 版本闸门修订 —— 官网自身两处展示（`config.mts` ↔ 首页）保持硬闸门，npm 主包漂移降级为 warning，不再每晚必红；`gox create` 脚手架的 `@goxjs/goxjs` 依赖由钉死 `^0.5.0` 改为 `latest`（新建工程直接跟随 npm 最新发布） |
 | 0.15.18 ~ 0.15.29 | 补丁系列：test262 批次 17~22 持续入库（Map/Set 迭代器 next 补齐、Promise.allKeyed / allSettledKeyed、thenable 采纳、Date setter 族参数强转修复，built-ins 合规率 71.1% → 73.9%）；引擎与平台壳成对发布闸门对齐（engineVersionRange 0.15.x） |
