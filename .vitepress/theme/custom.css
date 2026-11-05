@@ -233,6 +233,18 @@
   border-color: var(--vp-c-brand-1);
   color: var(--vp-c-brand-1);
 }
+.vs-tag-kind {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  padding: 0 4px;
+  border-radius: 4px;
+  color: var(--vp-c-text-3);
+  background: var(--vp-c-default-soft);
+}
+.vs-badge.docs {
+  color: var(--vp-c-text-2);
+  background: var(--vp-c-default-soft);
+}
 .vs-caret { transition: transform 0.2s; }
 .vs-caret.open { transform: rotate(180deg); }
 
