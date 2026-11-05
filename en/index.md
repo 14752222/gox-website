@@ -147,10 +147,11 @@ Passing a **function** as a prop or text makes it a reactive binding: signal upd
 
 ## Versions and Current Status
 
-Current version **v0.15.34**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
+Current version **v0.16.0**; see [GitHub Releases](https://github.com/14752222/Gox/releases) for the full changelog.
 
 | Version | Highlights |
 | --- | --- |
+| 0.16.0 | `ArrayBuffer.prototype.transfer` / `transferToFixedLength` (ES2024) land — detached-transfer semantics with TypedArray view sync; test262 metric reconciliation: `docs/test262-gate.md` is now the single authoritative definition, batch floors (language 85% / built-ins 50% / all 80%) are enforced as a CI gate (`test262-gate-floors.json` + hardened `check-compliance.py`), every previously unregistered harness is registered and `skipped` driven to zero; freshly built run: language 86.3%, built-ins 75.1%, all 80.7% |
 | 0.15.34 | New `apps/devtools/` interactive GUI debugging panel (Inspector v2, pure script, zero kernel changes): expandable/selectable element tree with multi-window switcher, node props & layout box queried by path, console retention with level filtering, a stateful `devEval` REPL (100-entry history), and a `devSnapshot` perf summary line; added to the headless apps smoke suite |
 | 0.15.30 ~ 0.15.33 | Engine: test262 batches 23–26 land (RegExp `unicodeSets` `v` flag, closure outer bindings read through a live binding cell, `Number.prototype.toString` shortest round-trip in any radix, `Math.f16round` (ES2024), `Error.prototype` chain wiring with per-instance `name`/`message` override semantics), built-ins compliance 73.9% → 75.0%. Tooling: `release.yml` de-duplication upgraded to a package-level `versions` cross-check (a flaky single `npm view` can no longer be misread as "not published"); the `pages.yml` version gate now keeps the site's own two displays (`config.mts` ↔ homepage) as a hard gate while downgrading npm drift to a warning; the `@goxjs/goxjs` dependency in `gox create` scaffolding moved from a pinned `^0.5.0` to `latest`, so new projects track the newest npm release |
 | 0.15.1 ~ 0.15.29 | Patch series: test262 batches 11–22 land continuously (Map/Set iterator `next`, `Promise.allKeyed` / `allSettledKeyed`, thenable adoption, Date setter coercion fixes — built-ins compliance 71.1% → 73.9%); the mobile `libgox` dual-ABI NDK rebuild from scratch and density render scaling; engine/platform-shell paired release gates aligned (`engineVersionRange` 0.15.x) |
