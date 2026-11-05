@@ -1,10 +1,13 @@
 <script setup lang="ts">
-// 导航栏版本切换器：显示本站文档版本，下拉可跳到最新 Release 或历史版本对应 tag。
+// 导航栏版本切换器：显示的是 **最新发布版**（= npm 上 `@goxjs/goxjs` 可安装的版本），
+// 不是本站文档对应的版本 —— 两者经常不一致（发版当天代码已发、文档还没跟上），
+// 用户点版本号是为了确认"我该 npm i 哪个版本"，所以徽标必须跟 npm 对齐；
+// 本站文档对应的版本在展开菜单里单独列一项并标注「本站文档」。
 // 桌面端注入 nav-bar-content-after，移动端注入 nav-screen-content-after（variant=screen）。
 // 数据源见 .vitepress/versions.ts。
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useData, withBase } from 'vitepress'
-import { VERSIONS, CURRENT_VERSION, LATEST_VERSION, ALL_RELEASES } from '../../versions'
+import { VERSIONS, LATEST_VERSION, ALL_RELEASES } from '../../versions'
 
 const props = defineProps<{ variant?: 'nav' | 'screen' }>()
 const variant = props.variant ?? 'nav'
@@ -16,22 +19,17 @@ const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 const menuId = `vs-menu-${variant}`
 
-// 本站文档版本与最新发布版一致时，徽标合并显示「当前 · 最新」
-const isAlsoLatest = CURRENT_VERSION === LATEST_VERSION
-
 const t = computed(() =>
   isEn.value
     ? {
-        current: isAlsoLatest ? 'current · latest' : 'current docs',
-        latest: 'latest',
+        current: 'docs here',
         all: 'All releases & changelog',
-        ariaLabel: 'Switch documentation version',
+        ariaLabel: 'Latest release version, switch documentation version',
       }
     : {
-        current: isAlsoLatest ? '当前 · 最新' : '当前文档',
-        latest: '最新版',
+        current: '本站文档',
         all: '全部版本与更新日志',
-        ariaLabel: '切换文档版本',
+        ariaLabel: '最新发布版号，可切换文档版本',
       },
 )
 
@@ -68,7 +66,8 @@ onBeforeUnmount(() => {
       :aria-controls="menuId"
       @click.stop="toggle"
     >
-      <span class="vs-tag">v{{ CURRENT_VERSION }}</span>
+      <span class="vs-tag">v{{ LATEST_VERSION }}</span>
+      <span class="vs-tag-kind">npm</span>
       <svg class="vs-caret" :class="{ open }" width="12" height="12" viewBox="0 0 24 24"
         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
         aria-hidden="true">
@@ -90,8 +89,8 @@ onBeforeUnmount(() => {
           @click="open = false"
         >
           <span class="vs-item-version">v{{ v.version }}</span>
-          <span v-if="v.current" class="vs-badge current">{{ t.current }}</span>
-          <span v-else-if="v.latest" class="vs-badge latest">{{ t.latest }}</span>
+          <span v-if="v.latest" class="vs-badge current">{{ isEn ? 'latest' : '最新发布' }}</span>
+          <span v-else-if="v.current" class="vs-badge docs">{{ t.current }}</span>
         </a>
         <div class="vs-divider" />
         <a :href="ALL_RELEASES" target="_blank" rel="noopener" class="vs-item vs-all" @click="open = false">
